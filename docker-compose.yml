@@ -1,0 +1,63 @@
+services:
+  simulator:
+    build:
+      context: ./Simulator
+    volumes:   
+      - uploads:/app/shared
+      - logs:/app/logs
+      - json:/app/json
+      - download:/app/download
+    ports:
+      - "6661:6661"
+    networks:
+      - my_network
+    restart: unless-stopped
+
+  extractor:
+    build:
+      context: ./Extractor
+    volumes:   
+      - uploads:/app/shared
+      - logs:/app/logs
+      - json:/app/json
+      - download:/app/download
+    ports:
+      - "6662:6662"
+    networks:
+      - my_network
+    restart: unless-stopped
+  
+
+  interface:
+    build:
+      context: ./interface
+    volumes:
+      - uploads:/app/uploads
+      - logs:/app/logs
+      - json:/app/json
+      - download:/app/download
+    ports:
+      - "6660:6660"
+    depends_on:
+      - simulator
+      - extractor
+    environment:
+      - HOST_ADDRESS=0.0.0.0
+      - HOST_PORT=6660
+      - SERVICE_NAME=Interface
+      - SIMULATOR_ADDRESS=simulator
+      - SIMULATOR_PORT=6661
+      - EXTRACTOR_ADDRESS=extractor
+      - EXTRACTOR_PORT=6662
+    networks:
+      - my_network
+
+volumes:
+  uploads:
+  logs:
+  json:
+  download:
+
+networks:
+  my_network:
+    driver: bridge

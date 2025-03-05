@@ -1,0 +1,7 @@
+fitter==1.7.1
+networkx==3.3
+numpy==2.2.1
+pandas==2.2.3
+pm4py==2.6.1
+scikit_learn==1.6.1
+scipy==1.15.0
