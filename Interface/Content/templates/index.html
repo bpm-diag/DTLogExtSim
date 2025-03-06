@@ -1,27 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BPMN Simulation</title>
+
+    <!-- Local Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+    <!-- Local jQuery (Full Version) -->
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+
+    <!-- Local Bootstrap Bundle (Includes Popper.js) -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </head>
 <body>
     <div class="container">
         <div class="row justify-content-center mt-5">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <h1 class="text-center mb-4">BPMN Simulation</h1>
-                <form method="POST" enctype="multipart/form-data">
-                    <div class="form-group my-5">
-                        <label for="bpmn_file">BPMN File:</label><br>
-                        <input type="file" class="form-control-file" id="bpmn_file" name="bpmn_file" required>
+
+                <!-- Tab Navigation -->
+                <ul class="nav nav-tabs" id="serviceTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="extractor-tab" data-bs-toggle="tab" href="#extractor">Extractor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="simulator-tab" data-bs-toggle="tab" href="#simulator">Simulator</a>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content mt-3">
+                    <!-- Extractor Form -->
+                    <div class="tab-pane fade show active" id="extractor">
+                        <form id="extractorForm" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="backend_service" value="extractor">
+                            
+                            <div class="form-group my-4">
+                                <label for="xes_file">XES File (Required):</label>
+                                <input type="file" class="form-control-file" id="xes_xes_extractor" name="xes_file" required>
+                            </div>
+
+                            <!-- Extractor Parameters -->
+                            <div class="form-group my-4">
+                                <label for="simthreshold">Similarity Threshold (optional, default=0.9):</label>
+                                <input type="number" step="0.01" class="form-control" id="simthreshold" name="simthreshold" placeholder="0.9" value="0.9">
+                            </div>
+
+                            <div class="form-group my-4">
+                                <label for="eta">Eta Value (optional, default=0.01):</label>
+                                <input type="number" step="0.001" class="form-control" id="eta" name="eta" placeholder="0.01" value="0.01">
+                            </div>
+
+                            <div class="form-group my-4">
+                                <label for="eps">Epsilon Value (optional, default=0.001):</label>
+                                <input type="number" step="0.001" class="form-control" id="eps" name="eps" placeholder="0.001" value="0.001">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">Send to Extractor</button>
+                        </form>
                     </div>
-                    <div class="form-group my-5">
-                        <label for="extra">Extra.json (optional):</label><br>
-                        <input type="file" class="form-control-file" id="extra" name="extra">
+
+                    <!-- Simulator Form -->
+                    <div class="tab-pane fade" id="simulator">
+                        <form id="simulatorForm" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="backend_service" value="simulator">
+                            
+                            <div class="form-group my-4">
+                                <label for="bpmn_file">BPMN File (Required):</label>
+                                <input type="file" class="form-control-file" id="bpmn_file_simulator" name="bpmn_file" required>
+                            </div>
+
+                            <div class="form-group my-4">
+                                <label for="extra">Extra.json (Optional):</label>
+                                <input type="file" class="form-control-file" id="extra_simulator" name="extra">
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-block">Send to Simulator</button>
+                        </form>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Simulate</button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Ensure Bootstrap Tabs Work Correctly
+        document.addEventListener("DOMContentLoaded", function () {
+            let tabTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tab"]'));
+            let tabList = tabTriggerList.map(function (tabTriggerEl) {
+                return new bootstrap.Tab(tabTriggerEl);
+            });
+
+            tabTriggerList.forEach(function (tabTriggerEl) {
+                tabTriggerEl.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    let tab = new bootstrap.Tab(tabTriggerEl);
+                    tab.show();
+                });
+            });
+        });
+
+        // Dynamically change form action based on selected tab
+        document.getElementById("extractorForm").addEventListener("submit", function(event) {
+            this.action = "/extractor";
+        });
+
+        document.getElementById("simulatorForm").addEventListener("submit", function(event) {
+            this.action = "/simulator";
+        });
+    </script>
 </body>
 </html>

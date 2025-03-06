@@ -7,6 +7,7 @@ services:
       - logs:/app/logs
       - json:/app/json
       - download:/app/download
+      - preupload:/app/preupload
     ports:
       - "6661:6661"
     networks:
@@ -21,6 +22,7 @@ services:
       - logs:/app/logs
       - json:/app/json
       - download:/app/download
+      - preupload:/app/preupload
     ports:
       - "6662:6662"
     networks:
@@ -36,6 +38,7 @@ services:
       - logs:/app/logs
       - json:/app/json
       - download:/app/download
+      - preupload:/app/preupload
     ports:
       - "6660:6660"
     depends_on:
@@ -57,6 +60,7 @@ volumes:
   logs:
   json:
   download:
+  preupload:
 
 networks:
   my_network:

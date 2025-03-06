@@ -18,14 +18,6 @@ PREUPLOAD_FOLDER = 'preupload'
 LOGS_FOLDER = 'logs' # Directory for logs within the container
 tagName = "diagbp"
 
-
-# Create upload and logs folders if they don't exist, FORSE DA RIMUOVERE POI CON DOCKER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
-os.makedirs(LOGS_FOLDER, exist_ok=True)
-os.makedirs(PREUPLOAD_FOLDER, exist_ok=True)
-os.makedirs(JSON_FOLDER, exist_ok=True)
-os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
-
 def wait_for_and_remove_flag():
     # Wait for 'flag.txt' to appear in 'uploads' folder, created by main.py after simulation is over
     flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
@@ -63,47 +55,89 @@ def index():
             print("Flag file removed successfully.")
     except OSError as e:
         print(f"Error removing flag file: {e}")
-
-    if request.method == 'POST':
-        bpmn_file = request.files['bpmn_file']
-        extra = request.files['extra']
-
-        if bpmn_file:
-            bpmn_path = os.path.join(PREUPLOAD_FOLDER, bpmn_file.filename)
-            bpmn_file.save(bpmn_path)
-            bpmn_file.seek(0)  
-
-            #check diagbp tag
-            tree = ET.parse(bpmn_path)
-            root = tree.getroot()
-            diagbpTag = root.find('.//' + tagName)
-            if diagbpTag is not None or extra: #se è presente o il tag nel file o l'extra.json file
-                if extra:
-                    extra_path = os.path.join(JSON_FOLDER, "extra.json")
-                    extra.save(extra_path)
-                # Save uploaded BPMN
-                bpmn_path = os.path.join(UPLOAD_FOLDER, bpmn_file.filename)
-                bpmn_file.save(bpmn_path)
-                os.remove(os.path.join(PREUPLOAD_FOLDER, bpmn_file.filename)) 
-                return redirect(url_for('results'))
-            else:
-                bpmn_path = os.path.join(UPLOAD_FOLDER, bpmn_file.filename) #save in upload so that simulator reads it and creates bpmn.json for parameters.html
-                bpmn_file.save(bpmn_path)
-                
-                response = requests.get(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/")
-                response_data = response.json()
-                if response_data.get("parser_output"):
-                    try:
-                        os.remove(flag_path) 
-                        print("Flag file removed successfully.")
-                        return redirect(url_for('parameters'))
-                    except OSError as e:
-                        print(f"Error removing flag file: {e}")
-                        return render_template('index.html')
-
-                return render_template('index.html')
-
     return render_template('index.html')
+
+
+@app.route("/extractor", methods=["POST"])
+def use_extractor():
+    """Handles file upload for Extractor."""
+    if "xes_file" not in request.files:
+        return "No file uploaded", 400
+
+    files = {"xes_file": request.files["xes_file"]}
+
+    data = {
+        "simthreshold": request.form.get("simthreshold", "0.9"),
+        "eta": request.form.get("eta", "0.01"),
+        "eps": request.form.get("eps", "0.001"),
+    }
+    print(data)
+    try:
+        # response = requests.get(EXTRACTOR_URL, files=files)
+        # return response.text
+        print(files)
+    except requests.exceptions.RequestException as e:
+        return f"Error connecting to Extractor: {str(e)}", 500
+
+@app.route("/simulator", methods=["POST"])
+def use_simulator():
+    """Handles file upload for Simulator."""
+    if "bpmn_file" not in request.files:
+        return "No BPMN file uploaded", 400
+
+    files = {"bpmn_file": request.files["bpmn_file"]}
+
+    # Add extra.json only if provided
+    if "extra" in request.files and request.files["extra"].filename != "":
+        files["extra"] = request.files["extra"]
+
+    flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
+
+    
+    # bpmn_file = request.files['bpmn_file']
+    # extra = request.files['extra']
+
+    if files["bpmn_file"]:
+        bpmn_path = os.path.join(PREUPLOAD_FOLDER, files["bpmn_file"].filename)
+        files["bpmn_file"].save(bpmn_path)
+        files["bpmn_file"].seek(0)  
+
+        #check diagbp tag
+        tree = ET.parse(bpmn_path)
+        root = tree.getroot()
+        diagbpTag = root.find('.//' + tagName)
+        if diagbpTag is not None or files["extra"]: #se è presente o il tag nel file o l'extra.json file
+            if files["extra"]:
+                extra_path = os.path.join(JSON_FOLDER, "extra.json")
+                files["extra"].save(extra_path)
+            # Save uploaded BPMN
+            bpmn_path = os.path.join(UPLOAD_FOLDER, files["bpmn_file"].filename)
+            files["bpmn_file"].save(bpmn_path)
+            os.remove(os.path.join(PREUPLOAD_FOLDER, files["bpmn_file"].filename)) 
+            return redirect(url_for('results'))
+        else:
+            bpmn_path = os.path.join(UPLOAD_FOLDER, files["bpmn_file"].filename) #save in upload so that simulator reads it and creates bpmn.json for parameters.html
+            files["bpmn_file"].save(bpmn_path)
+            
+            response = requests.get(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/")
+            response_data = response.json()
+            if response_data.get("parser_output"):
+                try:
+                    os.remove(flag_path) 
+                    print("Flag file removed successfully.")
+                    return redirect(url_for('parameters'))
+                except OSError as e:
+                    print(f"Error removing flag file: {e}")
+                    return render_template('index.html')
+
+            return render_template('index.html')
+
+    # try:
+    #     response = requests.post(SIMULATOR_URL, files=files)
+    #     return response.text
+    # except requests.exceptions.RequestException as e:
+    #     return f"Error connecting to Simulator: {str(e)}", 500
+
 
 @app.route('/results')
 def results():
