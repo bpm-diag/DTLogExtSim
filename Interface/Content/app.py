@@ -5,17 +5,20 @@ import time
 import xml.etree.ElementTree as ET
 import json
 import requests
+import shutil
 
 from config import Config
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config.from_object(Config)
 
+
 JSON_FOLDER='json'
 DOWNLOAD_FOLDER='download'
 UPLOAD_FOLDER = 'uploads'
 PREUPLOAD_FOLDER = 'preupload'
 LOGS_FOLDER = 'logs' # Directory for logs within the container
+EXTRACTOR_FOLDER = "extractor"
 tagName = "diagbp"
 
 def wait_for_and_remove_flag():
@@ -47,6 +50,12 @@ def index():
     for filename in os.listdir(JSON_FOLDER): # remove old log files
         file_path = os.path.join(JSON_FOLDER, filename)
         os.remove(file_path)
+    for filename in os.listdir(EXTRACTOR_FOLDER):
+        file_path = os.path.join(EXTRACTOR_FOLDER, filename)
+        if os.path.isfile(file_path) or os.path.islink(file_path):  # Delete files and symlinks
+            os.remove(file_path)
+        elif os.path.isdir(file_path):  # Delete directories
+            shutil.rmtree(file_path)
     
     try:
         flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
@@ -64,18 +73,19 @@ def use_extractor():
     if "xes_file" not in request.files:
         return "No file uploaded", 400
 
-    files = {"xes_file": request.files["xes_file"]}
-
+    files = {"xes_file": (request.files["xes_file"].filename, request.files["xes_file"].stream, request.files["xes_file"].mimetype)}
+    print(files)
     data = {
         "simthreshold": request.form.get("simthreshold", "0.9"),
         "eta": request.form.get("eta", "0.01"),
         "eps": request.form.get("eps", "0.001"),
     }
-    print(data)
+    
     try:
         # response = requests.get(EXTRACTOR_URL, files=files)
         # return response.text
-        print(files)
+        response = requests.post(f"http://{app.config['EXTRACTOR_ADDRESS']}:{app.config['EXTRACTOR_PORT']}/", files=files, data=data)
+        return redirect(url_for('extractor_results'))
     except requests.exceptions.RequestException as e:
         return f"Error connecting to Extractor: {str(e)}", 500
 
@@ -88,8 +98,8 @@ def use_simulator():
     files = {"bpmn_file": request.files["bpmn_file"]}
 
     # Add extra.json only if provided
-    if "extra" in request.files and request.files["extra"].filename != "":
-        files["extra"] = request.files["extra"]
+    # if "extra" in request.files and request.files["extra"].filename != "":
+    files["extra"] = request.files["extra"]
 
     flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
 
@@ -114,12 +124,12 @@ def use_simulator():
             bpmn_path = os.path.join(UPLOAD_FOLDER, files["bpmn_file"].filename)
             files["bpmn_file"].save(bpmn_path)
             os.remove(os.path.join(PREUPLOAD_FOLDER, files["bpmn_file"].filename)) 
-            return redirect(url_for('results'))
+            return redirect(url_for('simulator_results'))
         else:
             bpmn_path = os.path.join(UPLOAD_FOLDER, files["bpmn_file"].filename) #save in upload so that simulator reads it and creates bpmn.json for parameters.html
             files["bpmn_file"].save(bpmn_path)
             
-            response = requests.get(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/")
+            response = requests.post(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/", files=files)
             response_data = response.json()
             if response_data.get("parser_output"):
                 try:
@@ -139,10 +149,14 @@ def use_simulator():
     #     return f"Error connecting to Simulator: {str(e)}", 500
 
 
-@app.route('/results')
-def results():
+@app.route('/simulatorResults')
+def simulator_results():
     wait_for_and_remove_flag()
-    return render_template('results.html')
+    return render_template('simulatorResults.html')
+
+@app.route('/extractorResults')
+def extractor_results():
+    return render_template('extractorResults.html')
 
 
 @app.route('/parameters', methods=['GET', 'POST'])
@@ -346,9 +360,34 @@ def parameters():
             file.write(bpmn_content)
         os.remove(source_path)  
 
-        return redirect(url_for('results'))
+        return redirect(url_for('simulator_results'))
 
     return render_template('parameters.html', bpmn_dict=bpmn_dict)
+
+@app.route('/download_extractor')
+def download_extractor():
+    # 1. Create the ZIP archive
+    zip_filename = 'simulation_logs.zip'
+    zip_path = os.path.join(EXTRACTOR_FOLDER, zip_filename)
+    if os.path.isfile(zip_path): 
+        os.remove(zip_path)
+    
+    # 3. Create a ZIP archive including subdirectories
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for root, _, files in os.walk(EXTRACTOR_FOLDER):
+            for filename in files:
+                file_path = os.path.join(root, filename)
+                # Exclude the ZIP file itself
+                if file_path == zip_path:
+                    continue
+                # Preserve directory structure inside ZIP
+                archive_name = os.path.relpath(file_path, EXTRACTOR_FOLDER)
+                zf.write(file_path, arcname=archive_name)
+
+    # 2. Send the ZIP file for download
+    response = send_from_directory(EXTRACTOR_FOLDER, zip_filename, as_attachment=True)
+
+    return response 
    
 
 @app.route('/download_logs')

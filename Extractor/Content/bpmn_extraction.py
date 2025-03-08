@@ -82,7 +82,9 @@ class ExtractionBPMN():
 
         sep = ';' if pl.system().lower() == 'windows' else ':'
         # Mining structure definition
-        args = ['java']
+        args = ['xvfb-run']
+
+        args.append("java")
         if not pl.system().lower() == 'windows':
             args.append('-Xmx2G')
 

@@ -10,8 +10,11 @@ ENV FLASK_ENV=development
 RUN apt-get update && apt-get install -y openjdk-11-jdk && \
     apt-get clean
 
+RUN apt-get install -y xvfb && apt-get install -y graphviz
+
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
+
 
 # Create a working directory in the container
 WORKDIR /app

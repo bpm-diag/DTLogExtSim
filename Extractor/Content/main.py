@@ -172,7 +172,7 @@ if __name__ == "__main__":
     eps = args.eps
     sim_threshold = float(args.simthreshold)
 
-    log = pm4py.read_xes('input_file/' + args.file)
+    log = pm4py.read_xes(args.file)
    
 
     len_starting_log = len(log)

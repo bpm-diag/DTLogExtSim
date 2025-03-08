@@ -23,7 +23,7 @@ if not os.path.exists(shared_dir):
 
 @app.route("/", methods=["GET","POST"])
 def index():
-    if request.method == "GET":
+    if request.method == "POST":
         for filename in os.listdir(shared_dir):
             if filename.endswith(".bpmn"):
                 full_path = "shared/"+filename

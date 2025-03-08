@@ -401,5 +401,5 @@ class IntermediateStartPoint():
             file.write(f"{forced_flow_intermediate_states}\n")    
             file.write("\nIntermediate Forced Instance Types\n")
             file.write(f"{forced_instance_types}")
-            file.write("\Flow Probabilities\n")
+            file.write("\nFlow Probabilities\n")
             file.write(f"{flow_probabilities}")

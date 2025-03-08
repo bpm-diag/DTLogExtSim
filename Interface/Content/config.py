@@ -7,3 +7,6 @@ class Config:
 
     SIMULATOR_ADDRESS = os.getenv("SIMULATOR_ADDRESS", "0.0.0.0")
     SIMULATOR_PORT = os.getenv("SIMULATOR_PORT", "6661")
+
+    EXTRACTOR_ADDRESS = os.getenv("EXTRACTOR_ADDRESS", "0.0.0.0")
+    EXTRACTOR_PORT = os.getenv("EXTRACTOR_PORT", "6662")
