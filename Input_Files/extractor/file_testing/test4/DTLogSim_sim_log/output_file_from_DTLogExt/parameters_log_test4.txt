@@ -1,0 +1,421 @@
+{
+    "processInstances": [
+        {
+            "type": "A",
+            "count": "15"
+        }
+    ],
+    "startDateTime": "2024-12-02T06:00:00",
+    "arrivalRateDistribution": {
+        "type": "FIXED",
+        "mean": "5.0",
+        "arg1": "",
+        "arg2": "",
+        "timeUnit": "seconds"
+    },
+    "timetables": [
+        {
+            "name": "Tm1",
+            "rules": [
+                {
+                    "fromTime": "09:00:00",
+                    "toTime": "09:10:00",
+                    "fromWeekDay": "MONDAY",
+                    "toWeekDay": "MONDAY"
+                }
+            ]
+        },
+        {
+            "name": "tm_system",
+            "rules": [
+                {
+                    "fromTime": "00:00:00",
+                    "toTime": "23:59:00",
+                    "fromWeekDay": "MONDAY",
+                    "toWeekDay": "SUNDAY"
+                }
+            ]
+        }
+    ],
+    "resources": [
+        {
+            "name": "Group1",
+            "totalAmount": "1",
+            "costPerHour": "12.0",
+            "timetableName": "Tm1",
+            "setupTime": {
+                "type": "",
+                "mean": "",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": ""
+            },
+            "maxUsage": ""
+        },
+        {
+            "name": "Group2",
+            "totalAmount": "1",
+            "costPerHour": "18.0",
+            "timetableName": "Tm1",
+            "setupTime": {
+                "type": "",
+                "mean": "",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": ""
+            },
+            "maxUsage": ""
+        },
+        {
+            "name": "system_resource",
+            "totalAmount": "1",
+            "costPerHour": "1",
+            "timetableName": "tm_system",
+            "setupTime": {
+                "type": "",
+                "mean": "",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": ""
+            },
+            "maxUsage": ""
+        }
+    ],
+    "elements": [
+        {
+            "elementId": "A1",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
+                "mean": "20.0",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A2",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
+                "mean": "10.0",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A3",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
+                "mean": "10.0",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A4",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "EXPONENTIAL",
+                "mean": "38.11",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A7",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "EXPONENTIAL",
+                "mean": "17.33",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group2",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A5",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "EXPONENTIAL",
+                "mean": "28.16",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A8",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "EXPONENTIAL",
+                "mean": "23.64",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group2",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A9",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "EXPONENTIAL",
+                "mean": "15.44",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group2",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A10",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
+                "mean": "30.0",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A11",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
+                "mean": "10.0",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "A6",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "EXPONENTIAL",
+                "mean": "28.45",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "Group1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "abort2",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
+                "mean": "1.0",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "system_resource",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "abort1",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
+                "mean": "1.0",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "system_resource",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        }
+    ],
+    "sequenceFlows": [
+        {
+            "elementId": "idnode_94c4034b-4c71-4da9-ac36-a014e5c3b599",
+            "executionProbability": "0.24",
+            "types": []
+        },
+        {
+            "elementId": "idnode_43bf56ae-e185-4ade-87f2-cd6cb16dcbd4",
+            "executionProbability": "0.38",
+            "types": []
+        },
+        {
+            "elementId": "idnode_10f3d295-a3a7-4442-96ca-8ded4fc28a76",
+            "executionProbability": "0.38",
+            "types": []
+        },
+        {
+            "elementId": "idnode_a4dfea8d-5840-4cd5-8255-366c413cc26f",
+            "executionProbability": "0.43",
+            "types": []
+        },
+        {
+            "elementId": "idnode_d46a4c8f-142e-4929-85bc-e3a36e24f2d6",
+            "executionProbability": "0.57",
+            "types": []
+        },
+        {
+            "elementId": "idnode_082b20dd-65af-4e6c-b66e-1fe7e6dcb363",
+            "executionProbability": "0.25",
+            "types": []
+        },
+        {
+            "elementId": "idnode_0a30eef3-77df-4e68-b281-688f72d8c6c2",
+            "executionProbability": "0.75",
+            "types": []
+        },
+        {
+            "elementId": "idnode_25714ee4-d291-4879-8142-881312e34c74",
+            "executionProbability": "0.13",
+            "types": []
+        },
+        {
+            "elementId": "idnode_b1442e49-9226-4c24-94e2-a02acb69bd5e",
+            "executionProbability": "0.87",
+            "types": []
+        }
+    ],
+    "catchEvents": {},
+    "logging_opt": "1"
+}

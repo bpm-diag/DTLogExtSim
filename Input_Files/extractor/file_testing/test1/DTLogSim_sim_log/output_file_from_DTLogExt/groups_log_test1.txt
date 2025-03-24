@@ -1,0 +1,6 @@
+GROUP Group1 (# of resources = 1) ['res1']:
+   monday: ['09:00', '09:05', '09:10', '09:15', '09:20', '09:25']
+GROUP Group2 (# of resources = 1) ['res2']:
+   monday: ['09:00', '09:05', '09:10', '09:15', '09:20', '09:25']
+GROUP Group3 (# of resources = 1) ['machine']:
+   monday: ['09:10', '09:15']

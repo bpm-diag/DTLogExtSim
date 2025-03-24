@@ -1,0 +1,17 @@
+Instance Types
+   instanceType  number_of_traces
+0             1                39
+1            10                39
+2            11                39
+3            12                38
+4             2                39
+5             3                39
+6             4                40
+7             5                39
+8             6                39
+9             7                39
+10            8                39
+11            9                38
+
+Forced Instance Types Gateway
+{node_0b6c2e06-77d2-4c59-af01-0d8064b60470@: [(('2', '4'), None), (('2', '3'), None)]}

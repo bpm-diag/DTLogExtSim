@@ -1,0 +1,5 @@
+['A1', 'uniform', {'mean': 284.56, 'arg1': 0.0, 'arg2': 660.0}]
+['A2', 'expon', {'mean': 489.75, 'arg1': 0, 'arg2': 0}]
+['A5', 'fixed', {'mean': 1, 'arg1': 0, 'arg2': 0}]
+['A3', 'uniform', {'mean': 847.36, 'arg1': 451.0, 'arg2': 1321.0}]
+['A4', 'fixed', {'mean': 1, 'arg1': 0, 'arg2': 0}]

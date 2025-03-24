@@ -1,0 +1,2 @@
+Interarrival distribution and parameters
+['expon', {'mean': 12.66, 'arg1': 0, 'arg2': 0}]

@@ -1,0 +1,3 @@
+Instance Types
+  instanceType  number_of_traces
+0            A              5000

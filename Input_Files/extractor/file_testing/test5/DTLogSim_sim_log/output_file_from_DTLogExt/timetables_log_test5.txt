@@ -1,0 +1,6 @@
+Timetable: Tm1
+  Monday: 09:00 - 12:05
+  Tuesday: 09:00 - 09:15
+Timetable: Tm2
+  Monday: 09:00 - 10:00
+  Tuesday: 01:00 - 01:05, 09:00 - 09:15

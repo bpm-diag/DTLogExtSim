@@ -1,0 +1,2 @@
+Interarrival distribution and parameters
+['norm', {'mean': 597.29, 'arg1': 118.87, 'arg2': 0}]

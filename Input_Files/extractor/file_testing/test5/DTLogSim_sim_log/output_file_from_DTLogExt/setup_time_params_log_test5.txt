@@ -1,0 +1,5 @@
+Setup Time Duration DIstribution: 
+[['res4', 'expon', {'mean': 10.66, 'arg1': 0, 'arg2': 0}, 'Group1']]
+
+Max Usage before setup time is needed:
+[('Group1', 2)]

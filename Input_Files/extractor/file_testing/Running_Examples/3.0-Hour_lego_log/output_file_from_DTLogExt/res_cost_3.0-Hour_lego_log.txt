@@ -1,0 +1,1 @@
+{'Group1': 1.0, 'Group2': 1.0, 'Group3': 1.0, 'Group4': 1.0, 'Group5': 1.0}

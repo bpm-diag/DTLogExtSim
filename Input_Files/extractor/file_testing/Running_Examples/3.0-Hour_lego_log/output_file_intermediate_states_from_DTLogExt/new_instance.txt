@@ -1,0 +1,25 @@
+"processInstances": [
+        {
+            "type": "A0",
+            "count": "1"
+        },
+        {
+            "type": "A1",
+            "count": "1"
+        },
+        {
+            "type": "A2",
+            "count": "1"
+        },
+        {
+            "type": "A3",
+            "count": "4"
+        },
+        {
+            "type": "A4",
+            "count": "1"
+        },
+        {
+            "type": "A5",
+            "count": "2"
+        }]

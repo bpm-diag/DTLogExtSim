@@ -1,0 +1,3 @@
+concept:name
+A4    50.0
+Name: fixedCost, dtype: float64

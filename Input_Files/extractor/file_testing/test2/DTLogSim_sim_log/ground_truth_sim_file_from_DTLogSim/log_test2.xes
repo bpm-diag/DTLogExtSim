@@ -1,0 +1,3398 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<log xes.version="1849-2016" xes.features="nested-attributes" xmlns="http://www.xes-standard.org/">
+	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.xesext" />
+	<extension name="Organizational" prefix="org" uri="http://www.xes-standard.org/org.xesext" />
+	<extension name="Time" prefix="time" uri="http://www.xes-standard.org/time.xesext" />
+	<extension name="Lifecycle" prefix="lifecycle" uri="http://www.xes-standard.org/lifecycle.xesext" />
+	<string key="origin" value="csv" />
+	<trace>
+		<string key="concept:name" value="1" />
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:00:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:00:00+00:00" />
+			<int key="@@index" value="0" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:00:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:00:00+00:00" />
+			<int key="@@index" value="1" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:00:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:00:00+00:00" />
+			<int key="@@index" value="2" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<int key="@@index" value="3" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<int key="@@index" value="4" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<int key="@@index" value="5" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<int key="@@index" value="6" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<int key="@@index" value="7" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<int key="@@index" value="8" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:00:03.250405+00:00" />
+			<int key="@@index" value="9" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:00:10.374654+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:00:10.374654+00:00" />
+			<int key="@@index" value="10" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:00:10.374654+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:00:10.374654+00:00" />
+			<int key="@@index" value="11" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:00:10.374654+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:00:10.374654+00:00" />
+			<int key="@@index" value="12" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:00:10.374654+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:00:10.374654+00:00" />
+			<int key="@@index" value="13" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:00:33.099209+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:00:33.099209+00:00" />
+			<int key="@@index" value="14" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:00:53.755631+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:00:53.755631+00:00" />
+			<int key="@@index" value="15" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:00:53.755631+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:00:53.755631+00:00" />
+			<int key="@@index" value="16" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:00:53.755631+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:00:53.755631+00:00" />
+			<int key="@@index" value="17" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:00:53.755631+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:00:53.755631+00:00" />
+			<int key="@@index" value="18" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:01:54.615847+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:01:54.615847+00:00" />
+			<int key="@@index" value="19" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:01:54.615847+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:01:54.615847+00:00" />
+			<int key="@@index" value="20" />
+			<int key="@@case_index" value="0" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="10" />
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:45:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:45:00+00:00" />
+			<int key="@@index" value="21" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:45:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:45:00+00:00" />
+			<int key="@@index" value="22" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:45:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:45:00+00:00" />
+			<int key="@@index" value="23" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<int key="@@index" value="24" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<int key="@@index" value="25" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<int key="@@index" value="26" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A3" />
+			<date key="timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A3" />
+			<date key="time:timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<int key="@@index" value="27" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<int key="@@index" value="28" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A3" />
+			<date key="timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A3" />
+			<date key="time:timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<int key="@@index" value="29" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:45:02.318042+00:00" />
+			<int key="@@index" value="30" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A3" />
+			<date key="timestamp" value="2024-12-02T09:45:21.685376+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A3" />
+			<date key="time:timestamp" value="2024-12-02T09:45:21.685376+00:00" />
+			<int key="@@index" value="31" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:45:21.685376+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:45:21.685376+00:00" />
+			<int key="@@index" value="32" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:45:21.685376+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:45:21.685376+00:00" />
+			<int key="@@index" value="33" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:45:21.685376+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:45:21.685376+00:00" />
+			<int key="@@index" value="34" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:45:58.752456+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:45:58.752456+00:00" />
+			<int key="@@index" value="35" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:48:19.595159+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:48:19.595159+00:00" />
+			<int key="@@index" value="36" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:48:19.595159+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:48:19.595159+00:00" />
+			<int key="@@index" value="37" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:48:19.595159+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:48:19.595159+00:00" />
+			<int key="@@index" value="38" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:48:19.595159+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:48:19.595159+00:00" />
+			<int key="@@index" value="39" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:49:16.363665+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:49:16.363665+00:00" />
+			<int key="@@index" value="40" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="10" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:49:16.363665+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:49:16.363665+00:00" />
+			<int key="@@index" value="41" />
+			<int key="@@case_index" value="1" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="2" />
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:05:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:05:00+00:00" />
+			<int key="@@index" value="42" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:05:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:05:00+00:00" />
+			<int key="@@index" value="43" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:05:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:05:00+00:00" />
+			<int key="@@index" value="44" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<int key="@@index" value="45" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<int key="@@index" value="46" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<int key="@@index" value="47" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A3" />
+			<date key="timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A3" />
+			<date key="time:timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<int key="@@index" value="48" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<int key="@@index" value="49" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A3" />
+			<date key="timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A3" />
+			<date key="time:timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<int key="@@index" value="50" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:05:02.086132+00:00" />
+			<int key="@@index" value="51" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:05:06.774171+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:05:06.774171+00:00" />
+			<int key="@@index" value="52" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A3" />
+			<date key="timestamp" value="2024-12-02T09:05:18.247053+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A3" />
+			<date key="time:timestamp" value="2024-12-02T09:05:18.247053+00:00" />
+			<int key="@@index" value="53" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:05:18.247053+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:05:18.247053+00:00" />
+			<int key="@@index" value="54" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:05:18.247053+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:05:18.247053+00:00" />
+			<int key="@@index" value="55" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:05:18.247053+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:05:18.247053+00:00" />
+			<int key="@@index" value="56" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:06:05.190782+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:06:05.190782+00:00" />
+			<int key="@@index" value="57" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:06:05.190782+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:06:05.190782+00:00" />
+			<int key="@@index" value="58" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:06:05.190782+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:06:05.190782+00:00" />
+			<int key="@@index" value="59" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:06:05.190782+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:06:05.190782+00:00" />
+			<int key="@@index" value="60" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:06:58.982774+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:06:58.982774+00:00" />
+			<int key="@@index" value="61" />
+			<int key="@@case_index" value="2" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:06:58.982774+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:06:58.982774+00:00" />
+			<int key="@@index" value="62" />
+			<int key="@@case_index" value="2" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="3" />
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:10:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:10:00+00:00" />
+			<int key="@@index" value="63" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:10:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:10:00+00:00" />
+			<int key="@@index" value="64" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:10:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:10:00+00:00" />
+			<int key="@@index" value="65" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<int key="@@index" value="66" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<int key="@@index" value="67" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<int key="@@index" value="68" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<int key="@@index" value="69" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<int key="@@index" value="70" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<int key="@@index" value="71" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:10:02.958527+00:00" />
+			<int key="@@index" value="72" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:10:57.096418+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:10:57.096418+00:00" />
+			<int key="@@index" value="73" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:10:57.096418+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:10:57.096418+00:00" />
+			<int key="@@index" value="74" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:10:57.096418+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:10:57.096418+00:00" />
+			<int key="@@index" value="75" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:10:57.096418+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:10:57.096418+00:00" />
+			<int key="@@index" value="76" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:11:39.996532+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:11:39.996532+00:00" />
+			<int key="@@index" value="77" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:12:17.773435+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:12:17.773435+00:00" />
+			<int key="@@index" value="78" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:12:17.773435+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:12:17.773435+00:00" />
+			<int key="@@index" value="79" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:12:17.773435+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:12:17.773435+00:00" />
+			<int key="@@index" value="80" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:12:17.773435+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:12:17.773435+00:00" />
+			<int key="@@index" value="81" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:13:00.676852+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:13:00.676852+00:00" />
+			<int key="@@index" value="82" />
+			<int key="@@case_index" value="3" />
+		</event>
+		<event>
+			<int key="traceId" value="3" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:13:00.676852+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:13:00.676852+00:00" />
+			<int key="@@index" value="83" />
+			<int key="@@case_index" value="3" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="4" />
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:15:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:15:00+00:00" />
+			<int key="@@index" value="84" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:15:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:15:00+00:00" />
+			<int key="@@index" value="85" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:15:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:15:00+00:00" />
+			<int key="@@index" value="86" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<int key="@@index" value="87" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<int key="@@index" value="88" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<int key="@@index" value="89" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<int key="@@index" value="90" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<int key="@@index" value="91" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<int key="@@index" value="92" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:15:03.937275+00:00" />
+			<int key="@@index" value="93" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:16:08.201103+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:16:08.201103+00:00" />
+			<int key="@@index" value="94" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:16:41.147777+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:16:41.147777+00:00" />
+			<int key="@@index" value="95" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:16:41.147777+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:16:41.147777+00:00" />
+			<int key="@@index" value="96" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:16:41.147777+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:16:41.147777+00:00" />
+			<int key="@@index" value="97" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:16:41.147777+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:16:41.147777+00:00" />
+			<int key="@@index" value="98" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:17:25.996824+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:17:25.996824+00:00" />
+			<int key="@@index" value="99" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:17:25.996824+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:17:25.996824+00:00" />
+			<int key="@@index" value="100" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:17:25.996824+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:17:25.996824+00:00" />
+			<int key="@@index" value="101" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:17:25.996824+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:17:25.996824+00:00" />
+			<int key="@@index" value="102" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:18:00.167767+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:18:00.167767+00:00" />
+			<int key="@@index" value="103" />
+			<int key="@@case_index" value="4" />
+		</event>
+		<event>
+			<int key="traceId" value="4" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:18:00.167767+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:18:00.167767+00:00" />
+			<int key="@@index" value="104" />
+			<int key="@@case_index" value="4" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="5" />
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:20:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00+00:00" />
+			<int key="@@index" value="105" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:20:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00+00:00" />
+			<int key="@@index" value="106" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:20:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00+00:00" />
+			<int key="@@index" value="107" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<int key="@@index" value="108" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<int key="@@index" value="109" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<int key="@@index" value="110" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<int key="@@index" value="111" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<int key="@@index" value="112" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<int key="@@index" value="113" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:20:00.709476+00:00" />
+			<int key="@@index" value="114" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:20:12.606255+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:20:12.606255+00:00" />
+			<int key="@@index" value="115" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:20:12.606255+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:20:12.606255+00:00" />
+			<int key="@@index" value="116" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:20:12.606255+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:20:12.606255+00:00" />
+			<int key="@@index" value="117" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:20:12.606255+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:20:12.606255+00:00" />
+			<int key="@@index" value="118" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:20:56.135982+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:20:56.135982+00:00" />
+			<int key="@@index" value="119" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:22:12.504715+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:22:12.504715+00:00" />
+			<int key="@@index" value="120" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:22:12.504715+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:22:12.504715+00:00" />
+			<int key="@@index" value="121" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:22:12.504715+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:22:12.504715+00:00" />
+			<int key="@@index" value="122" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:22:12.504715+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:22:12.504715+00:00" />
+			<int key="@@index" value="123" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:23:08.656574+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:23:08.656574+00:00" />
+			<int key="@@index" value="124" />
+			<int key="@@case_index" value="5" />
+		</event>
+		<event>
+			<int key="traceId" value="5" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:23:08.656574+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:23:08.656574+00:00" />
+			<int key="@@index" value="125" />
+			<int key="@@case_index" value="5" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="6" />
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:25:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00+00:00" />
+			<int key="@@index" value="126" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:25:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00+00:00" />
+			<int key="@@index" value="127" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:25:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00+00:00" />
+			<int key="@@index" value="128" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<int key="@@index" value="129" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<int key="@@index" value="130" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<int key="@@index" value="131" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<int key="@@index" value="132" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<int key="@@index" value="133" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<int key="@@index" value="134" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:25:00.091622+00:00" />
+			<int key="@@index" value="135" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:25:09.582108+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:25:09.582108+00:00" />
+			<int key="@@index" value="136" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:25:27.815110+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:25:27.815110+00:00" />
+			<int key="@@index" value="137" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:25:27.815110+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:25:27.815110+00:00" />
+			<int key="@@index" value="138" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:25:27.815110+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:25:27.815110+00:00" />
+			<int key="@@index" value="139" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:25:27.815110+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:25:27.815110+00:00" />
+			<int key="@@index" value="140" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:26:03.865925+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:26:03.865925+00:00" />
+			<int key="@@index" value="141" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:26:03.865925+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:26:03.865925+00:00" />
+			<int key="@@index" value="142" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:26:03.865925+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:26:03.865925+00:00" />
+			<int key="@@index" value="143" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:26:03.865925+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:26:03.865925+00:00" />
+			<int key="@@index" value="144" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:27:03.542706+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:27:03.542706+00:00" />
+			<int key="@@index" value="145" />
+			<int key="@@case_index" value="6" />
+		</event>
+		<event>
+			<int key="traceId" value="6" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:27:03.542706+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:27:03.542706+00:00" />
+			<int key="@@index" value="146" />
+			<int key="@@case_index" value="6" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="7" />
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:30:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00+00:00" />
+			<int key="@@index" value="147" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:30:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00+00:00" />
+			<int key="@@index" value="148" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:30:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00+00:00" />
+			<int key="@@index" value="149" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<int key="@@index" value="150" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<int key="@@index" value="151" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<int key="@@index" value="152" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<int key="@@index" value="153" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<int key="@@index" value="154" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<int key="@@index" value="155" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:30:00.829560+00:00" />
+			<int key="@@index" value="156" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:31:06.986010+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:31:06.986010+00:00" />
+			<int key="@@index" value="157" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:31:06.986010+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:31:06.986010+00:00" />
+			<int key="@@index" value="158" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:31:06.986010+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:31:06.986010+00:00" />
+			<int key="@@index" value="159" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:31:06.986010+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:31:06.986010+00:00" />
+			<int key="@@index" value="160" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:31:43.918991+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:31:43.918991+00:00" />
+			<int key="@@index" value="161" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:31:50.108446+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:31:50.108446+00:00" />
+			<int key="@@index" value="162" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:31:50.108446+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:31:50.108446+00:00" />
+			<int key="@@index" value="163" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:31:50.108446+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:31:50.108446+00:00" />
+			<int key="@@index" value="164" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:31:50.108446+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:31:50.108446+00:00" />
+			<int key="@@index" value="165" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:32:49.803950+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:32:49.803950+00:00" />
+			<int key="@@index" value="166" />
+			<int key="@@case_index" value="7" />
+		</event>
+		<event>
+			<int key="traceId" value="7" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:32:49.803950+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:32:49.803950+00:00" />
+			<int key="@@index" value="167" />
+			<int key="@@case_index" value="7" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="8" />
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:35:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:35:00+00:00" />
+			<int key="@@index" value="168" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:35:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:35:00+00:00" />
+			<int key="@@index" value="169" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:35:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:35:00+00:00" />
+			<int key="@@index" value="170" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<int key="@@index" value="171" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<int key="@@index" value="172" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<int key="@@index" value="173" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<int key="@@index" value="174" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<int key="@@index" value="175" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<int key="@@index" value="176" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:35:02.746429+00:00" />
+			<int key="@@index" value="177" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A2" />
+			<date key="timestamp" value="2024-12-02T09:35:09.214615+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A2" />
+			<date key="time:timestamp" value="2024-12-02T09:35:09.214615+00:00" />
+			<int key="@@index" value="178" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:35:09.214615+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:35:09.214615+00:00" />
+			<int key="@@index" value="179" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:35:09.214615+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:35:09.214615+00:00" />
+			<int key="@@index" value="180" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:35:09.214615+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:35:09.214615+00:00" />
+			<int key="@@index" value="181" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:35:53.542477+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:35:53.542477+00:00" />
+			<int key="@@index" value="182" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:36:23.393419+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:36:23.393419+00:00" />
+			<int key="@@index" value="183" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:36:23.393419+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:36:23.393419+00:00" />
+			<int key="@@index" value="184" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:36:23.393419+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:36:23.393419+00:00" />
+			<int key="@@index" value="185" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:36:23.393419+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:36:23.393419+00:00" />
+			<int key="@@index" value="186" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:37:05.420482+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:37:05.420482+00:00" />
+			<int key="@@index" value="187" />
+			<int key="@@case_index" value="8" />
+		</event>
+		<event>
+			<int key="traceId" value="8" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:37:05.420482+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:37:05.420482+00:00" />
+			<int key="@@index" value="188" />
+			<int key="@@case_index" value="8" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="9" />
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="StartEvent_170fmja" />
+			<date key="timestamp" value="2024-12-02T09:40:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="StartEvent_170fmja" />
+			<date key="time:timestamp" value="2024-12-02T09:40:00+00:00" />
+			<int key="@@index" value="189" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:40:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:40:00+00:00" />
+			<int key="@@index" value="190" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:40:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:40:00+00:00" />
+			<int key="@@index" value="191" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A1" />
+			<date key="timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['systemin']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['1']" />
+			<string key="concept:name" value="A1" />
+			<date key="time:timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<int key="@@index" value="192" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="Gateway_1avihhq" />
+			<date key="timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1avihhq" />
+			<date key="time:timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<int key="@@index" value="193" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="Gateway_0hq1yx0" />
+			<date key="timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_0hq1yx0" />
+			<date key="time:timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<int key="@@index" value="194" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A3" />
+			<date key="timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A3" />
+			<date key="time:timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<int key="@@index" value="195" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<int key="@@index" value="196" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A3" />
+			<date key="timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A3" />
+			<date key="time:timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<int key="@@index" value="197" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:40:01.271892+00:00" />
+			<int key="@@index" value="198" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A3" />
+			<date key="timestamp" value="2024-12-02T09:40:41.955558+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A3" />
+			<date key="time:timestamp" value="2024-12-02T09:40:41.955558+00:00" />
+			<int key="@@index" value="199" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="Gateway_1t8ii83" />
+			<date key="timestamp" value="2024-12-02T09:40:41.955558+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1t8ii83" />
+			<date key="time:timestamp" value="2024-12-02T09:40:41.955558+00:00" />
+			<int key="@@index" value="200" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:40:41.955558+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:40:41.955558+00:00" />
+			<int key="@@index" value="201" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:40:41.955558+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:40:41.955558+00:00" />
+			<int key="@@index" value="202" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A4" />
+			<date key="timestamp" value="2024-12-02T09:41:18.154676+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res1']" />
+			<float key="fixedCost" value="nan" />
+			<string key="resourceCost" value="['12']" />
+			<string key="concept:name" value="A4" />
+			<date key="time:timestamp" value="2024-12-02T09:41:18.154676+00:00" />
+			<int key="@@index" value="203" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A5" />
+			<date key="timestamp" value="2024-12-02T09:43:27.669731+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res2']" />
+			<float key="fixedCost" value="20.0" />
+			<string key="resourceCost" value="['15']" />
+			<string key="concept:name" value="A5" />
+			<date key="time:timestamp" value="2024-12-02T09:43:27.669731+00:00" />
+			<int key="@@index" value="204" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="Gateway_1tyk1pd" />
+			<date key="timestamp" value="2024-12-02T09:43:27.669731+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGatewayOpen" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Gateway_1tyk1pd" />
+			<date key="time:timestamp" value="2024-12-02T09:43:27.669731+00:00" />
+			<int key="@@index" value="205" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:43:27.669731+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:43:27.669731+00:00" />
+			<int key="@@index" value="206" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:43:27.669731+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:43:27.669731+00:00" />
+			<int key="@@index" value="207" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="A6" />
+			<date key="timestamp" value="2024-12-02T09:44:19.272264+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<string key="org:resource" value="['res3']" />
+			<float key="fixedCost" value="10.0" />
+			<string key="resourceCost" value="['8']" />
+			<string key="concept:name" value="A6" />
+			<date key="time:timestamp" value="2024-12-02T09:44:19.272264+00:00" />
+			<int key="@@index" value="208" />
+			<int key="@@case_index" value="9" />
+		</event>
+		<event>
+			<int key="traceId" value="9" />
+			<string key="activity" value="Event_15y2l0y" />
+			<date key="timestamp" value="2024-12-02T09:44:19.272264+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="A" />
+			<float key="org:resource" value="nan" />
+			<float key="fixedCost" value="nan" />
+			<float key="resourceCost" value="nan" />
+			<string key="concept:name" value="Event_15y2l0y" />
+			<date key="time:timestamp" value="2024-12-02T09:44:19.272264+00:00" />
+			<int key="@@index" value="209" />
+			<int key="@@case_index" value="9" />
+		</event>
+	</trace>
+</log>

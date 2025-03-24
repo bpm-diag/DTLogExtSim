@@ -1,0 +1,6 @@
+A1: [['Group3']]
+A2: [['Group1']]
+A5: [['Group2']]
+A4: [['Group1']]
+A6: [['Group4']]
+A3: [['Group1']]

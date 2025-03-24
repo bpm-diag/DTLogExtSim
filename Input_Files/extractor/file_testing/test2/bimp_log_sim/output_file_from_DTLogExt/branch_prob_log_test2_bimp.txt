@@ -1,0 +1,2 @@
+Gateway probabilities: 
+{node_1a8de141-c533-4de3-a699-612493dc59cc@: [{'flow': 'idnode_fff8aa3f-ed46-4075-9865-14ac37f9d777', 'total_probability': 0.5, 'source': {'A1'}, 'destination': {'A2'}}, {'flow': 'idnode_76e07c1e-dc16-4e52-8129-5a965ad3b05b', 'total_probability': 0.5, 'source': {'A1'}, 'destination': {'A3'}}]}

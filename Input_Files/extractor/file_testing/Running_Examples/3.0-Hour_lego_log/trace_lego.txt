@@ -1,0 +1,129 @@
+<trace>
+	<string key="concept:name" value="1" />
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:29:27.812961+00:00" />
+		<string key="concept:name" value="Start" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="complete" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="startEvent" />
+		<float key="resourceCost" value="nan" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:29:27.812961+00:00" />
+		<string key="concept:name" value="1" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="assign" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="task" />
+		<float key="resourceCost" value="nan" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:29:31.410411+00:00" />
+		<string key="concept:name" value="1" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="start" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="task" />
+		<float key="resourceCost" value="nan" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:29:32.666668+00:00" />
+		<string key="concept:name" value="1" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="complete" />
+		<string key="org:resource" value="['res_1']" />
+		<string key="nodeType" value="task" />
+		<string key="resourceCost" value="['1']" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:29:39.009746+00:00" />
+		<string key="concept:name" value="2" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="assign" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="task" />
+		<float key="resourceCost" value="nan" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:29:42.082681+00:00" />
+		<string key="concept:name" value="2" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="start" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="task" />
+		<float key="resourceCost" value="nan" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:29:50.187003+00:00" />
+		<string key="concept:name" value="2" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="complete" />
+		<string key="org:resource" value="['res_2']" />
+		<string key="nodeType" value="task" />
+		<string key="resourceCost" value="['1']" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:30:04.106782+00:00" />
+		<string key="concept:name" value="3" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="assign" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="task" />
+		<float key="resourceCost" value="nan" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:30:07.686656+00:00" />
+		<string key="concept:name" value="3" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="start" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="task" />
+		<float key="resourceCost" value="nan" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:30:18.802579+00:00" />
+		<string key="concept:name" value="3" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="complete" />
+		<string key="org:resource" value="['res_3']" />
+		<string key="nodeType" value="task" />
+		<string key="resourceCost" value="['1']" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:30:22.823227+00:00" />
+		<string key="concept:name" value="5" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="assign" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="task" />
+		<float key="resourceCost" value="nan" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:30:25.676043+00:00" />
+		<string key="concept:name" value="5" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="start" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="task" />
+		<float key="resourceCost" value="nan" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:30:32.572902+00:00" />
+		<string key="concept:name" value="5" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="complete" />
+		<string key="org:resource" value="['res_5']" />
+		<string key="nodeType" value="task" />
+		<string key="resourceCost" value="['1']" />
+	</event>
+	<event>
+		<date key="time:timestamp" value="2023-11-08T15:30:32.572902+00:00" />
+		<string key="concept:name" value="End" />
+		<string key="instanceType" value="1" />
+		<string key="lifecycle:transition" value="complete" />
+		<float key="org:resource" value="nan" />
+		<string key="nodeType" value="endEvent" />
+		<float key="resourceCost" value="nan" />
+	</event>
+</trace>

@@ -1,0 +1,9 @@
+concept:name
+A1     35.0
+A13     5.0
+A14     5.0
+A15    20.0
+A2     10.0
+A3     10.0
+A4     10.0
+Name: fixedCost, dtype: float64

@@ -1,0 +1,4 @@
+GROUP Group1 (# of resources = 1) ['res1']:
+   monday: ['09:00', '09:05']
+GROUP Group2 (# of resources = 1) ['res2']:
+   monday: ['09:00', '09:05']

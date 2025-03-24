@@ -1,0 +1,2 @@
+Interarrival distribution and parameters
+['fixed', {'mean': 0, 'arg1': 0, 'arg2': 0}]

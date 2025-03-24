@@ -1,0 +1,6 @@
+Timetable: Tm1
+  Wednesday: 08:00 - 17:00
+  Tuesday: 08:00 - 17:00
+  Monday: 08:00 - 17:00
+  Thursday: 08:00 - 17:00
+  Friday: 08:00 - 17:00

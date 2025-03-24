@@ -1,0 +1,55 @@
+"sequenceFlows": [
+        {
+            "elementId": "idflow_s_i_a_0",
+            "executionProbability": "0.1",
+            "types": [
+                {
+                    "type": "A0"
+                }
+            ]
+        },
+        {
+            "elementId": "idflow_s_i_a_1",
+            "executionProbability": "0.1",
+            "types": [
+                {
+                    "type": "A1"
+                }
+            ]
+        },
+        {
+            "elementId": "idflow_s_i_a_2",
+            "executionProbability": "0.1",
+            "types": [
+                {
+                    "type": "A2"
+                }
+            ]
+        },
+        {
+            "elementId": "idflow_s_i_a_3",
+            "executionProbability": "0.1",
+            "types": [
+                {
+                    "type": "A3"
+                }
+            ]
+        },
+        {
+            "elementId": "idflow_s_i_a_4",
+            "executionProbability": "0.1",
+            "types": [
+                {
+                    "type": "A4"
+                }
+            ]
+        },
+        {
+            "elementId": "idflow_s_i_a_5",
+            "executionProbability": "0.1",
+            "types": [
+                {
+                    "type": "A5"
+                }
+            ]
+        }]
