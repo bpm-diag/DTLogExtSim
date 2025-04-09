@@ -95,41 +95,51 @@ def use_simulator():
     if "bpmn_file" not in request.files:
         return "No BPMN file uploaded", 400
 
-    files = {"bpmn_file": request.files["bpmn_file"]}
+    file_bpmn = {"bpmn_file": (request.files["bpmn_file"].filename, request.files["bpmn_file"].stream, request.files["bpmn_file"].mimetype)}
 
     # Add extra.json only if provided
     # if "extra" in request.files and request.files["extra"].filename != "":
-    files["extra"] = request.files["extra"]
+    files_extra = {"extra": (request.files["extra"].filename, request.files["extra"].stream, request.files["extra"].mimetype)} if "extra" in request.files and request.files["extra"].filename != "" else None
 
     flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
 
     
     # bpmn_file = request.files['bpmn_file']
     # extra = request.files['extra']
+    
+    if file_bpmn["bpmn_file"]:
+        bpmn_path = os.path.join(PREUPLOAD_FOLDER, file_bpmn["bpmn_file"][0])
+        with open(bpmn_path, "wb") as f:
+            f.write(file_bpmn["bpmn_file"][1].read())
 
-    if files["bpmn_file"]:
-        bpmn_path = os.path.join(PREUPLOAD_FOLDER, files["bpmn_file"].filename)
-        files["bpmn_file"].save(bpmn_path)
-        files["bpmn_file"].seek(0)  
+        file_bpmn_saved = open(bpmn_path, "rb")
+        file_bpmn["bpmn_file"] = (file_bpmn["bpmn_file"][0], file_bpmn_saved, file_bpmn["bpmn_file"][2])
+        # files["bpmn_file"].seek(0)  
 
         #check diagbp tag
         tree = ET.parse(bpmn_path)
         root = tree.getroot()
         diagbpTag = root.find('.//' + tagName)
-        if diagbpTag is not None or files["extra"]: #se è presente o il tag nel file o l'extra.json file
-            if files["extra"]:
+        if diagbpTag is not None or files_extra: #se è presente o il tag nel file o l'extra.json file
+            if files_extra:
                 extra_path = os.path.join(JSON_FOLDER, "extra.json")
-                files["extra"].save(extra_path)
+                request.files["extra"].save(extra_path[0])
             # Save uploaded BPMN
-            bpmn_path = os.path.join(UPLOAD_FOLDER, files["bpmn_file"].filename)
-            files["bpmn_file"].save(bpmn_path)
-            os.remove(os.path.join(PREUPLOAD_FOLDER, files["bpmn_file"].filename)) 
+            bpmn_path = os.path.join(UPLOAD_FOLDER, file_bpmn["bpmn_file"][0])
+            with open(bpmn_path, "wb") as f:
+                f.write(file_bpmn["bpmn_file"][1].read())
+
+            file_bpmn_saved = open(bpmn_path, "rb")
+            file_bpmn["bpmn_file"] = (file_bpmn["bpmn_file"][0], file_bpmn_saved, file_bpmn["bpmn_file"][2])
+            
+            response = requests.post(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/", files=file_bpmn)
             return redirect(url_for('simulator_results'))
         else:
-            bpmn_path = os.path.join(UPLOAD_FOLDER, files["bpmn_file"].filename) #save in upload so that simulator reads it and creates bpmn.json for parameters.html
-            files["bpmn_file"].save(bpmn_path)
+            bpmn_path = os.path.join(UPLOAD_FOLDER, file_bpmn["bpmn_file"][0]) #save in upload so that simulator reads it and creates bpmn.json for parameters.html
+            with open(bpmn_path, "wb") as f:
+                f.write(file_bpmn["bpmn_file"][1].read())
             
-            response = requests.post(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/", files=files)
+            response = requests.post(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/", files=file_bpmn)
             response_data = response.json()
             if response_data.get("parser_output"):
                 try:
@@ -151,7 +161,6 @@ def use_simulator():
 
 @app.route('/simulatorResults')
 def simulator_results():
-    wait_for_and_remove_flag()
     return render_template('simulatorResults.html')
 
 @app.route('/extractorResults')
@@ -359,6 +368,13 @@ def parameters():
             bpmn_content = bpmn_content.replace('</bpmn:definitions>', f'<diagbp>{diagbp_json}</diagbp>\n</bpmn:definitions>')
             file.write(bpmn_content)
         os.remove(source_path)  
+
+        # Riapri il file modificato per inviarlo al simulatore
+        with open(destination_path, 'rb') as f:
+            file_bpmn = {"bpmn_file": (bpmn_filename, f, 'application/xml')}
+            
+            # Invia il file al simulatore
+            response = requests.post(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/", files=file_bpmn)
 
         return redirect(url_for('simulator_results'))
 

@@ -53,7 +53,7 @@ def index():
             print(e.stderr)  # Print the error output
             data = {"Service Name": app.config["SERVICE_NAME"], "extractor_output": False}
 
-        
+        os.remove(files["xes_file"].filename)
         return jsonify(data), 200
     
 if __name__ == '__main__':

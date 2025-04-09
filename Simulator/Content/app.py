@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 import os
-
+import time
 from BpmnParser import *
-
+import time
 bpmnParser = BpmnParser()
 
 
@@ -24,11 +24,12 @@ if not os.path.exists(shared_dir):
 @app.route("/", methods=["GET","POST"])
 def index():
     if request.method == "POST":
-        for filename in os.listdir(shared_dir):
-            if filename.endswith(".bpmn"):
-                full_path = "shared/"+filename
-                parser_output = bpmnParser.process_bpmn(full_path)
-                os.remove(full_path)
+        files = {
+            "bpmn_file": request.files["bpmn_file"]
+            }
+        full_path = "shared/"+files["bpmn_file"].filename 
+        print(files)
+        parser_output = bpmnParser.process_bpmn(full_path)
         data = {"Service Name": app.config["SERVICE_NAME"], "parser_output": parser_output}
         return jsonify(data), 200
     
