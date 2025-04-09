@@ -56,10 +56,10 @@ class BpmnParser:
             'sequence_flows': bpmnGraph.sequence_flows,
             'collaboration': bpmnGraph.collaboration,
         }
-
         pool_names = {}
-        for participant_id, participant in bpmnDictionary['collaboration']['participants'].items():
-            pool_names[participant['processRef']] = participant['name']
+        if bpmnDictionary["collaboration"]:
+            for participant_id, participant in bpmnDictionary['collaboration']['participants'].items():
+                pool_names[participant['processRef']] = participant['name']
 
         process_elements = {}
         for process_id, process_element in bpmnGraph.process_elements.items():
