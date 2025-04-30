@@ -125,7 +125,7 @@ class Process:
         self.num = num
         self.action = env.process(self.run())
         self.costThresholds = {element['elementId']: int(element['costThreshold']) if element['costThreshold'] != '' else None for element in diagbp['elements']} 
-        self.durationThresholds={element['elementId']: element['durationThreshold'] if element['durationThreshold'] != '' else None for element in diagbp['elements']}
+        self.durationThresholds={element['elementId']: int(element['durationThreshold']) if element['durationThreshold'] != '' else None for element in diagbp['elements']}
         self.durationThresholdTimeUnits={element['elementId']: element['durationThresholdTimeUnit'] for element in diagbp['elements']}
 
         for element_id, time_unit in self.durationThresholdTimeUnits.items(): #edit duratioThresholds multiplying by self.durationThresholdTimeUnits
@@ -376,7 +376,7 @@ class Process:
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     yield self.env.timeout(1)
-            self.xeslog(node_id,"start",node['type'])
+            self.xeslog(node_id,"assign",node['type'])
             taskTime=timeCalculator.convert_to_seconds(task_durations[node_id]) # task duration is used here, it is passed before to a converter that transforms the type/mean/arg1/arg2 to a value in seconds, this value the task duration is always different in each instance
             if self.durationThresholds[node_id] is not None:
                 self.durationThresholds[node_id] -= taskTime
@@ -532,7 +532,7 @@ class Process:
 
             # add by LR
             #self.xeslog(node_id,"assign",node['type'],resourceid_for_task)
-            self.xeslog(node_id,"assign",node['type'])
+            self.xeslog(node_id,"start",node['type'])
 
             yield self.env.timeout(taskTime)
             
