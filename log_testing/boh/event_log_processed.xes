@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  XES version 1849.2016 (IEEE 1849-2016)  -->
+<!--  Created by Fluxicon Disco (fluxicon.com/disco)  -->
+<!--  (c) 2025 by Fluxicon BV, Torenallee 20, 5617 BC Eindhoven, The Netherlands  -->
+<log xes.version="1849.2016" xmlns:xes="http://www.xes-standard.org">
+	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.xesext"/>
+	<extension name="Lifecycle" prefix="lifecycle" uri="http://www.xes-standard.org/lifecycle.xesext"/>
+	<extension name="Time" prefix="time" uri="http://www.xes-standard.org/time.xesext"/>
+	<extension name="Organizational" prefix="org" uri="http://www.xes-standard.org/org.xesext"/>
+	<global scope="trace">
+		<string key="concept:name" value="name"/>
+		<string key="variant" value="string"/>
+		<int key="variant-index" value="0"/>
+	</global>
+	<global scope="event">
+		<string key="concept:name" value="name"/>
+		<string key="lifecycle:transition" value="transition"/>
+		<string key="org:resource" value="resource"/>
+		<date key="time:timestamp" value="2025-05-25T15:12:59.402+02:00"/>
+		<string key="station_id" value="string"/>
+		<string key="lifecycle" value="string"/>
+	</global>
+	<classifier name="Activity" keys="station_id"/>
+	<classifier name="Resource" keys="lifecycle"/>
+	<string key="lifecycle:model" value="standard"/>
+	<string key="creator" value="Fluxicon Disco"/>
+	<string key="library" value="Fluxicon Octane"/>
+	<trace>
+		<string key="concept:name" value="1-p1"/>
+		<string key="variant" value="Variant 3"/>
+		<int key="variant-index" value="3"/>
+		<string key="creator" value="Fluxicon Disco"/>
+		<event>
+			<string key="concept:name" value="corner2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="corner2_RETURN"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:36.501+01:00"/>
+			<string key="station_id" value="corner2"/>
+			<string key="lifecycle" value="corner2_RETURN"/>
+		</event>
+		<event>
+			<string key="concept:name" value="corner2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="corner2_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:38.381+01:00"/>
+			<string key="station_id" value="corner2"/>
+			<string key="lifecycle" value="corner2_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station11"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station11_LOAD"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:42.745+01:00"/>
+			<string key="station_id" value="station11"/>
+			<string key="lifecycle" value="station11_LOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station11"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station11_PROCESS"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:46.505+01:00"/>
+			<string key="station_id" value="station11"/>
+			<string key="lifecycle" value="station11_PROCESS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station11"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station11_UNLOAD"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:48.525+01:00"/>
+			<string key="station_id" value="station11"/>
+			<string key="lifecycle" value="station11_UNLOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station11"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station11_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:52.322+01:00"/>
+			<string key="station_id" value="station11"/>
+			<string key="lifecycle" value="station11_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_LOAD"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:55.769+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_LOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_PROCESS"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:59.493+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_PROCESS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_UNLOAD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:04.985+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_UNLOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:08.770+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station22"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station22_PASS"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:09.620+01:00"/>
+			<string key="station_id" value="station22"/>
+			<string key="lifecycle" value="station22_PASS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station22"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station22_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:12.941+01:00"/>
+			<string key="station_id" value="station22"/>
+			<string key="lifecycle" value="station22_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter1_FORWARD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:14.513+01:00"/>
+			<string key="station_id" value="splitter1"/>
+			<string key="lifecycle" value="splitter1_FORWARD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter1_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:17.834+01:00"/>
+			<string key="station_id" value="splitter1"/>
+			<string key="lifecycle" value="splitter1_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station31"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station31_LOAD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:18.952+01:00"/>
+			<string key="station_id" value="station31"/>
+			<string key="lifecycle" value="station31_LOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station31"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station31_PROCESS"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:22.670+01:00"/>
+			<string key="station_id" value="station31"/>
+			<string key="lifecycle" value="station31_PROCESS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station31"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station31_UNLOAD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:27.391+01:00"/>
+			<string key="station_id" value="station31"/>
+			<string key="lifecycle" value="station31_UNLOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station31"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station31_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:31.190+01:00"/>
+			<string key="station_id" value="station31"/>
+			<string key="lifecycle" value="station31_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="corner1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="corner1_RETURN"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:32.247+01:00"/>
+			<string key="station_id" value="corner1"/>
+			<string key="lifecycle" value="corner1_RETURN"/>
+		</event>
+		<event>
+			<string key="concept:name" value="corner1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="corner1_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:34.119+01:00"/>
+			<string key="station_id" value="corner1"/>
+			<string key="lifecycle" value="corner1_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter2_RETURN"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:48.415+01:00"/>
+			<string key="station_id" value="splitter2"/>
+			<string key="lifecycle" value="splitter2_RETURN"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter2_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:51.205+01:00"/>
+			<string key="station_id" value="splitter2"/>
+			<string key="lifecycle" value="splitter2_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_PASS"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:56.598+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_PASS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:59.933+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station22"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station22_PASS"/>
+			<date key="time:timestamp" value="2025-03-11T10:01:01.185+01:00"/>
+			<string key="station_id" value="station22"/>
+			<string key="lifecycle" value="station22_PASS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station22"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station22_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:01:04.515+01:00"/>
+			<string key="station_id" value="station22"/>
+			<string key="lifecycle" value="station22_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter1_RETURN"/>
+			<date key="time:timestamp" value="2025-03-11T10:01:05.862+01:00"/>
+			<string key="station_id" value="splitter1"/>
+			<string key="lifecycle" value="splitter1_RETURN"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter1_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:01:09.267+01:00"/>
+			<string key="station_id" value="splitter1"/>
+			<string key="lifecycle" value="splitter1_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter2_FORWARD"/>
+			<date key="time:timestamp" value="2025-03-11T10:01:18.158+01:00"/>
+			<string key="station_id" value="splitter2"/>
+			<string key="lifecycle" value="splitter2_FORWARD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter2_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:01:21.508+01:00"/>
+			<string key="station_id" value="splitter2"/>
+			<string key="lifecycle" value="splitter2_TRANSFER"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="2-p2"/>
+		<string key="variant" value="Variant 1"/>
+		<int key="variant-index" value="1"/>
+		<string key="creator" value="Fluxicon Disco"/>
+		<event>
+			<string key="concept:name" value="corner2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="corner2_RETURN"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:39.781+01:00"/>
+			<string key="station_id" value="corner2"/>
+			<string key="lifecycle" value="corner2_RETURN"/>
+		</event>
+		<event>
+			<string key="concept:name" value="corner2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="corner2_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:41.657+01:00"/>
+			<string key="station_id" value="corner2"/>
+			<string key="lifecycle" value="corner2_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station11"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station11_LOAD"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:52.952+01:00"/>
+			<string key="station_id" value="station11"/>
+			<string key="lifecycle" value="station11_LOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station11"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station11_PROCESS"/>
+			<date key="time:timestamp" value="2025-03-11T09:59:57.014+01:00"/>
+			<string key="station_id" value="station11"/>
+			<string key="lifecycle" value="station11_PROCESS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station11"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station11_UNLOAD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:01.520+01:00"/>
+			<string key="station_id" value="station11"/>
+			<string key="lifecycle" value="station11_UNLOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station11"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station11_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:05.319+01:00"/>
+			<string key="station_id" value="station11"/>
+			<string key="lifecycle" value="station11_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_LOAD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:09.400+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_LOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_PROCESS"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:13.329+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_PROCESS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_UNLOAD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:18.392+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_UNLOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station21"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station21_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:22.194+01:00"/>
+			<string key="station_id" value="station21"/>
+			<string key="lifecycle" value="station21_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station22"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station22_PASS"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:23.075+01:00"/>
+			<string key="station_id" value="station22"/>
+			<string key="lifecycle" value="station22_PASS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station22"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station22_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:26.387+01:00"/>
+			<string key="station_id" value="station22"/>
+			<string key="lifecycle" value="station22_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter1_FORWARD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:27.952+01:00"/>
+			<string key="station_id" value="splitter1"/>
+			<string key="lifecycle" value="splitter1_FORWARD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter1_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:31.292+01:00"/>
+			<string key="station_id" value="splitter1"/>
+			<string key="lifecycle" value="splitter1_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station31"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station31_LOAD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:32.535+01:00"/>
+			<string key="station_id" value="station31"/>
+			<string key="lifecycle" value="station31_LOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station31"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station31_PROCESS"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:36.475+01:00"/>
+			<string key="station_id" value="station31"/>
+			<string key="lifecycle" value="station31_PROCESS"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station31"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station31_UNLOAD"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:42.074+01:00"/>
+			<string key="station_id" value="station31"/>
+			<string key="lifecycle" value="station31_UNLOAD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="station31"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="station31_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:45.881+01:00"/>
+			<string key="station_id" value="station31"/>
+			<string key="lifecycle" value="station31_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="corner1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="corner1_RETURN"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:46.758+01:00"/>
+			<string key="station_id" value="corner1"/>
+			<string key="lifecycle" value="corner1_RETURN"/>
+		</event>
+		<event>
+			<string key="concept:name" value="corner1"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="corner1_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:00:48.639+01:00"/>
+			<string key="station_id" value="corner1"/>
+			<string key="lifecycle" value="corner1_TRANSFER"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter2_FORWARD"/>
+			<date key="time:timestamp" value="2025-03-11T10:01:02.666+01:00"/>
+			<string key="station_id" value="splitter2"/>
+			<string key="lifecycle" value="splitter2_FORWARD"/>
+		</event>
+		<event>
+			<string key="concept:name" value="splitter2"/>
+			<string key="lifecycle:transition" value="complete"/>
+			<string key="org:resource" value="splitter2_TRANSFER"/>
+			<date key="time:timestamp" value="2025-03-11T10:01:06.015+01:00"/>
+			<string key="station_id" value="splitter2"/>
+			<string key="lifecycle" value="splitter2_TRANSFER"/>
+		</event>
+	</trace>
+</log>

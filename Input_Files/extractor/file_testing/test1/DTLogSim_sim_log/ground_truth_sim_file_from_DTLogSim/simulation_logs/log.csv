@@ -1,0 +1,412 @@
+traceId,activity,timestamp,status,nodeType,poolName,instanceType,org:resource,fixedCost,resourceCost
+1,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+1,A1,2024-12-02 09:00:00,start,task,main,A,,,
+2,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+2,A1,2024-12-02 09:00:00,start,task,main,A,,,
+3,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+3,A1,2024-12-02 09:00:00,start,task,main,A,,,
+4,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+4,A1,2024-12-02 09:00:00,start,task,main,A,,,
+5,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+5,A1,2024-12-02 09:00:00,start,task,main,A,,,
+6,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+6,A1,2024-12-02 09:00:00,start,task,main,A,,,
+7,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+7,A1,2024-12-02 09:00:00,start,task,main,A,,,
+8,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+8,A1,2024-12-02 09:00:00,start,task,main,A,,,
+9,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+9,A1,2024-12-02 09:00:00,start,task,main,A,,,
+10,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+10,A1,2024-12-02 09:00:00,start,task,main,A,,,
+11,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+11,A1,2024-12-02 09:00:00,start,task,main,A,,,
+12,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+12,A1,2024-12-02 09:00:00,start,task,main,A,,,
+13,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+13,A1,2024-12-02 09:00:00,start,task,main,A,,,
+14,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+14,A1,2024-12-02 09:00:00,start,task,main,A,,,
+15,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+15,A1,2024-12-02 09:00:00,start,task,main,A,,,
+16,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+16,A1,2024-12-02 09:00:00,start,task,main,A,,,
+17,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+17,A1,2024-12-02 09:00:00,start,task,main,A,,,
+18,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+18,A1,2024-12-02 09:00:00,start,task,main,A,,,
+19,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+19,A1,2024-12-02 09:00:00,start,task,main,A,,,
+20,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,A,,,
+20,A1,2024-12-02 09:00:00,start,task,main,A,,,
+21,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+21,A1,2024-12-02 09:00:00,start,task,main,B,,,
+22,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+22,A1,2024-12-02 09:00:00,start,task,main,B,,,
+23,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+23,A1,2024-12-02 09:00:00,start,task,main,B,,,
+24,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+24,A1,2024-12-02 09:00:00,start,task,main,B,,,
+25,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+25,A1,2024-12-02 09:00:00,start,task,main,B,,,
+26,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+26,A1,2024-12-02 09:00:00,start,task,main,B,,,
+27,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+27,A1,2024-12-02 09:00:00,start,task,main,B,,,
+28,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+28,A1,2024-12-02 09:00:00,start,task,main,B,,,
+29,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+29,A1,2024-12-02 09:00:00,start,task,main,B,,,
+30,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,B,,,
+30,A1,2024-12-02 09:00:00,start,task,main,B,,,
+31,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,C,,,
+31,A1,2024-12-02 09:00:00,start,task,main,C,,,
+32,StartEvent_1rcvv68,2024-12-02 09:00:00,complete,startEvent,main,C,,,
+32,A1,2024-12-02 09:00:00,start,task,main,C,,,
+1,A1,2024-12-02 09:00:00,assign,task,main,A,,,
+2,A1,2024-12-02 09:00:00,assign,task,main,A,,,
+3,A1,2024-12-02 09:00:00,assign,task,main,A,,,
+4,A1,2024-12-02 09:00:00,assign,task,main,A,,,
+4,A1,2024-12-02 09:00:28.422063,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+4,first gateway,2024-12-02 09:00:28.422063,complete,exclusiveGateway,main,A,,,
+4,A3,2024-12-02 09:00:28.422063,start,task,main,A,,,
+5,A1,2024-12-02 09:00:29,assign,task,main,A,,,
+1,A1,2024-12-02 09:00:47.308184,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+1,first gateway,2024-12-02 09:00:47.308184,complete,exclusiveGateway,main,A,,,
+1,A2,2024-12-02 09:00:47.308184,start,task,main,A,,,
+6,A1,2024-12-02 09:00:48,assign,task,main,A,,,
+2,A1,2024-12-02 09:00:55.247684,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+2,first gateway,2024-12-02 09:00:55.247684,complete,exclusiveGateway,main,A,,,
+2,A2,2024-12-02 09:00:55.247684,start,task,main,A,,,
+7,A1,2024-12-02 09:00:56,assign,task,main,A,,,
+5,A1,2024-12-02 09:01:26.540812,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+5,first gateway,2024-12-02 09:01:26.540812,complete,exclusiveGateway,main,A,,,
+5,A3,2024-12-02 09:01:26.540812,start,task,main,A,,,
+8,A1,2024-12-02 09:01:27,assign,task,main,A,,,
+8,A1,2024-12-02 09:02:13.232316,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+8,first gateway,2024-12-02 09:02:13.232316,complete,exclusiveGateway,main,A,,,
+8,A3,2024-12-02 09:02:13.232316,start,task,main,A,,,
+9,A1,2024-12-02 09:02:14,assign,task,main,A,,,
+7,A1,2024-12-02 09:02:50.842217,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+7,first gateway,2024-12-02 09:02:50.842217,complete,exclusiveGateway,main,A,,,
+7,A2,2024-12-02 09:02:50.842217,start,task,main,A,,,
+10,A1,2024-12-02 09:02:51,assign,task,main,A,,,
+9,A1,2024-12-02 09:02:58.286201,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+9,first gateway,2024-12-02 09:02:58.286201,complete,exclusiveGateway,main,A,,,
+9,A3,2024-12-02 09:02:58.286201,start,task,main,A,,,
+11,A1,2024-12-02 09:02:59,assign,task,main,A,,,
+3,A1,2024-12-02 09:03:24.932567,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+3,first gateway,2024-12-02 09:03:24.932567,complete,exclusiveGateway,main,A,,,
+3,A3,2024-12-02 09:03:24.932567,start,task,main,A,,,
+12,A1,2024-12-02 09:03:25,assign,task,main,A,,,
+10,A1,2024-12-02 09:03:28.179091,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+10,first gateway,2024-12-02 09:03:28.179091,complete,exclusiveGateway,main,A,,,
+10,A2,2024-12-02 09:03:28.179091,start,task,main,A,,,
+13,A1,2024-12-02 09:03:29,assign,task,main,A,,,
+11,A1,2024-12-02 09:03:54.025954,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+11,first gateway,2024-12-02 09:03:54.025954,complete,exclusiveGateway,main,A,,,
+11,A3,2024-12-02 09:03:54.025954,start,task,main,A,,,
+14,A1,2024-12-02 09:03:55,assign,task,main,A,,,
+12,A1,2024-12-02 09:04:00.818275,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+12,first gateway,2024-12-02 09:04:00.818275,complete,exclusiveGateway,main,A,,,
+12,A3,2024-12-02 09:04:00.818275,start,task,main,A,,,
+15,A1,2024-12-02 09:04:01,assign,task,main,A,,,
+6,A1,2024-12-02 09:04:09.295312,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+6,first gateway,2024-12-02 09:04:09.295312,complete,exclusiveGateway,main,A,,,
+6,A2,2024-12-02 09:04:09.295312,start,task,main,A,,,
+16,A1,2024-12-02 09:04:10,assign,task,main,A,,,
+13,A1,2024-12-02 09:04:47.699213,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+13,first gateway,2024-12-02 09:04:47.699213,complete,exclusiveGateway,main,A,,,
+13,A3,2024-12-02 09:04:47.699213,start,task,main,A,,,
+17,A1,2024-12-02 09:04:48,assign,task,main,A,,,
+15,A1,2024-12-02 09:04:56.173060,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+15,first gateway,2024-12-02 09:04:56.173060,complete,exclusiveGateway,main,A,,,
+15,A3,2024-12-02 09:04:56.173060,start,task,main,A,,,
+18,A1,2024-12-02 09:04:57,assign,task,main,A,,,
+16,A1,2024-12-02 09:05:06.111591,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+16,first gateway,2024-12-02 09:05:06.111591,complete,exclusiveGateway,main,A,,,
+16,A3,2024-12-02 09:05:06.111591,start,task,main,A,,,
+19,A1,2024-12-02 09:05:07,assign,task,main,A,,,
+17,A1,2024-12-02 09:05:33.082025,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+17,first gateway,2024-12-02 09:05:33.082025,complete,exclusiveGateway,main,A,,,
+17,A2,2024-12-02 09:05:33.082025,start,task,main,A,,,
+14,A1,2024-12-02 09:05:33.832799,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+14,first gateway,2024-12-02 09:05:33.832799,complete,exclusiveGateway,main,A,,,
+14,A3,2024-12-02 09:05:33.832799,start,task,main,A,,,
+7,A2,2024-12-02 09:05:33.842217,assign,task,main,A,,,
+7,A2,2024-12-02 09:05:37.597586,complete,task,main,A,"['res2', 'res2', 'res2']",,"['18', '18', '18']"
+7,second gateway,2024-12-02 09:05:37.597586,complete,exclusiveGateway,main,A,,,
+7,Gateway_0vz9dei,2024-12-02 09:05:37.597586,complete,exclusiveGateway,main,A,,,
+7,Gateway_1kq2lpc,2024-12-02 09:05:37.597586,complete,exclusiveGateway,main,A,,,
+7,A5,2024-12-02 09:05:37.597586,start,task,main,A,,,
+7,A5,2024-12-02 09:05:37.597586,assign,task,main,A,,,
+20,A1,2024-12-02 09:05:38,assign,task,main,A,,,
+20,A1,2024-12-02 09:05:52.136667,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+20,first gateway,2024-12-02 09:05:52.136667,complete,exclusiveGateway,main,A,,,
+20,A3,2024-12-02 09:05:52.136667,start,task,main,A,,,
+21,A1,2024-12-02 09:05:53,assign,task,main,B,,,
+18,A1,2024-12-02 09:06:10.105715,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+18,first gateway,2024-12-02 09:06:10.105715,complete,exclusiveGateway,main,A,,,
+18,A3,2024-12-02 09:06:10.105715,start,task,main,A,,,
+22,A1,2024-12-02 09:06:11,assign,task,main,B,,,
+7,A5,2024-12-02 09:06:40.016299,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+7,Event_1usfnf7,2024-12-02 09:06:40.016299,complete,endEvent,main,A,,,
+23,A1,2024-12-02 09:06:41,assign,task,main,B,,,
+22,A1,2024-12-02 09:06:45.989744,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+22,first gateway,2024-12-02 09:06:45.989744,complete,exclusiveGateway,main,B,,,
+22,Gateway_1kq2lpc,2024-12-02 09:06:45.989744,complete,exclusiveGateway,main,B,,,
+22,A5,2024-12-02 09:06:45.989744,start,task,main,B,,,
+22,A5,2024-12-02 09:06:45.989744,assign,task,main,B,,,
+23,A1,2024-12-02 09:07:02.765387,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+23,first gateway,2024-12-02 09:07:02.765387,complete,exclusiveGateway,main,B,,,
+23,Gateway_1kq2lpc,2024-12-02 09:07:02.765387,complete,exclusiveGateway,main,B,,,
+23,A5,2024-12-02 09:07:02.765387,start,task,main,B,,,
+23,A5,2024-12-02 09:07:02.765387,assign,task,main,B,,,
+19,A1,2024-12-02 09:07:11.994333,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+19,first gateway,2024-12-02 09:07:11.994333,complete,exclusiveGateway,main,A,,,
+19,A3,2024-12-02 09:07:11.994333,start,task,main,A,,,
+24,A1,2024-12-02 09:07:12,assign,task,main,B,,,
+23,A5,2024-12-02 09:07:36.062544,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+23,Event_1usfnf7,2024-12-02 09:07:36.062544,complete,endEvent,main,B,,,
+25,A1,2024-12-02 09:07:37,assign,task,main,B,,,
+22,A5,2024-12-02 09:07:43.720718,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+22,Event_1usfnf7,2024-12-02 09:07:43.720718,complete,endEvent,main,B,,,
+26,A1,2024-12-02 09:07:44,assign,task,main,B,,,
+25,A1,2024-12-02 09:07:50.555233,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+25,first gateway,2024-12-02 09:07:50.555233,complete,exclusiveGateway,main,B,,,
+25,Gateway_1kq2lpc,2024-12-02 09:07:50.555233,complete,exclusiveGateway,main,B,,,
+25,A5,2024-12-02 09:07:50.555233,start,task,main,B,,,
+25,A5,2024-12-02 09:07:50.555233,assign,task,main,B,,,
+26,A1,2024-12-02 09:08:22.906042,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+26,first gateway,2024-12-02 09:08:22.906042,complete,exclusiveGateway,main,B,,,
+26,Gateway_1kq2lpc,2024-12-02 09:08:22.906042,complete,exclusiveGateway,main,B,,,
+26,A5,2024-12-02 09:08:22.906042,start,task,main,B,,,
+26,A5,2024-12-02 09:08:22.906042,assign,task,main,B,,,
+25,A5,2024-12-02 09:08:23.915996,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+25,Event_1usfnf7,2024-12-02 09:08:23.915996,complete,endEvent,main,B,,,
+27,A1,2024-12-02 09:08:24,assign,task,main,B,,,
+27,A1,2024-12-02 09:08:51.449685,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+27,first gateway,2024-12-02 09:08:51.449685,complete,exclusiveGateway,main,B,,,
+27,Gateway_1kq2lpc,2024-12-02 09:08:51.449685,complete,exclusiveGateway,main,B,,,
+27,A5,2024-12-02 09:08:51.449685,start,task,main,B,,,
+27,A5,2024-12-02 09:08:51.449685,assign,task,main,B,,,
+26,A5,2024-12-02 09:09:05.432775,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+26,Event_1usfnf7,2024-12-02 09:09:05.432775,complete,endEvent,main,B,,,
+28,A1,2024-12-02 09:09:06,assign,task,main,B,,,
+27,A5,2024-12-02 09:09:29.304636,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+27,Event_1usfnf7,2024-12-02 09:09:29.304636,complete,endEvent,main,B,,,
+29,A1,2024-12-02 09:09:30,assign,task,main,B,,,
+28,A1,2024-12-02 09:09:33.006481,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+28,first gateway,2024-12-02 09:09:33.006481,complete,exclusiveGateway,main,B,,,
+28,Gateway_1kq2lpc,2024-12-02 09:09:33.006481,complete,exclusiveGateway,main,B,,,
+28,A5,2024-12-02 09:09:33.006481,start,task,main,B,,,
+28,A5,2024-12-02 09:09:33.006481,assign,task,main,B,,,
+24,A1,2024-12-02 09:09:46.980173,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+24,first gateway,2024-12-02 09:09:46.980173,complete,exclusiveGateway,main,B,,,
+24,Gateway_1kq2lpc,2024-12-02 09:09:46.980173,complete,exclusiveGateway,main,B,,,
+24,A5,2024-12-02 09:09:46.980173,start,task,main,B,,,
+24,A5,2024-12-02 09:09:46.980173,assign,task,main,B,,,
+21,A1,2024-12-02 09:09:55.615581,complete,task,main,B,"['res2', 'res2']",,"['18', '18']"
+21,first gateway,2024-12-02 09:09:55.615581,complete,exclusiveGateway,main,B,,,
+21,Gateway_1kq2lpc,2024-12-02 09:09:55.615581,complete,exclusiveGateway,main,B,,,
+21,A5,2024-12-02 09:09:55.615581,start,task,main,B,,,
+21,A5,2024-12-02 09:09:55.615581,assign,task,main,B,,,
+28,A5,2024-12-02 09:10:25.853792,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+28,Event_1usfnf7,2024-12-02 09:10:25.853792,complete,endEvent,main,B,,,
+30,A1,2024-12-02 09:10:26,assign,task,main,B,,,
+29,A1,2024-12-02 09:10:39.515471,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+29,first gateway,2024-12-02 09:10:39.515471,complete,exclusiveGateway,main,B,,,
+29,Gateway_1kq2lpc,2024-12-02 09:10:39.515471,complete,exclusiveGateway,main,B,,,
+29,A5,2024-12-02 09:10:39.515471,start,task,main,B,,,
+29,A5,2024-12-02 09:10:39.515471,assign,task,main,B,,,
+24,A5,2024-12-02 09:10:47.433900,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+24,Event_1usfnf7,2024-12-02 09:10:47.433900,complete,endEvent,main,B,,,
+31,A1,2024-12-02 09:10:48,assign,task,main,C,,,
+21,A5,2024-12-02 09:10:59.143531,complete,task,main,B,"['res2', 'res2']",,"['18', '18']"
+21,Event_1usfnf7,2024-12-02 09:10:59.143531,complete,endEvent,main,B,,,
+32,A1,2024-12-02 09:11:00,assign,task,main,C,,,
+29,A5,2024-12-02 09:11:29.806140,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+29,Event_1usfnf7,2024-12-02 09:11:29.806140,complete,endEvent,main,B,,,
+30,A1,2024-12-02 09:11:34.871129,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+30,first gateway,2024-12-02 09:11:34.871129,complete,exclusiveGateway,main,B,,,
+30,Gateway_1kq2lpc,2024-12-02 09:11:34.871129,complete,exclusiveGateway,main,B,,,
+30,A5,2024-12-02 09:11:34.871129,start,task,main,B,,,
+30,A5,2024-12-02 09:11:34.871129,assign,task,main,B,,,
+32,A1,2024-12-02 09:11:44.166497,complete,task,main,C,"['res2', 'res2']",,"['18', '18']"
+32,first gateway,2024-12-02 09:11:44.166497,complete,exclusiveGateway,main,C,,,
+32,A2,2024-12-02 09:11:44.166497,start,task,main,C,,,
+32,A2,2024-12-02 09:11:44.166497,assign,task,main,C,,,
+31,A1,2024-12-02 09:12:15.869110,complete,task,main,C,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+31,first gateway,2024-12-02 09:12:15.869110,complete,exclusiveGateway,main,C,,,
+31,A2,2024-12-02 09:12:15.869110,start,task,main,C,,,
+3,A3,2024-12-02 09:12:15.932567,assign,task,main,A,,,
+30,A5,2024-12-02 09:12:17.019474,complete,task,main,B,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+30,Event_1usfnf7,2024-12-02 09:12:17.019474,complete,endEvent,main,B,,,
+11,A3,2024-12-02 09:12:17.025954,assign,task,main,A,,,
+32,A2,2024-12-02 09:12:35.061369,complete,task,main,C,"['res2', 'res2', 'res2']",,"['18', '18', '18']"
+32,second gateway,2024-12-02 09:12:35.061369,complete,exclusiveGateway,main,C,,,
+32,A4,2024-12-02 09:12:35.061369,start,task,main,C,,,
+32,A4,2024-12-02 09:12:35.061369,assign,task,main,C,,,
+17,A2,2024-12-02 09:12:35.082025,assign,task,main,A,,,
+17,A2,2024-12-02 09:12:50.846586,complete,task,main,A,"['res2', 'res2', 'res2']",,"['18', '18', '18']"
+17,second gateway,2024-12-02 09:12:50.846586,complete,exclusiveGateway,main,A,,,
+17,A4,2024-12-02 09:12:50.846586,start,task,main,A,,,
+31,A2,2024-12-02 09:12:50.869110,assign,task,main,C,,,
+31,A2,2024-12-02 09:13:07.021823,complete,task,main,C,"['res2', 'res2', 'res2']",,"['18', '18', '18']"
+31,second gateway,2024-12-02 09:13:07.021823,complete,exclusiveGateway,main,C,,,
+31,Gateway_0vz9dei,2024-12-02 09:13:07.021823,complete,exclusiveGateway,main,C,,,
+31,Gateway_1kq2lpc,2024-12-02 09:13:07.021823,complete,exclusiveGateway,main,C,,,
+31,A5,2024-12-02 09:13:07.021823,start,task,main,C,,,
+31,A5,2024-12-02 09:13:07.021823,assign,task,main,C,,,
+10,A2,2024-12-02 09:13:07.179091,assign,task,main,A,,,
+10,A2,2024-12-02 09:13:08.547224,complete,task,main,A,"['res2', 'res2', 'res2']",,"['18', '18', '18']"
+10,second gateway,2024-12-02 09:13:08.547224,complete,exclusiveGateway,main,A,,,
+10,Gateway_0vz9dei,2024-12-02 09:13:08.547224,complete,exclusiveGateway,main,A,,,
+10,Gateway_1kq2lpc,2024-12-02 09:13:08.547224,complete,exclusiveGateway,main,A,,,
+10,A5,2024-12-02 09:13:08.547224,start,task,main,A,,,
+10,A5,2024-12-02 09:13:08.547224,assign,task,main,A,,,
+3,A3,2024-12-02 09:13:20.304863,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+3,Gateway_1kq2lpc,2024-12-02 09:13:20.304863,complete,exclusiveGateway,main,A,,,
+3,A5,2024-12-02 09:13:20.304863,start,task,main,A,,,
+3,A5,2024-12-02 09:13:20.304863,assign,task,main,A,,,
+32,A4,2024-12-02 09:13:41.022912,complete,task,main,C,['machine'],50,['30']
+32,Gateway_0vz9dei,2024-12-02 09:13:41.022912,complete,exclusiveGateway,main,C,,,
+32,Gateway_1kq2lpc,2024-12-02 09:13:41.022912,complete,exclusiveGateway,main,C,,,
+32,A5,2024-12-02 09:13:41.022912,start,task,main,C,,,
+11,A3,2024-12-02 09:13:41.045657,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+11,Gateway_1kq2lpc,2024-12-02 09:13:41.045657,complete,exclusiveGateway,main,A,,,
+11,A5,2024-12-02 09:13:41.045657,start,task,main,A,,,
+18,A3,2024-12-02 09:13:41.105715,assign,task,main,A,,,
+17,A4,2024-12-02 09:13:41.846586,assign,task,main,A,,,
+10,A5,2024-12-02 09:13:51.342135,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+10,Event_1usfnf7,2024-12-02 09:13:51.342135,complete,endEvent,main,A,,,
+32,A5,2024-12-02 09:13:52.022912,assign,task,main,C,,,
+31,A5,2024-12-02 09:13:52.453694,complete,task,main,C,"['res2', 'res2']",,"['18', '18']"
+31,Event_1usfnf7,2024-12-02 09:13:52.453694,complete,endEvent,main,C,,,
+11,A5,2024-12-02 09:13:53.045657,assign,task,main,A,,,
+3,A5,2024-12-02 09:14:16.367170,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+3,Event_1usfnf7,2024-12-02 09:14:16.367170,complete,endEvent,main,A,,,
+4,A3,2024-12-02 09:14:16.422063,assign,task,main,A,,,
+32,A5,2024-12-02 09:14:24.885931,complete,task,main,C,"['res2', 'res2']",,"['18', '18']"
+32,Event_1usfnf7,2024-12-02 09:14:24.885931,complete,endEvent,main,C,,,
+2,A2,2024-12-02 09:14:25.247684,assign,task,main,A,,,
+11,A5,2024-12-02 09:14:40.134071,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+11,Event_1usfnf7,2024-12-02 09:14:40.134071,complete,endEvent,main,A,,,
+18,A3,2024-12-02 09:14:50.215562,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+18,Gateway_1kq2lpc,2024-12-02 09:14:50.215562,complete,exclusiveGateway,main,A,,,
+18,A5,2024-12-02 09:14:50.215562,start,task,main,A,,,
+18,A5,2024-12-02 09:14:50.215562,assign,task,main,A,,,
+17,A4,2024-12-02 09:15:11.174730,complete,task,main,A,['machine'],50,['30']
+17,Gateway_0vz9dei,2024-12-02 09:15:11.174730,complete,exclusiveGateway,main,A,,,
+17,Gateway_1kq2lpc,2024-12-02 09:15:11.174730,complete,exclusiveGateway,main,A,,,
+17,A5,2024-12-02 09:15:11.174730,start,task,main,A,,,
+18,A5,2024-12-02 09:15:41.562810,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+18,Event_1usfnf7,2024-12-02 09:15:41.562810,complete,endEvent,main,A,,,
+13,A3,2024-12-02 09:15:41.699213,assign,task,main,A,,,
+17,A5,2024-12-02 09:15:42.174730,assign,task,main,A,,,
+4,A3,2024-12-02 09:15:43.780172,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+4,Gateway_1kq2lpc,2024-12-02 09:15:43.780172,complete,exclusiveGateway,main,A,,,
+4,A5,2024-12-02 09:15:43.780172,start,task,main,A,,,
+12,A3,2024-12-02 09:15:43.818275,assign,task,main,A,,,
+2,A2,2024-12-02 09:16:08.737776,complete,task,main,A,"['res2', 'res2', 'res2']",,"['18', '18', '18']"
+2,second gateway,2024-12-02 09:16:08.737776,complete,exclusiveGateway,main,A,,,
+2,A4,2024-12-02 09:16:08.737776,start,task,main,A,,,
+2,A4,2024-12-02 09:16:08.737776,assign,task,main,A,,,
+4,A5,2024-12-02 09:16:08.780172,assign,task,main,A,,,
+17,A5,2024-12-02 09:16:37.092031,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+17,Event_1usfnf7,2024-12-02 09:16:37.092031,complete,endEvent,main,A,,,
+6,A2,2024-12-02 09:16:37.295312,assign,task,main,A,,,
+4,A5,2024-12-02 09:16:44.211106,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+4,Event_1usfnf7,2024-12-02 09:16:44.211106,complete,endEvent,main,A,,,
+12,A3,2024-12-02 09:16:45.994447,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+12,Gateway_1kq2lpc,2024-12-02 09:16:45.994447,complete,exclusiveGateway,main,A,,,
+12,A5,2024-12-02 09:16:45.994447,start,task,main,A,,,
+12,A5,2024-12-02 09:16:45.994447,assign,task,main,A,,,
+2,A4,2024-12-02 09:17:02.264561,complete,task,main,A,['machine'],50,['30']
+2,Gateway_0vz9dei,2024-12-02 09:17:02.264561,complete,exclusiveGateway,main,A,,,
+2,Gateway_1kq2lpc,2024-12-02 09:17:02.264561,complete,exclusiveGateway,main,A,,,
+2,A5,2024-12-02 09:17:02.264561,start,task,main,A,,,
+13,A3,2024-12-02 09:17:13.272821,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+13,Gateway_1kq2lpc,2024-12-02 09:17:13.272821,complete,exclusiveGateway,main,A,,,
+13,A5,2024-12-02 09:17:13.272821,start,task,main,A,,,
+13,A5,2024-12-02 09:17:13.272821,assign,task,main,A,,,
+12,A5,2024-12-02 09:17:37.201642,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+12,Event_1usfnf7,2024-12-02 09:17:37.201642,complete,endEvent,main,A,,,
+8,A3,2024-12-02 09:17:37.232316,assign,task,main,A,,,
+13,A5,2024-12-02 09:17:48.423505,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+13,Event_1usfnf7,2024-12-02 09:17:48.423505,complete,endEvent,main,A,,,
+5,A3,2024-12-02 09:17:48.540812,assign,task,main,A,,,
+2,A5,2024-12-02 09:17:49.264561,assign,task,main,A,,,
+2,A5,2024-12-02 09:18:28.471492,complete,task,main,A,"['res2', 'res2']",,"['18', '18']"
+2,Event_1usfnf7,2024-12-02 09:18:28.471492,complete,endEvent,main,A,,,
+8,A3,2024-12-02 09:19:21.678667,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+8,Gateway_1kq2lpc,2024-12-02 09:19:21.678667,complete,exclusiveGateway,main,A,,,
+8,A5,2024-12-02 09:19:21.678667,start,task,main,A,,,
+8,A5,2024-12-02 09:19:21.678667,assign,task,main,A,,,
+5,A3,2024-12-02 09:19:27.375484,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+5,Gateway_1kq2lpc,2024-12-02 09:19:27.375484,complete,exclusiveGateway,main,A,,,
+5,A5,2024-12-02 09:19:27.375484,start,task,main,A,,,
+5,A5,2024-12-02 09:19:27.375484,assign,task,main,A,,,
+6,A2,2024-12-02 09:19:27.664066,complete,task,main,A,"['res2', 'res2', 'res2']",,"['18', '18', '18']"
+6,second gateway,2024-12-02 09:19:27.664066,complete,exclusiveGateway,main,A,,,
+6,Gateway_0vz9dei,2024-12-02 09:19:27.664066,complete,exclusiveGateway,main,A,,,
+6,Gateway_1kq2lpc,2024-12-02 09:19:27.664066,complete,exclusiveGateway,main,A,,,
+6,A5,2024-12-02 09:19:27.664066,start,task,main,A,,,
+6,A5,2024-12-02 09:19:27.664066,assign,task,main,A,,,
+8,A5,2024-12-02 09:20:08.119161,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+8,Event_1usfnf7,2024-12-02 09:20:08.119161,complete,endEvent,main,A,,,
+1,A2,2024-12-02 09:20:08.308184,assign,task,main,A,,,
+1,A2,2024-12-02 09:20:20.531334,complete,task,main,A,"['res2', 'res2', 'res2']",,"['18', '18', '18']"
+1,second gateway,2024-12-02 09:20:20.531334,complete,exclusiveGateway,main,A,,,
+1,Gateway_0vz9dei,2024-12-02 09:20:20.531334,complete,exclusiveGateway,main,A,,,
+1,Gateway_1kq2lpc,2024-12-02 09:20:20.531334,complete,exclusiveGateway,main,A,,,
+1,A5,2024-12-02 09:20:20.531334,start,task,main,A,,,
+1,A5,2024-12-02 09:20:20.531334,assign,task,main,A,,,
+6,A5,2024-12-02 09:20:24.369263,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+6,Event_1usfnf7,2024-12-02 09:20:24.369263,complete,endEvent,main,A,,,
+5,A5,2024-12-02 09:20:27.071444,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+5,Event_1usfnf7,2024-12-02 09:20:27.071444,complete,endEvent,main,A,,,
+16,A3,2024-12-02 09:20:27.111591,assign,task,main,A,,,
+1,A5,2024-12-02 09:20:58.661517,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+1,Event_1usfnf7,2024-12-02 09:20:58.661517,complete,endEvent,main,A,,,
+14,A3,2024-12-02 09:20:58.832799,assign,task,main,A,,,
+16,A3,2024-12-02 09:21:37.387322,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+16,Gateway_1kq2lpc,2024-12-02 09:21:37.387322,complete,exclusiveGateway,main,A,,,
+16,A5,2024-12-02 09:21:37.387322,start,task,main,A,,,
+16,A5,2024-12-02 09:21:37.387322,assign,task,main,A,,,
+14,A3,2024-12-02 09:22:11.074657,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+14,Gateway_1kq2lpc,2024-12-02 09:22:11.074657,complete,exclusiveGateway,main,A,,,
+14,A5,2024-12-02 09:22:11.074657,start,task,main,A,,,
+14,A5,2024-12-02 09:22:11.074657,assign,task,main,A,,,
+16,A5,2024-12-02 09:22:38.391106,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+16,Event_1usfnf7,2024-12-02 09:22:38.391106,complete,endEvent,main,A,,,
+19,A3,2024-12-02 09:22:38.994333,assign,task,main,A,,,
+14,A5,2024-12-02 09:23:00.863479,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+14,Event_1usfnf7,2024-12-02 09:23:00.863479,complete,endEvent,main,A,,,
+20,A3,2024-12-02 09:23:01.136667,assign,task,main,A,,,
+19,A3,2024-12-02 09:23:47.365177,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+19,Gateway_1kq2lpc,2024-12-02 09:23:47.365177,complete,exclusiveGateway,main,A,,,
+19,A5,2024-12-02 09:23:47.365177,start,task,main,A,,,
+19,A5,2024-12-02 09:23:47.365177,assign,task,main,A,,,
+20,A3,2024-12-02 09:24:06.935156,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+20,Gateway_1kq2lpc,2024-12-02 09:24:06.935156,complete,exclusiveGateway,main,A,,,
+20,A5,2024-12-02 09:24:06.935156,start,task,main,A,,,
+20,A5,2024-12-02 09:24:06.935156,assign,task,main,A,,,
+19,A5,2024-12-02 09:24:19.850291,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+19,Event_1usfnf7,2024-12-02 09:24:19.850291,complete,endEvent,main,A,,,
+15,A3,2024-12-02 09:24:20.173060,assign,task,main,A,,,
+20,A5,2024-12-02 09:24:59.233540,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+20,Event_1usfnf7,2024-12-02 09:24:59.233540,complete,endEvent,main,A,,,
+9,A3,2024-12-02 09:24:59.286201,assign,task,main,A,,,
+15,A3,2024-12-02 09:26:11.982381,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+15,Gateway_1kq2lpc,2024-12-02 09:26:11.982381,complete,exclusiveGateway,main,A,,,
+15,A5,2024-12-02 09:26:11.982381,start,task,main,A,,,
+15,A5,2024-12-02 09:26:11.982381,assign,task,main,A,,,
+9,A3,2024-12-02 09:26:44.959847,complete,task,main,A,"['res1', 'res1', 'res1', 'res1', 'res1']",,"['15', '15', '15', '15', '15']"
+9,Gateway_1kq2lpc,2024-12-02 09:26:44.959847,complete,exclusiveGateway,main,A,,,
+9,A5,2024-12-02 09:26:44.959847,start,task,main,A,,,
+9,A5,2024-12-02 09:26:44.959847,assign,task,main,A,,,
+15,A5,2024-12-02 09:26:59.744987,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+15,Event_1usfnf7,2024-12-02 09:26:59.744987,complete,endEvent,main,A,,,
+9,A5,2024-12-02 09:27:44.783422,complete,task,main,A,"['res1', 'res1', 'res1', 'res2']",,"['15', '15', '15', '18']"
+9,Event_1usfnf7,2024-12-02 09:27:44.783422,complete,endEvent,main,A,,,

@@ -1,0 +1,824 @@
+<ns0:trace>
+		<ns0:string key="concept:name" value="1" />
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="StartEvent_1rcvv68" />
+			<ns0:date key="timestamp" value="2024-12-02T09:00:00+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="startEvent" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="StartEvent_1rcvv68" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:00:00+00:00" />
+			<ns0:int key="@@index" value="0" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A1" />
+			<ns0:date key="timestamp" value="2024-12-02T09:00:00+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A1" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:00:00+00:00" />
+			<ns0:int key="@@index" value="1" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A1" />
+			<ns0:date key="timestamp" value="2024-12-02T09:00:00+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A1" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:00:00+00:00" />
+			<ns0:int key="@@index" value="2" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A1" />
+			<ns0:date key="timestamp" value="2024-12-02T09:00:47.308184+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['res1', 'res1', 'res1', 'res2']" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:string key="resourceCost" value="['15', '15', '15', '18']" />
+			<ns0:string key="concept:name" value="A1" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:00:47.308184+00:00" />
+			<ns0:int key="@@index" value="3" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="first gateway" />
+			<ns0:date key="timestamp" value="2024-12-02T09:00:47.308184+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="first gateway" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:00:47.308184+00:00" />
+			<ns0:int key="@@index" value="4" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A2" />
+			<ns0:date key="timestamp" value="2024-12-02T09:00:47.308184+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A2" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:00:47.308184+00:00" />
+			<ns0:int key="@@index" value="5" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A2" />
+			<ns0:date key="timestamp" value="2024-12-02T09:20:08.308184+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A2" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:20:08.308184+00:00" />
+			<ns0:int key="@@index" value="6" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A2" />
+			<ns0:date key="timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['res2', 'res2', 'res2']" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:string key="resourceCost" value="['18', '18', '18']" />
+			<ns0:string key="concept:name" value="A2" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:int key="@@index" value="7" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="second gateway" />
+			<ns0:date key="timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="second gateway" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:int key="@@index" value="8" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Gateway_0vz9dei" />
+			<ns0:date key="timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Gateway_0vz9dei" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:int key="@@index" value="9" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Gateway_1kq2lpc" />
+			<ns0:date key="timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Gateway_1kq2lpc" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:int key="@@index" value="10" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A5" />
+			<ns0:date key="timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A5" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:int key="@@index" value="11" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A5" />
+			<ns0:date key="timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A5" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:20:20.531334+00:00" />
+			<ns0:int key="@@index" value="12" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A5" />
+			<ns0:date key="timestamp" value="2024-12-02T09:20:58.661517+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['res1', 'res1', 'res1', 'res2']" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:string key="resourceCost" value="['15', '15', '15', '18']" />
+			<ns0:string key="concept:name" value="A5" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:20:58.661517+00:00" />
+			<ns0:int key="@@index" value="13" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Event_1usfnf7" />
+			<ns0:date key="timestamp" value="2024-12-02T09:20:58.661517+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="endEvent" />
+			<ns0:string key="poolName" value="main" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Event_1usfnf7" />
+			<ns0:date key="time:timestamp" value="2024-12-02T09:20:58.661517+00:00" />
+			<ns0:int key="@@index" value="14" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+	</ns0:trace>
+
+
+    <ns0:trace>
+		<ns0:string key="concept:name" value="1" />
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Start" />
+			<ns0:date key="timestamp" value="2024-11-11T09:00:00+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="startEvent" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Start" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:00:00+00:00" />
+			<ns0:int key="@@index" value="0" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A1" />
+			<ns0:date key="timestamp" value="2024-11-11T09:00:00+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A1" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:00:00+00:00" />
+			<ns0:int key="@@index" value="1" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A1" />
+			<ns0:date key="timestamp" value="2024-11-11T09:00:00+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A1" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:00:00+00:00" />
+			<ns0:int key="@@index" value="2" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A1" />
+			<ns0:date key="timestamp" value="2024-11-11T09:00:05.314605+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['res1', 'res1', 'res1', 'res2']" />
+			<ns0:float key="fixedCost" value="10.0" />
+			<ns0:string key="resourceCost" value="['8', '8', '8', '15']" />
+			<ns0:string key="concept:name" value="A1" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:00:05.314605+00:00" />
+			<ns0:int key="@@index" value="3" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Gateway_02bnfz0" />
+			<ns0:date key="timestamp" value="2024-11-11T09:00:05.314605+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Gateway_02bnfz0" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:00:05.314605+00:00" />
+			<ns0:int key="@@index" value="4" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A2" />
+			<ns0:date key="timestamp" value="2024-11-11T09:00:05.314605+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A2" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:00:05.314605+00:00" />
+			<ns0:int key="@@index" value="5" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A2" />
+			<ns0:date key="timestamp" value="2024-11-11T09:01:03.314605+00:00" />
+			<ns0:string key="lifecycle:transition" value="startSetupTime" />
+			<ns0:float key="nodeType" value="nan" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="[('machine', 2)]" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A2" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:01:03.314605+00:00" />
+			<ns0:int key="@@index" value="6" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A2" />
+			<ns0:date key="timestamp" value="2024-11-11T09:01:03.314605+00:00" />
+			<ns0:string key="lifecycle:transition" value="endSetupTime" />
+			<ns0:float key="nodeType" value="nan" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="[('machine', 2)]" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A2" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:01:03.314605+00:00" />
+			<ns0:int key="@@index" value="7" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A2" />
+			<ns0:date key="timestamp" value="2024-11-11T09:01:03.314605+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A2" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:01:03.314605+00:00" />
+			<ns0:int key="@@index" value="8" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A2" />
+			<ns0:date key="timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['machine']" />
+			<ns0:float key="fixedCost" value="50.0" />
+			<ns0:string key="resourceCost" value="['50']" />
+			<ns0:string key="concept:name" value="A2" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:int key="@@index" value="9" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Gateway1" />
+			<ns0:date key="timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Gateway1" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:int key="@@index" value="10" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Gateway_0uc5lh1" />
+			<ns0:date key="timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Gateway_0uc5lh1" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:int key="@@index" value="11" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A4" />
+			<ns0:date key="timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A4" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:int key="@@index" value="12" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A4" />
+			<ns0:date key="timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:string key="lifecycle:transition" value="startSetupTime" />
+			<ns0:string key="nodeType" value="worn" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="[('machine', 2)]" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A4" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:01:05.432306+00:00" />
+			<ns0:int key="@@index" value="13" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A4" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:14.860000+00:00" />
+			<ns0:string key="lifecycle:transition" value="endSetupTime" />
+			<ns0:string key="nodeType" value="worn" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="[('machine', 2)]" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A4" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:14.860000+00:00" />
+			<ns0:int key="@@index" value="14" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A4" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:14.860000+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A4" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:14.860000+00:00" />
+			<ns0:int key="@@index" value="15" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A4" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:44.860000+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['machine']" />
+			<ns0:float key="fixedCost" value="50.0" />
+			<ns0:string key="resourceCost" value="['50']" />
+			<ns0:string key="concept:name" value="A4" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:44.860000+00:00" />
+			<ns0:int key="@@index" value="16" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Gateway2" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:44.860000+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Gateway2" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:44.860000+00:00" />
+			<ns0:int key="@@index" value="17" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A6" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:44.860000+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A6" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:44.860000+00:00" />
+			<ns0:int key="@@index" value="18" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A6" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:44.860000+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A6" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:44.860000+00:00" />
+			<ns0:int key="@@index" value="19" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A6" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:47.694767+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['res2', 'res2']" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:string key="resourceCost" value="['15', '15']" />
+			<ns0:string key="concept:name" value="A6" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:47.694767+00:00" />
+			<ns0:int key="@@index" value="20" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Gateway_03djvdz" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:47.694767+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Gateway_03djvdz" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:47.694767+00:00" />
+			<ns0:int key="@@index" value="21" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A7" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:47.694767+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A7" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:47.694767+00:00" />
+			<ns0:int key="@@index" value="22" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A7" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:47.694767+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A7" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:47.694767+00:00" />
+			<ns0:int key="@@index" value="23" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A7" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:58.355534+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['res3']" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:string key="resourceCost" value="['20']" />
+			<ns0:string key="concept:name" value="A7" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:58.355534+00:00" />
+			<ns0:int key="@@index" value="24" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="Gateway_1kbaa3g" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:58.355534+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="Gateway_1kbaa3g" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:58.355534+00:00" />
+			<ns0:int key="@@index" value="25" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A8" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:58.355534+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A8" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:58.355534+00:00" />
+			<ns0:int key="@@index" value="26" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A8" />
+			<ns0:date key="timestamp" value="2024-11-11T09:02:58.355534+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A8" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:02:58.355534+00:00" />
+			<ns0:int key="@@index" value="27" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A8" />
+			<ns0:date key="timestamp" value="2024-11-11T09:03:07.476692+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['res1', 'res1', 'res1', 'res2']" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:string key="resourceCost" value="['8', '8', '8', '15']" />
+			<ns0:string key="concept:name" value="A8" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:03:07.476692+00:00" />
+			<ns0:int key="@@index" value="28" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="GatewayLoop" />
+			<ns0:date key="timestamp" value="2024-11-11T09:03:07.476692+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="exclusiveGateway" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="GatewayLoop" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:03:07.476692+00:00" />
+			<ns0:int key="@@index" value="29" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A9" />
+			<ns0:date key="timestamp" value="2024-11-11T09:03:07.476692+00:00" />
+			<ns0:string key="lifecycle:transition" value="assign" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A9" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:03:07.476692+00:00" />
+			<ns0:int key="@@index" value="30" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A9" />
+			<ns0:date key="timestamp" value="2024-11-11T09:07:42.476692+00:00" />
+			<ns0:string key="lifecycle:transition" value="startSetupTime" />
+			<ns0:float key="nodeType" value="nan" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="[('machine', 2)]" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A9" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:07:42.476692+00:00" />
+			<ns0:int key="@@index" value="31" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A9" />
+			<ns0:date key="timestamp" value="2024-11-11T09:07:42.476692+00:00" />
+			<ns0:string key="lifecycle:transition" value="endSetupTime" />
+			<ns0:float key="nodeType" value="nan" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="[('machine', 2)]" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A9" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:07:42.476692+00:00" />
+			<ns0:int key="@@index" value="32" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A9" />
+			<ns0:date key="timestamp" value="2024-11-11T09:07:42.476692+00:00" />
+			<ns0:string key="lifecycle:transition" value="start" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="A9" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:07:42.476692+00:00" />
+			<ns0:int key="@@index" value="33" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="A9" />
+			<ns0:date key="timestamp" value="2024-11-11T09:07:45.639993+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="task" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:string key="org:resource" value="['res1', 'res2', 'machine']" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:string key="resourceCost" value="['8', '15', '50']" />
+			<ns0:string key="concept:name" value="A9" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:07:45.639993+00:00" />
+			<ns0:int key="@@index" value="34" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+		<ns0:event>
+			<ns0:int key="traceId" value="1" />
+			<ns0:string key="activity" value="End" />
+			<ns0:date key="timestamp" value="2024-11-11T09:07:45.639993+00:00" />
+			<ns0:string key="lifecycle:transition" value="complete" />
+			<ns0:string key="nodeType" value="endEvent" />
+			<ns0:float key="poolName" value="nan" />
+			<ns0:string key="instanceType" value="A" />
+			<ns0:float key="org:resource" value="nan" />
+			<ns0:float key="fixedCost" value="nan" />
+			<ns0:float key="resourceCost" value="nan" />
+			<ns0:string key="concept:name" value="End" />
+			<ns0:date key="time:timestamp" value="2024-11-11T09:07:45.639993+00:00" />
+			<ns0:int key="@@index" value="35" />
+			<ns0:int key="@@case_index" value="0" />
+		</ns0:event>
+	</ns0:trace>
