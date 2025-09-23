@@ -7,6 +7,7 @@ from .preprocess_log import *
 from .handle_elements import *
 from .splitminer import *
 from .save_and_copy import *
+# from .bpmn_layout_improver import *
 
 class ExtractionBPMN():
     """

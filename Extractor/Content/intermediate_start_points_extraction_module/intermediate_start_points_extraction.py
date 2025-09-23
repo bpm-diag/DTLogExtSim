@@ -64,7 +64,7 @@ class IntermediateStartPoint:
         self._create_triple_timestamp_event_analysis = create_triple_timestamp_event_analysis.__get__(self)
         self._create_start_gateway = create_start_gateway.__get__(self)
         self._create_gateway_for_activity = create_gateway_for_activity.__get__(self)
-        self._create_intermediate_geteways = create_intermediate_gateways.__get__(self)
+        self._create_intermediate_gateways = create_intermediate_gateways.__get__(self)
         self._prepare_final_activities_list = prepare_final_activities_list.__get__(self)
         self.create_modified_bpmn_model = create_modified_bpmn_model.__get__(self)
         
@@ -204,35 +204,3 @@ class IntermediateStartPoint:
             # 'correct_event_order': self.correct_order_diag_log
         }
     
-    # Properties per accesso ai risultati
-    @property
-    def final_activities_interrupted(self) -> Optional[pd.DataFrame]:
-        """Attività finali interrotte."""
-        return self._final_activities_interrupted
-    
-    @property
-    def final_activities_ended(self) -> Optional[pd.DataFrame]:
-        """Attività finali completate."""
-        return self._final_activities_ended
-    
-    @property
-    def forced_flow_intermediate_states(self) -> Optional[Dict[str, Tuple[str, str, str]]]:
-        """Flussi forzati per stati intermedi."""
-        return self._forced_flow_intermediate_states
-    
-    @property
-    def forced_instance_types(self) -> Optional[pd.DataFrame]:
-        """Tipi di istanza forzati."""
-        return self._forced_instance_types
-    
-    @property
-    def flow_probabilities(self) -> Optional[List[Tuple[str, float]]]:
-        """Probabilità di flusso."""
-        return self._flow_probabilities
-    
-    @property
-    def modified_model(self) -> Optional[Any]:
-        """Modello BPMN modificato."""
-        return self._modified_model
-
-

@@ -36,8 +36,11 @@ def reorder_single_timestamp(self, log: pd.DataFrame) -> List[Dict]:
         """Riordina per singolo timestamp (solo complete)."""
         complete_events = log[log['event_type'] == LIFECYCLE_COMPLETE].copy()
         complete_events = complete_events.rename(columns={'timestamp': 'end_timestamp'})
+
+        complete_events["start_timestamp"] = complete_events["end_timestamp"]
+
         complete_events = complete_events.drop(columns='event_type')
-        complete_events = complete_events[['caseid', 'task', 'end_timestamp']]
+        complete_events = complete_events[['caseid', 'task', "start_timestamp", 'end_timestamp']]
         
         return complete_events.to_dict('records')
     

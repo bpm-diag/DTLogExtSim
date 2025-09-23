@@ -30,11 +30,14 @@ def extract_duration_distribution(self, processed_log: pd.DataFrame) -> List[Lis
                         duration = row['end_timestamp'] - row['start_timestamp']
                         duration_seconds = float(duration.total_seconds())
                         
-                        if not np.isnan(duration_seconds) and duration_seconds > 0:
+                        if not np.isnan(duration_seconds):
                             # Evita durate zero per problemi di calcolo distribuzione
                             if duration_seconds == 0:
                                 duration_seconds = 0.00001
                             activity_durations[task].append(duration_seconds)
+                elif 'end_timestamp' in row and 'start_timestamp' not in row:
+                    print(f"⚠ Task {task}: solo end_timestamp, usando durata di default")
+                    activity_durations[task].append(0.00001)  # Durata fittizia per evitare errori
             
             # Calcolo distribuzioni
             activity_distributions = []

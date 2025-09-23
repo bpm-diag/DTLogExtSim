@@ -2,6 +2,7 @@ import pm4py
 import os
 import pandas as pd
 from typing import Dict, Tuple, List, Any
+import xml.etree.ElementTree as ET
 
 def save_results(self, forced_flows: Dict[str, Tuple[str, str, str]], 
                     forced_instance_types: pd.DataFrame,

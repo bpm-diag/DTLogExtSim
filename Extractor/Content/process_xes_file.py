@@ -145,8 +145,8 @@ class ProcessXesFile():
             result = isp_processor.extract_all_intermediate_points()
             
             # Ottieni risultati
-            new_forced_instance = isp_processor.forced_instance_types
-            new_flow_prob = isp_processor.flow_probabilities
+            new_forced_instance = isp_processor._forced_instance_types
+            new_flow_prob = isp_processor._flow_probabilities
             
             # Estrai attività di start e end
             start_activity, end_activity = self._extract_start_end_activities()
@@ -167,8 +167,68 @@ class ProcessXesFile():
             
         except Exception as e:
             raise Exception(f"Errore nell'estrazione punti intermedi: {str(e)}")
-
+        
     def _extract_start_end_activities(self) -> Tuple[str, str]:
+        """Estrae le attività di start e end dal log con logica robusta."""
+        
+        try:
+            if self.preprocessor.diaglog:
+                # Per log diagnostici, cerca eventi specifici
+                start_events = self.log[self.log[TAG_NODE_TYPE] == 'startEvent']
+                end_events = self.log[self.log[TAG_NODE_TYPE] == 'endEvent']
+                
+                # Se non trovati con nodeType, usa pattern
+                if start_events.empty:
+                    start_events = self.log[self.log[TAG_ACTIVITY_NAME].str.contains(r'Start', case=False, na=False)]
+                if end_events.empty:
+                    end_events = self.log[self.log[TAG_ACTIVITY_NAME].str.contains(r'End', case=False, na=False)]
+                    
+            else:
+                # Per log normali, cerca pattern testuali
+                start_events = self.log[self.log[TAG_ACTIVITY_NAME].str.contains(r'Start', case=False, na=False)]
+                end_events = self.log[self.log[TAG_ACTIVITY_NAME].str.contains(r'End|abort', case=False, na=False)]
+            
+            # Fallback: usa prima e ultima attività
+            if start_events.empty:
+                print("⚠ Evento start non trovato, usando prima attività")
+                first_activities = []
+                for trace_id, trace_group in self.log.groupby(TAG_TRACE_ID):
+                    trace_sorted = trace_group.sort_values(TAG_TIMESTAMP)
+                    if not trace_sorted.empty:
+                        first_activities.append(trace_sorted.iloc[0][TAG_ACTIVITY_NAME])
+                
+                if first_activities:
+                    from collections import Counter
+                    start_activity = Counter(first_activities).most_common(1)[0][0]
+                else:
+                    raise ValueError("Impossibile determinare attività di start")
+            else:
+                start_activity = start_events[TAG_ACTIVITY_NAME].iloc[0]
+                
+            if end_events.empty:
+                print("⚠ Evento end non trovato, usando ultima attività")
+                last_activities = []
+                for trace_id, trace_group in self.log.groupby(TAG_TRACE_ID):
+                    trace_sorted = trace_group.sort_values(TAG_TIMESTAMP)
+                    if not trace_sorted.empty:
+                        last_activities.append(trace_sorted.iloc[-1][TAG_ACTIVITY_NAME])
+                
+                if last_activities:
+                    from collections import Counter
+                    end_activity = Counter(last_activities).most_common(1)[0][0]
+                else:
+                    raise ValueError("Impossibile determinare attività di end")
+            else:
+                end_activity = end_events[TAG_ACTIVITY_NAME].iloc[0]
+            
+            print(f"✓ Start activity: {start_activity}")
+            print(f"✓ End activity: {end_activity}")
+            return start_activity, end_activity
+            
+        except Exception as e:
+            raise Exception(f"Errore nell'estrazione start/end: {str(e)}")
+
+    def _extract_start_end_activities_old(self) -> Tuple[str, str]:
         """Estrae le attività di start e end dal log."""
         if self.preprocessor.diaglog:
             # Per log diagnostici, cerca eventi specifici

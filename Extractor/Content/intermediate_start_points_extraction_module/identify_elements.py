@@ -66,8 +66,64 @@ def identify_final_completed_activities(self, reordered_log: pd.DataFrame,
     
     return pd.DataFrame()
 
-    
 def identify_start_activity(self) -> str:
+    """
+    Identifica l'attività di start dal log con logica migliorata.
+    
+    Returns:
+        Nome dell'attività di start
+        
+    Raises:
+        ValueError: Se nessuna attività di start viene trovata
+    """
+    print("Identificando attività di start...")
+    
+    try:
+        start_events = pd.DataFrame()
+        
+        # STRATEGIA 1: Log diagnostico - cerca nodeType="startEvent"
+        if self.diaglog and TAG_NODE_TYPE in self.log.columns:
+            start_events = self.log[self.log[TAG_NODE_TYPE] == 'startEvent']
+            if not start_events.empty:
+                start_activity = start_events[TAG_ACTIVITY_NAME].iloc[0]
+                print(f"✓ Start activity trovata (nodeType): {start_activity}")
+                return start_activity
+        
+        # STRATEGIA 2: Pattern testuale "Start" (case-insensitive)
+        start_patterns = [r'Start', r'start', r'BEGIN', r'begin']
+        for pattern in start_patterns:
+            start_events = self.log[self.log[TAG_ACTIVITY_NAME].str.contains(pattern, case=False, na=False)]
+            if not start_events.empty:
+                start_activity = start_events[TAG_ACTIVITY_NAME].iloc[0]
+                print(f"✓ Start activity trovata (pattern '{pattern}'): {start_activity}")
+                return start_activity
+        
+        # STRATEGIA 3: Prima attività cronologicamente (fallback)
+        print("⚠ Nessun evento start esplicito trovato, usando prima attività cronologica...")
+        
+        # Trova la prima attività per ogni traccia, poi quella più comune
+        first_activities = []
+        for trace_id, trace_group in self.log.groupby(TAG_TRACE_ID):
+            trace_sorted = trace_group.sort_values(TAG_TIMESTAMP)
+            if not trace_sorted.empty:
+                first_activity = trace_sorted.iloc[0][TAG_ACTIVITY_NAME]
+                first_activities.append(first_activity)
+        
+        if first_activities:
+            # Usa l'attività più comune come start
+            from collections import Counter
+            most_common_start = Counter(first_activities).most_common(1)[0][0]
+            print(f"✓ Start activity dedotta (più comune): {most_common_start}")
+            return most_common_start
+        
+        # STRATEGIA 4: Crea attività di start virtuale
+        print("⚠ Creando attività di start virtuale...")
+        return "VirtualStart"
+        
+    except Exception as e:
+        raise Exception(f"Errore nell'identificazione attività start: {str(e)}")
+    
+def identify_start_activity_old(self) -> str:
     """Identifica l'attività di start dal log."""
     start_pattern = r'Start'
     start_events = self.log[self.log[TAG_ACTIVITY_NAME].str.contains(start_pattern, case=False, na=False)]

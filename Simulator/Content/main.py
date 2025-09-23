@@ -12,19 +12,7 @@ import csv
 import threading
 import os
 
-
-print("Sono in Main")
-
 sys.setrecursionlimit(100000)
-
-
-#Put resourcesOutputConsole and timetableOutputConsole to true if you want the log in console of resources locked/unlocked and timetable management
-debug1=False
-debug=False
-resourcesOutputConsole=False
-timetableOutputConsole=False
-costsOutputConsole=False
-logSetupTime=False
 
 
 extraLog={}
@@ -33,9 +21,6 @@ extraFlag=False
 extraPath="json/extra.json"
 diagbpPath="json/diagbp.json"
 bpmnPath="json/bpmn.json"
-#extraPath="Interface/json/extra.json"
-#diagbpPath="Interface/json/diagbp.json"
-#bpmnPath="Interface/json/bpmn.json"
 
 if os.path.isfile(extraPath):
     diagbpPath="json/extra.json"
@@ -109,6 +94,8 @@ tasks_worklists={element['elementId']: element['worklistId'] for element in diag
 totalCost={} #task_costs are summed here
 timeUsedPerResource={} #resources time being used are summed here
 worklist_resources={}
+
+
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets, once a node is executed in this instance, it is saved here
     startDateTime = diagbp['startDateTime']
@@ -196,8 +183,6 @@ class Process:
                 self.xeslog(node_id,"startSetupTime",logg, resource_setup_time_info)
                 #self.xeslog(node_id,"startSetupTime",logg) if usury or instanceCambio else None
 
-                print(f"Cambio usury {resource_tuple[0]} {self.env.now}") if logSetupTime and usury else None
-                print(f"Cambio instance_type {resource_tuple[0]} {self.env.now}") if logSetupTime and instanceCambio else None
                 if instanceCambio or usury:
                     yield self.env.timeout(setup_time)
                     print(f"Fine cambio {resource_tuple[0]} {self.env.now}")
@@ -242,8 +227,6 @@ class Process:
             to_time = dt_time(to_hour, to_minute, to_second)
             from_day = rule['fromWeekDay'].upper()
             to_day = rule['toWeekDay'].upper()
-            if timetableOutputConsole:
-                print(str(from_time)+"|"+str(current_hour_minute_second)+"|"+str(to_time)+"|days:|"+str(from_day)+"|"+str(current_time.strftime('%A').upper())+"|"+str(to_day))
 
             # Checks for both ways, from time bigger or lower than to time
             if from_time > to_time: #ie: 22:00:00 to 04:00:00
@@ -427,11 +410,6 @@ class Process:
                                 resources_in_timetable = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
                             print(f"PREEEEE avail: {len(available_resources)} needed:{amount_needed} ") if debug else None
                             if len(available_resources) < amount_needed:
-                                if resourcesOutputConsole:
-                                    if len(resources_in_timetable) == 0 and timetablebreakFlag==False:
-                                        print(node_id + f"|group n.{i}| TIMETABLE-BREAK | {resource_name}: No resources available within timetable #{self.num}")
-                                    else:
-                                        print(node_id + f"|group n.{i}| BREAK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed #{self.num}")
                                 for name, req, costPerHour, resourceSimpy,_ in requests:
                                     req.resource.release(req)
                                     req.cancel() # cancel the requests that were accumulated till now since this group is ko
@@ -446,10 +424,6 @@ class Process:
                                     #debug zone
                                     print(f"to_req: {to_request}") if debug else None
                                     print(f"waited:{waited}") if debug else None                                 
-                                    if debug1 and not resource_tuple[4]=="" and resource_tuple[4]["type"]:
-                                        print(f"({resource_tuple[0]}, {resource_tuple[1]}, {resource_tuple[2]}, {resource_tuple[3]}, {resource_tuple[4]}, {resource_tuple[5]}, {resource_tuple[6].level}, {resource_tuple[7]})")
-                                    elif debug1:
-                                        print(f"({resource_tuple[0]}, {resource_tuple[1]}, {resource_tuple[2]}, {resource_tuple[3]}")
 
                                     if appended == amount_needed:
                                         break
@@ -513,10 +487,7 @@ class Process:
                                 #if not worklist_id:
                                 resourceid_for_task.append(resource_name)
                                 resource_cost_hour.append(cost_per_hour)
-
-                                if resourcesOutputConsole:
-                                    
-                                    print(f"{node_id}|Resource locked: {resource_name} ({req.resource}), Time: {self.env.now} #{self.num}")                          
+                  
                             break  # Break the loop as resources are allocated
                         else:
                             for _,req,_,_,_ in requests:
@@ -576,8 +547,6 @@ class Process:
                     if req.triggered:
                         req.cancel()
                         req.resource.release(req)
-                    if resourcesOutputConsole:
-                        print(node_id + "|Resource released: " + name  + ", Time: " + str(self.env.now))
             yield from self.run_node(next_node_id, subprocess_node)
 
 
@@ -948,14 +917,10 @@ resourcesPercentageUsage={}
 resourceCosts={}
 
 for key, value in totalCost.items():
-    if costsOutputConsole:
-        print("Cost of all the tasks in instance n. "+str(key)+": "+str(value))
     taskCosts[key]=value
 
 for name, time in timeUsedPerResource.items():
     total_amount = len(global_resources[name])  # Get the total number of individual resources for this type
-    if costsOutputConsole:
-        print(f"Percentage of usage of resource '{name}': {((time*100)/env.now)/total_amount:.1f}%")
     resourcesPercentageUsage[name] = f"{((time*100)/env.now)/total_amount:.1f}"
 
 
@@ -965,8 +930,6 @@ for resource in resources:
     time_in_hours = env.now / 3600  # Convert time to hours
     resource_cost = total_amount * cost_per_hour * time_in_hours
     name=resource['name']
-    if costsOutputConsole:
-        print(f"Cost for resource '{name}': {resource_cost:.1f}")
     resourceCosts[name]=f"{resource_cost:.1f}"
 
 

@@ -75,7 +75,7 @@ def build_splitminer_command(self, input_file: str, output_file: str, sm2_jar: s
         'au.edu.unimelb.services.ServiceProvider',
         'SMD',
         self.eta, self.eps,  # Parametri eta e epsilon
-        'false', 'false', 'false',  # Altri parametri SplitMiner
+        'true', 'false', 'true',  # Altri parametri SplitMiner
         input_file,
         output_file
     ])
