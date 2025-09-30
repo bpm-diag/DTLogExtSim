@@ -1,9 +1,8 @@
 import json
 import sys
 
-bpmnPath="json/bpmn.json"
 
-def parse_again():
+def parse_again(bpmnPath):
     try:
         with open(bpmnPath, "r") as file:
             bpmn_dict = json.load(file)

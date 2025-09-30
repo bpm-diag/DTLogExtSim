@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, send_from_directory, redirect, url_for, jsonify
 import os
 import zipfile
-import time
 import xml.etree.ElementTree as ET
 import json
 import requests
 import shutil
+
+from bpmn_parser_module.bpmn_parser import *
 
 from config import Config
 
@@ -13,42 +14,21 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config.from_object(Config)
 
 
-JSON_FOLDER='json'
 DOWNLOAD_FOLDER='download'
 UPLOAD_FOLDER = 'uploads'
-PREUPLOAD_FOLDER = 'preupload'
-LOGS_FOLDER = 'logs' # Directory for logs within the container
 EXTRACTOR_FOLDER = "extractor"
-tagName = "diagbp"
-
-def wait_for_and_remove_flag():
-    # Wait for 'flag.txt' to appear in 'uploads' folder, created by main.py after simulation is over
-    flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
-    while not os.path.exists(flag_path):
-        time.sleep(1) 
-    try:
-        os.remove(flag_path) 
-        print("Flag file removed successfully.")
-    except OSError as e:
-        print(f"Error removing flag file: {e}")
-
+TAG_NAME = "diagbp"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    for filename in os.listdir(PREUPLOAD_FOLDER): # remove old log files
-        file_path = os.path.join(PREUPLOAD_FOLDER, filename)
-        os.remove(file_path)
     for filename in os.listdir(UPLOAD_FOLDER): # remove old log files
         file_path = os.path.join(UPLOAD_FOLDER, filename)
-        os.remove(file_path)
+        #remove also folder and files inside it
+        if os.path.isdir(file_path):
+            shutil.rmtree(file_path)
+
     for filename in os.listdir(DOWNLOAD_FOLDER): # remove old log files
         file_path = os.path.join(DOWNLOAD_FOLDER, filename)
-        os.remove(file_path)
-    for filename in os.listdir(LOGS_FOLDER): # remove old log files
-        file_path = os.path.join(LOGS_FOLDER, filename)
-        os.remove(file_path)
-    for filename in os.listdir(JSON_FOLDER): # remove old log files
-        file_path = os.path.join(JSON_FOLDER, filename)
         os.remove(file_path)
     for filename in os.listdir(EXTRACTOR_FOLDER):
         file_path = os.path.join(EXTRACTOR_FOLDER, filename)
@@ -57,13 +37,6 @@ def index():
         elif os.path.isdir(file_path):  # Delete directories
             shutil.rmtree(file_path)
     
-    try:
-        flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
-        if os.path.exists(flag_path):
-            os.remove(flag_path) 
-            print("Flag file removed successfully.")
-    except OSError as e:
-        print(f"Error removing flag file: {e}")
     return render_template('index.html')
 
 
@@ -82,8 +55,6 @@ def use_extractor():
     }
     
     try:
-        # response = requests.get(EXTRACTOR_URL, files=files)
-        # return response.text
         response = requests.post(f"http://{app.config['EXTRACTOR_ADDRESS']}:{app.config['EXTRACTOR_PORT']}/", files=files, data=data)
         return redirect(url_for('extractor_results'))
     except requests.exceptions.RequestException as e:
@@ -91,77 +62,79 @@ def use_extractor():
 
 @app.route("/simulator", methods=["POST"])
 def use_simulator():
-    """Handles file upload for Simulator."""
-    if "bpmn_file" not in request.files:
-        return "No BPMN file uploaded", 400
+    try:
+        """Handles file upload for Simulator."""
+        if "bpmn_file" not in request.files:
+            return "No BPMN file uploaded", 400
 
-    file_bpmn = {"bpmn_file": (request.files["bpmn_file"].filename, request.files["bpmn_file"].stream, request.files["bpmn_file"].mimetype)}
-
-    # Add extra.json only if provided
-    # if "extra" in request.files and request.files["extra"].filename != "":
-    files_extra = {"extra": (request.files["extra"].filename, request.files["extra"].stream, request.files["extra"].mimetype)} if "extra" in request.files and request.files["extra"].filename != "" else None
-
-    flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
-
-    
-    # bpmn_file = request.files['bpmn_file']
-    # extra = request.files['extra']
-    
-    if file_bpmn["bpmn_file"]:
-        bpmn_path = os.path.join(PREUPLOAD_FOLDER, file_bpmn["bpmn_file"][0])
-        with open(bpmn_path, "wb") as f:
-            f.write(file_bpmn["bpmn_file"][1].read())
-
-        file_bpmn_saved = open(bpmn_path, "rb")
-        file_bpmn["bpmn_file"] = (file_bpmn["bpmn_file"][0], file_bpmn_saved, file_bpmn["bpmn_file"][2])
-        # files["bpmn_file"].seek(0)  
-
-        #check diagbp tag
-        tree = ET.parse(bpmn_path)
-        root = tree.getroot()
-        diagbpTag = root.find('.//' + tagName)
-        if diagbpTag is not None or files_extra: #se è presente o il tag nel file o l'extra.json file
-            if files_extra:
-                extra_path = os.path.join(JSON_FOLDER, "extra.json")
-                request.files["extra"].save(extra_path[0])
-            # Save uploaded BPMN
-            bpmn_path = os.path.join(UPLOAD_FOLDER, file_bpmn["bpmn_file"][0])
-            with open(bpmn_path, "wb") as f:
+        file_bpmn = {"bpmn_file": (request.files["bpmn_file"].filename, request.files["bpmn_file"].stream, request.files["bpmn_file"].mimetype)}
+        
+        if file_bpmn["bpmn_file"]:
+            file_bpmn_no_ext = file_bpmn["bpmn_file"][0].split(".bpmn")[0]
+            if os.path.exists(os.path.join(UPLOAD_FOLDER, file_bpmn_no_ext)):
+                simulation_path = os.path.join(UPLOAD_FOLDER, file_bpmn_no_ext)
+            else:
+                os.mkdir(os.path.join(UPLOAD_FOLDER, file_bpmn_no_ext))
+                simulation_path = os.path.join(UPLOAD_FOLDER, file_bpmn_no_ext)
+            # save bpmn file as .bpmn
+            with open(simulation_path + "/" + file_bpmn["bpmn_file"][0], "wb") as f:
                 f.write(file_bpmn["bpmn_file"][1].read())
 
-            file_bpmn_saved = open(bpmn_path, "rb")
-            file_bpmn["bpmn_file"] = (file_bpmn["bpmn_file"][0], file_bpmn_saved, file_bpmn["bpmn_file"][2])
-            
-            response = requests.post(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/", files=file_bpmn)
-            return redirect(url_for('simulator_results'))
-        else:
-            bpmn_path = os.path.join(UPLOAD_FOLDER, file_bpmn["bpmn_file"][0]) #save in upload so that simulator reads it and creates bpmn.json for parameters.html
-            with open(bpmn_path, "wb") as f:
-                f.write(file_bpmn["bpmn_file"][1].read())
-            
-            response = requests.post(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/", files=file_bpmn)
-            response_data = response.json()
-            if response_data.get("parser_output"):
-                try:
-                    os.remove(flag_path) 
-                    print("Flag file removed successfully.")
-                    return redirect(url_for('parameters'))
-                except OSError as e:
-                    print(f"Error removing flag file: {e}")
+            files_extra = {"extra": (request.files["extra"].filename, request.files["extra"].stream, request.files["extra"].mimetype)} if "extra" in request.files and request.files["extra"].filename != "" else None
+
+            tree = ET.parse(simulation_path + "/" + file_bpmn["bpmn_file"][0])
+            root = tree.getroot()
+            diagbpTag = root.find('.//' + TAG_NAME)
+            if diagbpTag is not None:
+                print("DA GESTIRE FOUND DIAGBP")
+                # TODO: gestire diagbp
+                # probabilmente dovrei prima estrarre dal XML e poi produrre i json necessari 
+                # o il json necessario per poi mandarlo il simulator
+                # per ora non gestisco
+            elif files_extra:
+                # TODO: gestire extra
+                # probabilmente dovrei estrarre solo il json dal XML
+                # e usarlo per mandarlo al simulator
+                # per ora non gestisco
+                parser = BpmnParser()
+                parser_output = parser.process_bpmn(bpmn_path, files_extra)
+                if parser_output:
+                    with open(bpmn_path+".json", "rb") as f:
+                        file_bpmn_json_saved = {"bpmn_file": (file_bpmn["bpmn_file"][0]+".json", f, file_bpmn["bpmn_file"][2])}
+
+                if files_extra:
+                    extra_path = os.path.join(UPLOAD_FOLDER, files_extra["extra"][0])
+                    with open(extra_path, "wb") as f:
+                        f.write(files_extra["extra"][1].read())
+                    file_extra_saved = open(extra_path, "rb")
+                    files_extra["extra"] = (files_extra["extra"][0], file_extra_saved, files_extra["extra"][2])
+
+                files = {"bpmn_file": file_bpmn["bpmn_file"]}
+                if files_extra:
+                    files["extra"] = files_extra["extra"]
+                    print("DA GESTIRE FOUND EXTRA")
+                extra_filename = files_extra["extra"][0] if files_extra and "extra" in files_extra else None
+            else:
+                print("NESSUN PARAMETRO DI CONFIG")
+                parser = BpmnParser()
+                parser_output = parser.generate_json_from_bpmn(simulation_path, file_bpmn_no_ext, file_bpmn["bpmn_file"][0])
+                if parser_output:
+                    print(f"redirecting to parameters with simulation_path: {simulation_path}, simulation_no_ext: {file_bpmn_no_ext}")
+                    return redirect(url_for('parameters',
+                                simulation_path=simulation_path,
+                                simulation_no_ext=file_bpmn_no_ext,
+                                flag_extra=0))
+                else:
                     return render_template('index.html')
 
-            return render_template('index.html')
-
-    # try:
-    #     response = requests.post(SIMULATOR_URL, files=files)
-    #     return response.text
-    # except requests.exceptions.RequestException as e:
-    #     return f"Error connecting to Simulator: {str(e)}", 500
-
+    except OSError as e:
+        print("Error saving files: ", e)
+        return render_template('index.html')
 
 @app.route('/simulatorResults')
 def simulator_results():
-    return render_template('simulatorResults.html')
+    simulation_path = request.args.get('simulation_path')
+    return render_template('simulatorResults.html', simulation_path=simulation_path)
 
 @app.route('/extractorResults')
 def extractor_results():
@@ -170,10 +143,26 @@ def extractor_results():
 
 @app.route('/parameters', methods=['GET', 'POST'])
 def parameters():
-    bpmn_filename = os.listdir(PREUPLOAD_FOLDER)[0]
-    with open(os.path.join(JSON_FOLDER, "bpmn.json"), 'r') as f:
+    # Get parameters based on request method
+    if request.method == 'GET':
+        simulation_path = request.args.get('simulation_path')
+        simulation_no_ext = request.args.get('simulation_no_ext')
+        flag_extra = request.args.get('flag_extra')
+    else:  # POST
+        simulation_path = request.form.get('simulation_path')
+        simulation_no_ext = request.form.get('simulation_no_ext')
+        flag_extra = request.form.get('flag_extra')
+    
+    # Try to read the bpmn_dict file
+    bpmn_json_path = os.path.join(simulation_path, simulation_no_ext + ".json")
+    with open(bpmn_json_path, 'r') as f:
         bpmn_dict = json.load(f)
 
+    if flag_extra == 1:
+        extra_path = os.path.join(simulation_path, "extra.json")
+        with open(extra_path, 'r') as f:
+            extra = json.load(f)
+    
     if request.method == 'POST':
         diagbp_data = {
             "processInstances": [],
@@ -192,7 +181,7 @@ def parameters():
             "catchEvents": {}
         }
 
-         # Process instance types
+        timetable_data = {}
         for key, value in request.form.items():
             if key.startswith('instance_type_'):
                 instance_type = value
@@ -203,11 +192,7 @@ def parameters():
                     "type": instance_type,
                     "count": instance_count
                 })
-
-        # Timetables
-        timetable_data = {}  # Temporary dictionary to hold timetable data
-        for key, value in request.form.items():
-            if key.startswith('rule_from_time_'):
+            elif key.startswith('rule_from_time_'):
                 parts = key.split('_')
                 timetable_index = int(parts[3])  # Get the timetable index
                 rule_index = int(parts[4])        # Get the rule index
@@ -226,33 +211,25 @@ def parameters():
                     "fromWeekDay": request.form.get(f'rule_from_day_{timetable_index}_{rule_index}'),
                     "toWeekDay": request.form.get(f'rule_to_day_{timetable_index}_{rule_index}')
                 })
-
-        # Now, add the timetables to diagbp_data in the correct order
-        diagbp_data["timetables"] = list(timetable_data.values()) 
-
-
-        # Process resources 
-        for key, value in request.form.items():
-            if key.startswith('resource_name_'):
+            elif key.startswith('resource_name_'):
                 resource_index = key.split("_")[2]  # Extract the resource index from the key
-
                 resource_name = value 
                 resource_amount = request.form.get(f'resource_amount_{resource_index}')
                 resource_cost = request.form.get(f'resource_cost_{resource_index}')
                 resource_timetable = request.form.get(f'resource_timetable_{resource_index}')
 
-                # Setup Time parameters
                 setup_time_type = request.form.get(f'resource_{resource_index}_setupTimeType')
                 setup_time_mean = request.form.get(f'resource_{resource_index}_setupTimeMean')
                 setup_time_arg1 = request.form.get(f'resource_{resource_index}_setupTimeArg1')
                 setup_time_arg2 = request.form.get(f'resource_{resource_index}_setupTimeArg2')
                 setup_time_unit = request.form.get(f'resource_{resource_index}_setupTimeUnit')
                 max_usage = request.form.get(f'resource_maxUsage_{resource_index}')
+
                 if str(setup_time_mean)=="":
                     setup_time_type=""
                     setup_time_unit=""
-
-                diagbp_data["resources"].append({
+                
+                resource_data = {
                     "name": resource_name,
                     "totalAmount": resource_amount,
                     "costPerHour": resource_cost,
@@ -264,121 +241,123 @@ def parameters():
                         "arg2": setup_time_arg2,
                         "timeUnit": setup_time_unit
                     },
-                    "maxUsage": max_usage 
-                })
+                    "maxUsage": max_usage
+                }
+                diagbp_data["resources"].append(resource_data)
 
-        # Process elements (including those within subprocesses - iterative approach)
-        for process_id, process_data in bpmn_dict['process_elements'].items():
-            nodes_to_process = [(node_id, node_data) for node_id, node_data in process_data['node_details'].items()]
-            while nodes_to_process:
-                node_id, node_data = nodes_to_process.pop()
+        # Now, add the timetables to diagbp_data in the correct order
+        diagbp_data["timetables"] = list(timetable_data.values()) 
 
-                if node_data['type'] == 'task':
-                    durationThreshold= request.form.get(f'durationThreshold_{node_id}', '')
-                    duration_threshold_time_unit = request.form.get(f'durationThresholdTimeUnit_{node_id}', 'seconds')
-                    if durationThreshold=='':
-                        duration_threshold_time_unit = ''
-                    # Process task element
-                    element_data = {
+        nodes_to_process = []
+        if 'process_elements' in bpmn_dict:
+            for process_id, process_data in bpmn_dict['process_elements'].items():
+                nodes_to_process.extend([(node_id, node_data) for node_id, node_data in process_data['node_details'].items()])
+
+        while nodes_to_process:
+            node_id, node_data = nodes_to_process.pop(0)
+            if node_data['type'] == 'subprocess':
+                nodes_to_process.extend([(sub_node_id, sub_node_data) for sub_node_id, sub_node_data in node_data['subprocess_details'].items()])
+            elif node_data['type'] == 'task':
+                duration_type = request.form.get(f'durationType_{node_id}', 'FIXED')
+                duration_mean = request.form.get(f'durationMean_{node_id}', '')
+                duration_arg1 = request.form.get(f'durationArg1_{node_id}', '')
+                duration_arg2 = request.form.get(f'durationArg2_{node_id}', '')
+                duration_time_unit = request.form.get(f'durationTimeUnit_{node_id}', 'seconds')
+
+                duration_threshold = request.form.get(f'durationThreshold_{node_id}', '')
+                duration_threshold_time_unit = request.form.get(f'durationThresholdTimeUnit_{node_id}', 'seconds') if duration_threshold else ''
+
+                element_data = {
                         "elementId": node_id,
                         "worklistId": request.form.get(f'worklistId_{node_id}', ''),
                         "fixedCost": request.form.get(f'fixedCost_{node_id}', ''),
                         "costThreshold": request.form.get(f'costThreshold_{node_id}', ''),
                         "durationDistribution": {
-                            "type": request.form.get(f'durationType_{node_id}', 'FIXED'),
-                            "mean": request.form.get(f'durationMean_{node_id}', ''),
-                            "arg1": request.form.get(f'durationArg1_{node_id}', ''),
-                            "arg2": request.form.get(f'durationArg2_{node_id}', ''),
-                            "timeUnit": request.form.get(f'durationTimeUnit_{node_id}', 'seconds')
+                            "type": duration_type,
+                            "mean": duration_mean,
+                            "arg1": duration_arg1,
+                            "arg2": duration_arg2,
+                            "timeUnit": duration_time_unit
                         },
-                        "durationThreshold":durationThreshold,
+                        "durationThreshold": duration_threshold,
                         "durationThresholdTimeUnit": duration_threshold_time_unit,
                         "resourceIds": []
                     }
-
-                    # Process resources for the current element
-                    i = 1
-                    while request.form.get(f'resourceName_{i}_{node_id}'):
-                        resource_name = request.form.get(f'resourceName_{i}_{node_id}')
-                        amount_needed = request.form.get(f'amountNeeded_{i}_{node_id}')
-                        group_id = request.form.get(f'groupId_{i}_{node_id}','1')
-                        if resource_name and amount_needed:
+                i = 1
+                while request.form.get(f'resourceName_{i}_{node_id}'):
+                    resource_name = request.form.get(f'resourceName_{i}_{node_id}')
+                    amount_needed = request.form.get(f'amountNeeded_{i}_{node_id}')
+                    group_id = request.form.get(f'groupId_{i}_{node_id}','1')
+                    if resource_name and amount_needed:
                             element_data["resourceIds"].append({
                                 "resourceName": resource_name,
                                 "amountNeeded": amount_needed,
                                 "groupId": group_id
                             })
-                        i += 1
-                    diagbp_data["elements"].append(element_data)
+                    i += 1
+                diagbp_data["elements"].append(element_data)
+            elif node_data['type'] in ['intermediateCatchEvent', 'startEvent'] and \
+            node_data.get('subtype') not in ['messageEventDefinition', None]:
+                diagbp_data["catchEvents"][node_id] = {
+                    "type": request.form.get(f'catchEventDurationType_{node_id}', 'FIXED'),
+                    "mean": request.form.get(f'catchEventDurationMean_{node_id}', ''),
+                    "arg1": request.form.get(f'catchEventDurationArg1_{node_id}', ''),
+                    "arg2": request.form.get(f'catchEventDurationArg2_{node_id}', ''),
+                    "timeUnit": request.form.get(f'catchEventDurationTimeUnit_{node_id}', 'seconds')
+                }
 
-                elif node_data['type'] == 'subProcess':
-                    # Add subprocess tasks to the nodes_to_process list
-                    for sub_node_id, sub_node_data in node_data['subprocess_details'].items():
-                        nodes_to_process.append((sub_node_id, sub_node_data))
-
-
-
-        # Process sequence flows
-        for flow_id in bpmn_dict['sequence_flows']:
-            execution_probability = request.form.get(f'executionProbability_{flow_id}')
-            if execution_probability is None:  # Skip if not provided
-                continue 
-            forced_instance_types = []
-            i = 1
-            while request.form.get(f'forcedInstanceType_{flow_id}_{i}'):
-                forced_instance_type = request.form.get(f'forcedInstanceType_{flow_id}_{i}')
-                if forced_instance_type: 
+        if 'sequence_flows' in bpmn_dict:
+            for flow_id in bpmn_dict['sequence_flows']:
+                execution_probability = request.form.get(f'executionProbability_{flow_id}')
+                if execution_probability is None:  # Skip if not provided
+                    continue 
+                forced_instance_types = []
+                i = 1
+                while True:
+                    forced_instance_type = request.form.get(f'forcedInstanceType_{flow_id}_{i}')
+                    if not forced_instance_type:
+                        break
                     forced_instance_types.append({"type": forced_instance_type})
-                i += 1
+                    i += 1
 
-            diagbp_data["sequenceFlows"].append({
-                "elementId": flow_id,
-                "executionProbability": execution_probability,
-                "types": forced_instance_types
-            })
+                diagbp_data["sequenceFlows"].append({
+                    "elementId": flow_id,
+                    "executionProbability": execution_probability,
+                    "types": forced_instance_types
+                })
             
-        # Process catch events (iterative approach)
-        for process_id, process_data in bpmn_dict['process_elements'].items():
-            nodes_to_process = [(node_id, node_data) for node_id, node_data in process_data['node_details'].items()]
-            while nodes_to_process:
-                node_id, node_data = nodes_to_process.pop()
-                if node_data['type'] in ['intermediateCatchEvent', 'startEvent'] and \
-                   node_data.get('subtype') not in ['messageEventDefinition', None]:
-                    diagbp_data["catchEvents"][node_id] = {
-                        "type": request.form.get(f'catchEventDurationType_{node_id}', 'FIXED'),
-                        "mean": request.form.get(f'catchEventDurationMean_{node_id}', ''),
-                        "arg1": request.form.get(f'catchEventDurationArg1_{node_id}', ''),
-                        "arg2": request.form.get(f'catchEventDurationArg2_{node_id}', ''),
-                        "timeUnit": request.form.get(f'catchEventDurationTimeUnit_{node_id}', 'seconds')
-                    }
-                elif node_data['type'] == 'subProcess':
-                    for sub_node_id, sub_node_data in node_data['subprocess_details'].items():
-                        nodes_to_process.append((sub_node_id, sub_node_data))
 
-        # Logging option
+
+        # realize the diagbp file corresponding to simulation parameters
         diagbp_data["logging_opt"] = request.form.get('logging_opt', 0)  # Default to 0 (disabled)
         diagbp_json = json.dumps(diagbp_data, indent=4)
+        with open(os.path.join(simulation_path, 'extra.json'), 'w') as extra_file:
+            extra_file.write(diagbp_json)
 
-        source_path = os.path.join(PREUPLOAD_FOLDER, bpmn_filename)
-        destination_path = os.path.join(UPLOAD_FOLDER, bpmn_filename)
-        with open(source_path, 'r') as bpmn_file:
+        #read the bpmn file
+        destination_path = os.path.join(simulation_path, simulation_no_ext + ".bpmn")
+        with open(destination_path, 'r') as bpmn_file:
             bpmn_content = bpmn_file.read()
 
+        #insert the diagbp json in the bpmn file
         with open(destination_path, 'w') as file:
             bpmn_content = bpmn_content.replace('</bpmn:definitions>', f'<diagbp>{diagbp_json}</diagbp>\n</bpmn:definitions>')
             file.write(bpmn_content)
-        os.remove(source_path)  
+        
+        values = {"simulation_path": simulation_path,
+            "simulation_no_ext": simulation_no_ext}
 
-        # Riapri il file modificato per inviarlo al simulatore
-        with open(destination_path, 'rb') as f:
-            file_bpmn = {"bpmn_file": (bpmn_filename, f, 'application/xml')}
-            
-            # Invia il file al simulatore
-            response = requests.post(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/", files=file_bpmn)
+        try:    
+            response = requests.post(f"http://{app.config['SIMULATOR_ADDRESS']}:{app.config['SIMULATOR_PORT']}/", data=values)
+            return redirect(url_for('simulator_results', simulation_path=simulation_path))
+        except requests.exceptions.RequestException as e:
+            print(f"-----ERROR-----: {e}")
+            return render_template('index.html')
 
-        return redirect(url_for('simulator_results'))
-
-    return render_template('parameters.html', bpmn_dict=bpmn_dict)
+    if flag_extra:
+        return render_template('parameters.html', simulation_path=simulation_path, simulation_no_ext=simulation_no_ext, flag_extra=1, bpmn_dict=bpmn_dict)
+    else:
+        return render_template('parameters.html', simulation_path=simulation_path, simulation_no_ext=simulation_no_ext, flag_extra=0, bpmn_dict=bpmn_dict)
 
 @app.route('/download_extractor')
 def download_extractor():
@@ -406,38 +385,28 @@ def download_extractor():
     return response 
    
 
-@app.route('/download_logs')
-def download_logs():
-    # 1. Create the ZIP archive
+@app.route('/download_simulator')
+def download_simulator():
+    simulation_path = request.args.get('simulation_path')
     zip_filename = 'simulation_logs.zip'
-    zip_path = os.path.join(LOGS_FOLDER, zip_filename)
+    zip_path = os.path.join(simulation_path, zip_filename)
     if os.path.isfile(zip_path): 
         os.remove(zip_path)
     
     with zipfile.ZipFile(zip_path, 'w') as zf:
-        for filename in os.listdir(LOGS_FOLDER):
-            if filename != zip_filename: # Don't add the zip itself
-                file_path = os.path.join(LOGS_FOLDER, filename)
-                zf.write(file_path, arcname=filename)  # Add file to archive
+        for root, _, files in os.walk(simulation_path):
+            for filename in files:
+                file_path = os.path.join(root, filename)
+                # Exclude the ZIP file itself
+                if file_path == zip_path:
+                    continue
+                # Preserve directory structure inside ZIP
+                archive_name = os.path.relpath(file_path, simulation_path)
+                zf.write(file_path, arcname=archive_name)
 
-    # 2. Send the ZIP file for download
-    response = send_from_directory(LOGS_FOLDER, zip_filename, as_attachment=True)
+    response = send_from_directory(simulation_path, zip_filename, as_attachment=True)
 
     return response 
-
-@app.route('/download_bpmn_with_parameters')
-def download_bpmn_with_parameters():
-    for filename in os.listdir(DOWNLOAD_FOLDER):
-        if filename.endswith('.bpmn'):
-            return send_from_directory(DOWNLOAD_FOLDER, filename, as_attachment=True)
-    return "BPMN file not found", 404
-
-@app.route('/download_extra_json')
-def download_extra_json():
-    for filename in os.listdir(DOWNLOAD_FOLDER):
-        if filename.endswith('.json'):
-            return send_from_directory(DOWNLOAD_FOLDER, filename, as_attachment=True)
-    return "JSON file not found", 404
 
 
 @app.errorhandler(404)
@@ -455,8 +424,7 @@ def internal_server_error(error):
 
 @app.errorhandler(Exception)
 def handle_exception(error):
-    # Generic error handler for all other exceptions
     return jsonify({"error": str(error)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host=app.config["HOST_ADDRESS"], port=app.config["HOST_PORT"])
+    app.run(debug=True, host=app.config["HOST_ADDRESS"], port=app.config["HOST_PORT"], use_reloader=True)

@@ -279,6 +279,7 @@ class ProcessXesFile():
             print(f"Iniziando processamento file: {self.file_path}")
 
             self.load_xes_file()
+            self.validate_inputs()
 
             self.initialize_preprocessing()
 
@@ -312,3 +313,18 @@ class ProcessXesFile():
                 'error': error_msg,
                 'file_processed': self.file_name
             }
+
+    def validate_inputs(self):
+        if self.log is None or self.log.empty:
+            raise ValueError("Log non può essere vuoto")
+            
+            
+        # Verifica colonne necessarie
+        required_columns = [TAG_ACTIVITY_NAME, TAG_TRACE_ID, TAG_TIMESTAMP, TAG_LIFECYCLE]
+        missing_columns = [col for col in required_columns if col not in self.log.columns]
+        if missing_columns:
+            print(f"Colonne mancanti nel log: {missing_columns}")
+            if TAG_LIFECYCLE in missing_columns:
+                print("Aggiungo colonna lifecycle")
+                for trace_id, trace_group in self.log.groupby(TAG_TRACE_ID):
+                    self.log.loc[trace_group.index, TAG_LIFECYCLE] = "complete"

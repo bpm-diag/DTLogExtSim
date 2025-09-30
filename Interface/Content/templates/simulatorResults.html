@@ -9,12 +9,11 @@
 </head>
 <body>
     <div class="container">
+        <input type="hidden" id="simulation_path" value="{{ simulation_path }}">
         <h1 class="text-center mt-5">Simulation Complete!</h1>
         <p class="text-center">Your simulation is complete. Download the logs below:</p>
         <div class="text-center">
-            <a href="{{ url_for('download_logs') }}" class="btn btn-primary">Download Logs</a>
-            <a href="{{ url_for('download_bpmn_with_parameters') }}" class="btn btn-secondary">Download BPMN with parameters</a>
-            <a href="{{ url_for('download_extra_json') }}" class="btn btn-secondary">Download extra.json</a> 
+            <a href="{{ url_for('download_simulator' , simulation_path=simulation_path) }}" class="btn btn-primary">Download Simulator Results</a>
         </div>
         <br><br>
         <div class="text-center">

@@ -3,11 +3,8 @@ services:
     build:
       context: ./Simulator
     volumes:   
-      - uploads:/app/shared
-      - logs:/app/logs
-      - json:/app/json
+      - uploads:/app/uploads
       - download:/app/download
-      - preupload:/app/preupload
     ports:
       - "6661:6661"
     networks:
@@ -18,11 +15,8 @@ services:
     build:
       context: ./Extractor
     volumes:   
-      - uploads:/app/shared
-      - logs:/app/logs
-      - json:/app/json
+      - uploads:/app/uploads
       - download:/app/download
-      - preupload:/app/preupload
       - extractor:/app/extractor
     ports:
       - "6662:6662"
@@ -36,10 +30,7 @@ services:
       context: ./Interface
     volumes:
       - uploads:/app/uploads
-      - logs:/app/logs
-      - json:/app/json
       - download:/app/download
-      - preupload:/app/preupload
       - extractor:/app/extractor
     ports:
       - "6660:6660"
@@ -60,9 +51,7 @@ services:
 volumes:
   uploads:
   logs:
-  json:
   download:
-  preupload:
   extractor:
 
 networks:

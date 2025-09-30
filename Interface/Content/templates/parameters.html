@@ -27,6 +27,9 @@
         <p class="mb-5">Attention: giving the same worklistId to tasks that use different resources will result in the simulation crashing. Only give a worklistId to tasks using identical resources</p>
 
         <form method="POST" action="{{ url_for('parameters') }}" class="mt-4">
+            <input type="hidden" name="simulation_path" value="{{ simulation_path if simulation_path else '' }}">
+            <input type="hidden" name="simulation_no_ext" value="{{ simulation_no_ext if simulation_no_ext else '' }}">
+            <input type="hidden" name="flag_extra" value="{{ flag_extra if flag_extra else '' }}">
             <div class="form-group">
                 <label for="inter_arrival_time_type">Inter Arrival Time Type:</label>
                 <select id="inter_arrival_time_type" name="inter_arrival_time_type" class="form-control">

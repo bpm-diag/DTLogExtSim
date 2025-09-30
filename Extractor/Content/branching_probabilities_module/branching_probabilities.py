@@ -63,7 +63,7 @@ class BranchProbCalculation:
         self._find_successor_tasks = find_successor_tasks.__get__(self)
         self._find_predecessor_tasks = find_predecessor_tasks.__get__(self)
 
-        self._nodes_math = nodes_match.__get__(self)
+        self._nodes_match = nodes_match.__get__(self)
         self._resolve_target_gateways = resolve_target_gateways.__get__(self)
         self._resolve_source_gateways = resolve_source_gateways.__get__(self)
 
