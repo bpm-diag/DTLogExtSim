@@ -86,34 +86,32 @@ def use_simulator():
             root = tree.getroot()
             diagbpTag = root.find('.//' + TAG_NAME)
             if diagbpTag is not None:
-                print("DA GESTIRE FOUND DIAGBP")
-                # TODO: gestire diagbp
-                # probabilmente dovrei prima estrarre dal XML e poi produrre i json necessari 
-                # o il json necessario per poi mandarlo il simulator
-                # per ora non gestisco
-            elif files_extra:
-                # TODO: gestire extra
-                # probabilmente dovrei estrarre solo il json dal XML
-                # e usarlo per mandarlo al simulator
-                # per ora non gestisco
+                print("FOUND DIAGBP")
                 parser = BpmnParser()
-                parser_output = parser.process_bpmn(bpmn_path, files_extra)
+                parser_output = parser.generate_json_from_bpmn_diag(simulation_path, file_bpmn_no_ext, file_bpmn["bpmn_file"][0])
                 if parser_output:
-                    with open(bpmn_path+".json", "rb") as f:
-                        file_bpmn_json_saved = {"bpmn_file": (file_bpmn["bpmn_file"][0]+".json", f, file_bpmn["bpmn_file"][2])}
-
-                if files_extra:
-                    extra_path = os.path.join(UPLOAD_FOLDER, files_extra["extra"][0])
-                    with open(extra_path, "wb") as f:
-                        f.write(files_extra["extra"][1].read())
-                    file_extra_saved = open(extra_path, "rb")
-                    files_extra["extra"] = (files_extra["extra"][0], file_extra_saved, files_extra["extra"][2])
-
-                files = {"bpmn_file": file_bpmn["bpmn_file"]}
-                if files_extra:
-                    files["extra"] = files_extra["extra"]
-                    print("DA GESTIRE FOUND EXTRA")
-                extra_filename = files_extra["extra"][0] if files_extra and "extra" in files_extra else None
+                    print(f"redirecting to parameters with simulation_path: {simulation_path}, simulation_no_ext: {file_bpmn_no_ext}")
+                    return redirect(url_for('parameters',
+                                simulation_path=simulation_path,
+                                simulation_no_ext=file_bpmn_no_ext,
+                                flag_extra=1))
+                else:
+                    return render_template('index.html')
+            elif files_extra:
+                print("FOUND EXTRA")
+                parser = BpmnParser()
+                parser_output = parser.generate_json_from_bpmn(simulation_path, file_bpmn_no_ext, file_bpmn["bpmn_file"][0])
+                extra_path = os.path.join(simulation_path, "extra.json")
+                with open(extra_path, "wb") as f:
+                    f.write(files_extra["extra"][1].read())
+                if parser_output:
+                    print(f"redirecting to parameters with simulation_path: {simulation_path}, simulation_no_ext: {file_bpmn_no_ext}")
+                    return redirect(url_for('parameters',
+                                simulation_path=simulation_path,
+                                simulation_no_ext=file_bpmn_no_ext,
+                                flag_extra=1))
+                else:
+                    return render_template('index.html')
             else:
                 print("NESSUN PARAMETRO DI CONFIG")
                 parser = BpmnParser()
@@ -147,11 +145,11 @@ def parameters():
     if request.method == 'GET':
         simulation_path = request.args.get('simulation_path')
         simulation_no_ext = request.args.get('simulation_no_ext')
-        flag_extra = request.args.get('flag_extra')
+        flag_extra = int(request.args.get('flag_extra'))
     else:  # POST
         simulation_path = request.form.get('simulation_path')
         simulation_no_ext = request.form.get('simulation_no_ext')
-        flag_extra = request.form.get('flag_extra')
+        flag_extra = int(request.form.get('flag_extra'))
     
     # Try to read the bpmn_dict file
     bpmn_json_path = os.path.join(simulation_path, simulation_no_ext + ".json")
@@ -160,6 +158,7 @@ def parameters():
 
     if flag_extra == 1:
         extra_path = os.path.join(simulation_path, "extra.json")
+        print(extra_path)
         with open(extra_path, 'r') as f:
             extra = json.load(f)
     
@@ -333,16 +332,16 @@ def parameters():
         diagbp_json = json.dumps(diagbp_data, indent=4)
         with open(os.path.join(simulation_path, 'extra.json'), 'w') as extra_file:
             extra_file.write(diagbp_json)
+        if flag_extra != 1:
+            #read the bpmn file
+            destination_path = os.path.join(simulation_path, simulation_no_ext + ".bpmn")
+            with open(destination_path, 'r') as bpmn_file:
+                bpmn_content = bpmn_file.read()
 
-        #read the bpmn file
-        destination_path = os.path.join(simulation_path, simulation_no_ext + ".bpmn")
-        with open(destination_path, 'r') as bpmn_file:
-            bpmn_content = bpmn_file.read()
-
-        #insert the diagbp json in the bpmn file
-        with open(destination_path, 'w') as file:
-            bpmn_content = bpmn_content.replace('</bpmn:definitions>', f'<diagbp>{diagbp_json}</diagbp>\n</bpmn:definitions>')
-            file.write(bpmn_content)
+            #insert the diagbp json in the bpmn file
+            with open(destination_path, 'w') as file:
+                bpmn_content = bpmn_content.replace('</bpmn:definitions>', f'<diagbp>{diagbp_json}</diagbp>\n</bpmn:definitions>')
+                file.write(bpmn_content)
         
         values = {"simulation_path": simulation_path,
             "simulation_no_ext": simulation_no_ext}
@@ -354,8 +353,8 @@ def parameters():
             print(f"-----ERROR-----: {e}")
             return render_template('index.html')
 
-    if flag_extra:
-        return render_template('parameters.html', simulation_path=simulation_path, simulation_no_ext=simulation_no_ext, flag_extra=1, bpmn_dict=bpmn_dict)
+    if flag_extra == 1:
+        return render_template('parameters.html', simulation_path=simulation_path, simulation_no_ext=simulation_no_ext, flag_extra=1, bpmn_dict=bpmn_dict, extra=extra)
     else:
         return render_template('parameters.html', simulation_path=simulation_path, simulation_no_ext=simulation_no_ext, flag_extra=0, bpmn_dict=bpmn_dict)
 
