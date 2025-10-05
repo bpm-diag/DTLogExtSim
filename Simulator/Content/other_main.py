@@ -12,7 +12,7 @@ import csv
 import threading
 
 
-def main(loader, csv_log_path):
+def main(loader, csv_log_path, scenario_idx, rep_idx):
     print("Starting Simulator Processing")
 
     logging_opt = loader.extra_data['logging_opt']
@@ -142,7 +142,7 @@ def main(loader, csv_log_path):
     dataframe = pm4py.format_dataframe(dataframe, case_id='traceId', activity_key='activity', timestamp_key='timestamp')
     event_log = pm4py.convert_to_event_log(dataframe)
 
-    csv_file_extra = loader.simulation_path + "/logExtra.csv"
+    csv_file_extra = loader.simulation_path + "/" + scenario_idx + "/" + rep_idx + "/logExtra.csv"
     combined_dict = {}
     for k, v in taskCosts.items():
         combined_dict[f'cost of the tasks of instance ({k})'] = v
@@ -168,7 +168,7 @@ def main(loader, csv_log_path):
         # Redirect sys.stdout to /dev/null to suppress the output
         sys.stdout = open(os.devnull, 'w')    
         # Call the pm4py.write_xes function
-        pm4py.write_xes(event_log, loader.simulation_path + "/log.xes")
+        pm4py.write_xes(event_log, loader.simulation_path + "/" + scenario_idx + "/" + rep_idx + "/log.xes")
     finally:
         # Close the temporary file and restore the original stdout
         sys.stdout.close()
@@ -184,20 +184,22 @@ if __name__ == "__main__":
 
     simulation_path = sys.argv[1]
     simulation_no_ext = sys.argv[2]
+    scenario_idx = sys.argv[3]
+    rep_idx = sys.argv[4]
     extra_path=simulation_path + "/extra.json"
     process_path=simulation_path + "/" + simulation_no_ext + ".json"
-    csv_log_path=simulation_path + "/log.csv"
+    csv_log_path=simulation_path + "/" + scenario_idx + "/" + rep_idx + "/log.csv"
 
     parsingAgain.parse_again(process_path)
 
-    loader = BPMNHandler(simulation_path, simulation_no_ext, extra_path, process_path)
+    loader = BPMNHandler(simulation_path, simulation_no_ext, extra_path, process_path, scenario_idx)
     try:
         loader.load_configuration_files()
     except ValueError as e:
         print(f"-----ERROR-----: {e}")
         raise ValueError(e)
     try:
-        main(loader, csv_log_path)
+        main(loader, csv_log_path, scenario_idx, rep_idx)
     except ValueError as e:
         print(f"-----ERROR-----: {e}")
         raise ValueError(e)

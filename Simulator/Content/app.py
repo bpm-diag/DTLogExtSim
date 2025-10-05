@@ -11,9 +11,10 @@ def index():
     if request.method == "POST":
         simulation_path = request.form.get("simulation_path")
         simulation_no_ext = request.form.get("simulation_no_ext")
+        scenario_idx = request.form.get("scenario_idx")
+        rep_idx = request.form.get("rep_idx")
         try:
-            # cmd = ["python", "main.py", simulation_path, simulation_no_ext]
-            cmd = ["python", "other_main.py", simulation_path, simulation_no_ext]
+            cmd = ["python", "other_main.py", simulation_path, simulation_no_ext, scenario_idx, rep_idx]
             try:
                 process = subprocess.run(
                     cmd,

@@ -1,0 +1,49 @@
+.scenario-tab-content {
+    border: 1px solid #dee2e6;
+    border-top: none;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+.box {
+    border: 2px solid #ced4da;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    margin-bottom: 20px;
+}
+.scenario-name-input {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.tab-close-btn {
+    font-size: 1.2rem;
+    margin-left: 8px;
+    padding: 0;
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    line-height: 1;
+    font-weight: bold;
+}
+.tab-close-btn:hover {
+    color: #bb2d3b;
+}
+.nav-tabs .nav-link {
+    display: flex;
+    align-items: center;
+}
+.instance-group, .timetable-group, .resource-group {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #fafafa;
+    position: relative;
+}
+.remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

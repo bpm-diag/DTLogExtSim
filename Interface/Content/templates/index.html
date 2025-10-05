@@ -77,6 +77,22 @@
                                 <input type="file" class="form-control-file" id="extra_simulator" name="extra">
                             </div>
 
+                            <div class="form-group my-4">
+                                <label for="number_of_repetitions">Number of Repetitions (Optional, default=1):</label>
+                                <!-- avoid typing negative values and non-numeric characters  and no decimals-->
+                                <input type="number" class="form-control" id="number_of_repetitions" name="number_of_repetitions" placeholder="1" value="1" min="1" >
+                                <script>
+                                    document.getElementById("number_of_repetitions").addEventListener("input", function (event) {
+                                        if (event.target.value < 1) {
+                                            event.target.value = 1;
+                                        }
+                                        event.target.value = event.target.value.replace(/[^0-9]/g, '');
+                                        event.target.value = event.target.value.replace(/\./g, '');
+                                        event.target.value = event.target.value.replace(/,/g, '');
+                                    });
+                                </script>
+                            </div>
+
                             <button type="submit" class="btn btn-success btn-block">Send to Simulator</button>
                         </form>
                     </div>

@@ -2,11 +2,12 @@ import json
 
 
 class BPMNHandler:
-    def __init__(self, simulation_path, simulation_no_ext, extra_path, process_path):
+    def __init__(self, simulation_path, simulation_no_ext, extra_path, process_path, scenario_idx):
         self.simulation_path = simulation_path
         self.simulation_no_ext = simulation_no_ext
         self.extra_path = extra_path
         self.process_path = process_path
+        self.scenario_idx = scenario_idx
 
         self.process_data = None
         self.extra_data = None
@@ -29,6 +30,9 @@ class BPMNHandler:
         try:
             with open(self.extra_path, 'r') as file:
                 self.extra_data = json.load(file)
+                logging_opt = self.extra_data['logging_opt']
+                self.extra_data = self.extra_data[str(self.scenario_idx)]
+                self.extra_data['logging_opt'] = logging_opt
         except FileNotFoundError:
             print(f"-----ERROR-----: extra file not found")
             raise ValueError("-----ERROR-----: extra file not found")
