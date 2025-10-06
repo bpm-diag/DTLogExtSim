@@ -144,7 +144,7 @@ function updateActivityTimeDistribution(elementId, scenarioIndex) {
 
     
     const selectedType = typeSelect.value;
-    const elementGroup = document.querySelector(`#scenario-${scenarioIndex} .element-group`);
+    const elementGroup = typeSelect.closest('.element-group');
     
     // Trova i container dei parametri
     const meanContainer = elementGroup.querySelector('.form-group:has(input[id$="_durationMean_' + elementId + '"])');

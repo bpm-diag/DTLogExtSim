@@ -21,11 +21,11 @@ TAG_NAME = "diagbp"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    for filename in os.listdir(UPLOAD_FOLDER): # remove old log files
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
-        #remove also folder and files inside it
-        if os.path.isdir(file_path):
-            shutil.rmtree(file_path)
+    # for filename in os.listdir(UPLOAD_FOLDER): # remove old log files
+    #     file_path = os.path.join(UPLOAD_FOLDER, filename)
+    #     #remove also folder and files inside it
+    #     if os.path.isdir(file_path):
+    #         shutil.rmtree(file_path)
 
     for filename in os.listdir(DOWNLOAD_FOLDER): # remove old log files
         file_path = os.path.join(DOWNLOAD_FOLDER, filename)
@@ -223,7 +223,7 @@ def parameters():
                         "toWeekDay": request.form.get(f'scenario_{i}_rule_to_day_{timetable_index}_{rule_index}')
                     })
                 elif key.startswith(f'scenario_{i}_resource_name_'):
-                    resource_index = key.split("_")[3]  # Extract the resource index from the key
+                    resource_index = key.split("_")[4]  # Extract the resource index from the key
                     resource_name = value 
                     resource_amount = request.form.get(f'scenario_{i}_resource_amount_{resource_index}')
                     resource_cost = request.form.get(f'scenario_{i}_resource_cost_{resource_index}')
@@ -362,6 +362,14 @@ def parameters():
         
 
         try:
+            # Prima di creare la struttura, pulisci le cartelle esistenti
+            # Mantieni solo i file nella root del simulation_path
+            for item in os.listdir(simulation_path):
+                item_path = os.path.join(simulation_path, item)
+                # Elimina solo se è una directory
+                if os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+                    print(f"Removed directory: {item_path}")
             # Crea la struttura di cartelle S×R
             for scenario_idx in range(number_of_scenarios):
                 scenario_folder = os.path.join(simulation_path, str(scenario_idx))
