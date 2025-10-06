@@ -40,6 +40,17 @@ function addScenario() {
     
     // Aggiorna gli ID dei container
     updateContainerIds(templateContent, scenarioIndex);
+
+    // Aggiorna i data attributes per le distribuzioni temporali
+    const durationSelects = templateContent.querySelectorAll('.duration-type');
+    durationSelects.forEach(select => {
+        select.setAttribute('data-scenario', scenarioIndex);
+    });
+
+    const catchEventSelects = templateContent.querySelectorAll('.catch-event-duration-type');
+    catchEventSelects.forEach(select => {
+        select.setAttribute('data-scenario', scenarioIndex);
+    });
     
     // Pulisci i container dinamici (instances, timetables, resources)
     clearDynamicContainers(templateContent, scenarioIndex);
@@ -291,6 +302,19 @@ function renumberScenarios() {
     elementResourceCounters = newCounters.elementResources;
     
     scenarioCount = newTabs.length;
+
+    // Aggiorna i data attributes per ogni scenario rinumerato
+    newContents.forEach((content, idx) => {
+        const durationSelects = content.querySelectorAll('.duration-type');
+        durationSelects.forEach(select => {
+            select.setAttribute('data-scenario', idx);
+        });
+        
+        const catchEventSelects = content.querySelectorAll('.catch-event-duration-type');
+        catchEventSelects.forEach(select => {
+            select.setAttribute('data-scenario', idx);
+        });
+    });
     
     // RIPRISTINA i valori e aggiorna la UI
     for (let i = 0; i < scenarioCount; i++) {
