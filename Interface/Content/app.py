@@ -318,14 +318,15 @@ def parameters():
                     }
 
             if 'sequence_flows' in bpmn_dict:
+                print(bpmn_dict['sequence_flows'])
                 for flow_id in bpmn_dict['sequence_flows']:
-                    execution_probability = request.form.get(f'executionProbability_{flow_id}')
+                    execution_probability = request.form.get(f'scenario_{i}_executionProbability_{flow_id}')
                     if execution_probability is None:  # Skip if not provided
                         continue 
                     forced_instance_types = []
                     type_idx = 1
                     while True:
-                        forced_instance_type = request.form.get(f'forcedInstanceType_{flow_id}_{type_idx}')
+                        forced_instance_type = request.form.get(f'scenario_{i}_forcedInstanceType_{flow_id}_{type_idx}')
                         if not forced_instance_type:
                             break
                         forced_instance_types.append({"type": forced_instance_type})
