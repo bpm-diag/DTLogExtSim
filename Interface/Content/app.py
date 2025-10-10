@@ -19,6 +19,20 @@ UPLOAD_FOLDER = 'uploads'
 EXTRACTOR_FOLDER = "extractor"
 TAG_NAME = "diagbp"
 
+# --- WHATIF: helper per ottenere le ROOT dal servizio whatif_api ---
+def _fetch_whatif_roots():
+    """
+    Chiede a whatif_api la lista di 'root' nel volume uploads condiviso
+    (cartelle che contengono almeno un .bpmn e sottocartelle scenario 0,1,2,...).
+    """
+    try:
+        r = requests.get(f"{app.config['WHATIF_API_URL']}/api/uploads/roots", timeout=5)
+        if r.ok:
+            return r.json()
+    except Exception:
+        pass
+    return []
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # for filename in os.listdir(UPLOAD_FOLDER): # remove old log files
@@ -36,8 +50,11 @@ def index():
             os.remove(file_path)
         elif os.path.isdir(file_path):  # Delete directories
             shutil.rmtree(file_path)
-    
-    return render_template('index.html')
+
+     # --- WHATIF: passa 'roots' al template per popolare la tendina ---
+    roots = _fetch_whatif_roots()
+    return render_template('index.html', roots=roots)
+    #return render_template('index.html')
 
 
 @app.route("/extractor", methods=["POST"])
@@ -449,7 +466,89 @@ def download_simulator():
 
     return response 
 
+# WHATIF: nuove route per integrazione 
+@app.post("/whatif/upload-zip")
+def whatif_upload_zip():
+    """
+    Riceve lo ZIP dal form e lo inoltra a whatif_api per l'estrazione nel volume.
+    Accetta i campi:
+      - scenario_zip (file .zip)
+      - scenario_name (opzionale: nome root di destinazione)
+    """
+    f = request.files.get("scenario_zip")
+    if not f:
+        return "File ZIP mancante", 400
 
+    files = {"scenario_zip": (f.filename, f.stream, f.mimetype or "application/zip")}
+    data = {"scenario_name": request.form.get("scenario_name", "")}
+
+    try:
+        r = requests.post(f"{app.config['WHATIF_API_URL']}/api/uploads/import-zip",
+                          files=files, data=data, timeout=120)
+        r.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        app.logger.error(f"/whatif/upload-zip proxy error: {e}")
+        return "Errore durante upload ZIP", 502
+
+    return jsonify({"ok": True, "message": "ZIP caricato con successo"})
+
+@app.post("/whatif/upload-folder")
+def whatif_upload_folder():
+    """
+    Proxy: riceve una 'cartella' dal browser (input webkitdirectory)
+    e la inoltra a whatif_api mantenendo i percorsi relativi (filename).
+    """
+    files_in = request.files.getlist("files")
+    if not files_in:
+        return "No files", 400
+
+    # Multipart con più parti 'files'; filename deve rimanere il path relativo
+    mp = [("files", (f.filename, f.stream, "application/octet-stream")) for f in files_in]
+    data = {}
+    if request.form.get("scenario_name"):
+        data["scenario"] = request.form.get("scenario_name")
+
+    try:
+        r = requests.post(f"{app.config['WHATIF_API_URL']}/api/uploads/import-folder",
+                          files=mp, data=data, timeout=300)
+        return redirect(url_for('index'))
+    except requests.exceptions.RequestException as e:
+        return f"Error uploading folder to WhatIf API: {e}", 500
+
+@app.post("/whatif/start")
+def whatif_start():
+    """
+    Legge 'root' e gli scenari selezionati (hidden 'scenarios_csv')
+    e redireziona l'utente alla UI di WhatIf con i parametri in querystring.
+    """
+    from urllib.parse import quote_plus
+    root = request.form.get("root", "").strip()
+    scenarios_csv = request.form.get("scenarios_csv", "").strip()
+    if not root or not scenarios_csv:
+        return "Seleziona una root e almeno due scenari.", 400
+
+    # http://localhost:3003?root=<root>&scenarios=0,1,2
+    return redirect(f"{app.config['WHATIF_UI_URL']}?root={quote_plus(root)}&scenarios={quote_plus(scenarios_csv)}")
+
+
+@app.get("/whatif/scenarios")
+def whatif_scenarios():
+    """
+    Ritorna l'elenco delle sottocartelle 'scenario' (0,1,2,...) per la root scelta.
+    Proxy verso whatif_api.
+    """
+    root = request.args.get("root", "")
+    if not root:
+        return jsonify({"error": "missing root"}), 400
+    try:
+        r = requests.get(f"{app.config['WHATIF_API_URL']}/api/uploads/scenarios",
+                         params={"root": root}, timeout=10)
+        return (r.text, r.status_code, r.headers.items())
+    except Exception as e:
+        app.logger.error(f"/whatif/scenarios proxy error: {e}")
+        return jsonify({"error": "proxy error"}), 502
+
+# --- Error Handlers ---
 @app.errorhandler(404)
 def not_found_error(error):
     msg = "Resource not found"

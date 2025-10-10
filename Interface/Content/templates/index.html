@@ -28,6 +28,9 @@
                     <li class="nav-item">
                         <a class="nav-link" id="simulator-tab" data-bs-toggle="tab" href="#simulator">Simulator</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="whatif-tab" data-bs-toggle="tab" href="#whatif">What-If</a>
+                    </li>
                 </ul>
 
                 <!-- Tab Content -->
@@ -38,7 +41,7 @@
                             <input type="hidden" name="backend_service" value="extractor">
                             
                             <div class="form-group my-4">
-                                <label for="xes_file">XES File (Required):</label>
+                                <label for="xes_xes_extractor">XES File (Required):</label>
                                 <input type="file" class="form-control-file" id="xes_xes_extractor" name="xes_file" required>
                             </div>
 
@@ -68,12 +71,12 @@
                             <input type="hidden" name="backend_service" value="simulator">
                             
                             <div class="form-group my-4">
-                                <label for="bpmn_file">BPMN File (Required):</label>
+                                <label for="bpmn_file_simulator">BPMN File (Required):</label>
                                 <input type="file" class="form-control-file" id="bpmn_file_simulator" name="bpmn_file" required>
                             </div>
 
                             <div class="form-group my-4">
-                                <label for="extra">Extra.json (Optional):</label>
+                                <label for="extra_simulator">Extra.json (Optional):</label>
                                 <input type="file" class="form-control-file" id="extra_simulator" name="extra">
                             </div>
 
@@ -95,6 +98,52 @@
 
                             <button type="submit" class="btn btn-success btn-block">Send to Simulator</button>
                         </form>
+                    </div>
+
+                    <!-- What-If Form -->
+                    <div class="tab-pane fade" id="whatif">
+                    <div class="alert alert-secondary">
+                        <strong>What-If analysis</strong> — seleziona una <em>root</em> (cartella che contiene il BPMN) e almeno due <em>scenari</em> (sub-cartelle numeriche).
+                    </div>
+
+                    <!-- 1) Upload ZIP (solo .zip) -->
+                    <form id="whatifZipForm" method="POST" action="/whatif/upload-zip" enctype="multipart/form-data" class="mb-4">
+                        <div class="form-group my-3">
+                        <label for="whatif_zip">Upload ZIP (struttura: <code>root/{0..S}/{0..R}/log.xes</code> + <code>root/*.bpmn</code>):</label>
+                        <input type="file" class="form-control-file" id="whatif_zip" name="scenario_zip" accept=".zip" required>
+                        <small class="form-text text-muted">Lo ZIP verrà caricato ed estratto nel volume condiviso.</small>
+                        </div>
+                        <div class="form-group my-3">
+                        <label for="whatif_zip_name">Nome root (opzionale):</label>
+                        <input type="text" class="form-control" id="whatif_zip_name" name="scenario_name" placeholder="es. negozio_original">
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">Upload ZIP</button>
+                    </form>
+
+                    <!-- 2) Seleziona ROOT e SCENARI dal volume -->
+                    <form id="whatifStartForm" method="POST" action="/whatif/start">
+                        <div class="form-group my-3">
+                        <label for="whatif_root">Root (cartella con BPMN):</label>
+                        <select class="form-control" id="whatif_root" name="root" required>
+                            {% if roots %}
+                            {% for r in roots %}
+                                <option value="{{ r }}">{{ r }}</option>
+                            {% endfor %}
+                            {% else %}
+                            <option value="" disabled selected>Nessuna root valida trovata</option>
+                            {% endif %}
+                        </select>
+                        <small class="form-text text-muted">La root deve contenere almeno un <code>.bpmn</code> e sub-cartelle scenario (0,1,2,…).</small>
+                        </div>
+
+                        <div class="form-group my-3">
+                        <label for="whatif_scenarios">Scenari (seleziona almeno due):</label>
+                        <select class="form-control" id="whatif_scenarios" name="scenarios" multiple size="6" required></select>
+                        <small class="form-text text-muted">Usa Ctrl/⌘ per selezioni multiple.</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Start What-If</button>
+                    </form>
                     </div>
                 </div>
             </div>
@@ -118,7 +167,7 @@
             });
         });
 
-        // Dynamically change form action based on selected tab
+        // Dynamically change form action based on selected tab (kept like original)
         document.getElementById("extractorForm").addEventListener("submit", function(event) {
             this.action = "/extractor";
         });
@@ -126,6 +175,62 @@
         document.getElementById("simulatorForm").addEventListener("submit", function(event) {
             this.action = "/simulator";
         });
+
+        // What-If: carica scenari per root selezionata
+          async function loadScenariosForRoot(root) {
+            const sel = document.getElementById('whatif_scenarios');
+            sel.innerHTML = '';
+            if (!root) return;
+            const r = await fetch(`/whatif/scenarios?root=${encodeURIComponent(root)}`);
+            if (!r.ok) return;
+            const arr = await r.json();
+            for (const s of arr) {
+            const opt = document.createElement('option');
+            opt.value = s; opt.textContent = s;
+            sel.appendChild(opt);
+            }
+        }
+
+        document.getElementById('whatif_root')?.addEventListener('change', (e) => {
+            loadScenariosForRoot(e.target.value);
+        });
+
+        // valida: almeno 2 scenari → serializza in hidden field
+        document.getElementById('whatifStartForm').addEventListener('submit', function (e) {
+            const sel = document.getElementById('whatif_scenarios');
+            const selected = Array.from(sel.selectedOptions).map(o => o.value);
+            if (selected.length < 2) {
+            e.preventDefault();
+            alert('Seleziona almeno due scenari.');
+            return false;
+            }
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden'; hidden.name = 'scenarios_csv'; hidden.value = selected.join(',');
+            this.appendChild(hidden);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const rootSel = document.getElementById('whatif_root');
+            if (rootSel && rootSel.value) loadScenariosForRoot(rootSel.value);
+        });
+        document.getElementById('whatifZipForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const res = await fetch('/whatif/upload-zip', { method: 'POST', body: formData });
+            const data = await res.json();
+            alert(data.message || (data.ok ? 'Upload completato' : 'Errore'));
+            if (data.ok) {
+                // aggiorna la lista roots senza ricaricare la pagina
+                const rootSel = document.getElementById('whatif_root');
+                if (rootSel) {
+                const r = await fetch('/whatif/roots');
+                if (r.ok) {
+                    const roots = await r.json();
+                    rootSel.innerHTML = roots.map(r => `<option value="${r}">${r}</option>`).join('');
+                }
+                }
+            }
+            });
     </script>
 </body>
 </html>

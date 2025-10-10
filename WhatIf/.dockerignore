@@ -1,0 +1,5 @@
+content/node_modules
+content/.next
+content/.next/cache
+content/backend/venv
+.git

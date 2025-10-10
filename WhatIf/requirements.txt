@@ -1,0 +1,8 @@
+flask
+flask-cors
+pandas
+numpy
+xmltodict
+lxml
+gunicorn
+typing_extensions

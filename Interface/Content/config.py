@@ -10,3 +10,6 @@ class Config:
 
     EXTRACTOR_ADDRESS = os.getenv("EXTRACTOR_ADDRESS", "0.0.0.0")
     EXTRACTOR_PORT = os.getenv("EXTRACTOR_PORT", "6662")
+    # What-If service (API Flask) e UI (Next.js)
+    WHATIF_API_URL = os.getenv("WHATIF_API_URL", "http://whatif_api:5000")
+    WHATIF_UI_URL  = os.getenv("WHATIF_UI_URL",  "http://localhost:3003")

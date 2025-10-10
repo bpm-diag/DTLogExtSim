@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+  --background: #b6defa;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.djs-container { cursor: grab; }
+.djs-container:active { cursor: grabbing; }
+
+/* --- codice per colori heatmap --- */
+.djs-connection .djs-visual path {
+  fill: none !important;         
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.95;
+}
+
+/* Frecce: punta della freccia = stesso colore della linea */
+.djs-connection .djs-visual marker path {
+  fill: currentColor !important;  
+}
+
+/* Stato neutro (reset) */
+.heat-none .djs-visual path {
+  stroke: #646868 !important;
+  stroke-width: 2 !important;
+}
+
+/* Palette heat (verde → rosso) e spessori */
+.heat-0 .djs-visual path { color: hsl(120, 70%, 45%); stroke: currentColor !important; stroke-width: 2.3px  !important; }
+.heat-1 .djs-visual path { color: hsl(74, 82%, 49%); stroke: currentColor !important; stroke-width: 2.5px  !important; }
+.heat-2 .djs-visual path { color: hsl(55, 100%, 50%); stroke: currentColor !important; stroke-width: 2.9px  !important; }
+.heat-3 .djs-visual path { color: hsl(28, 90%, 51%); stroke: currentColor !important; stroke-width: 3px  !important; }
+.heat-4 .djs-visual path { color: hsl(8, 95%, 47%); stroke: currentColor !important; stroke-width: 3.5px  !important; }
+.heat-5 .djs-visual path { color: hsl(0, 98%, 24%); stroke: currentColor !important; stroke-width: 4px!important; }
+
+

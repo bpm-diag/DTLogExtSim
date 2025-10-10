@@ -48,6 +48,44 @@ services:
     networks:
       - my_network
 
+# what if services
+  whatif_api:
+    build:
+      context: ./WhatIf
+      dockerfile: Dockerfile
+      target: api
+    environment:
+      - UPLOADS_DIR=/app/uploads
+    volumes:
+      - uploads:/app/uploads
+    networks:
+      - my_network
+    ports:
+      - "5003:5000"
+    restart: unless-stopped
+
+  whatif_ui:
+    build:
+      context: ./WhatIf
+      dockerfile: Dockerfile
+      target: ui
+      args:
+        # visibile al browser; punta alla porta esposta dell'API sul tuo host
+        NEXT_PUBLIC_API_URL: http://localhost:5003
+    environment:
+      # usato solo in SSR/side fetch dal container Next verso l'API via rete Docker
+      - INTERNAL_API_URL=http://whatif_api:5000
+      - NODE_ENV=production
+      - NEXT_PUBLIC_INTERFACE_HOME_URL=http://localhost:6660
+    depends_on:
+      - whatif_api
+    networks:
+      - my_network
+    ports:
+      - "3003:3000"
+    restart: unless-stopped
+
+
 volumes:
   uploads:
   logs:
