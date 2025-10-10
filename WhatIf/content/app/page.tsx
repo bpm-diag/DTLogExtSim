@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Box, Chip, CircularProgress, Divider, FormControl, InputLabel, MenuItem, Select, Stack, Tab, Tabs, Typography, Button, FormHelperText } from "@mui/material";
+import { Alert, Box, Chip, CircularProgress, Divider, FormControl, InputLabel, MenuItem, Select, Stack, Tab, Tabs, Typography, Button, FormHelperText, Fab } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 import DurationChart from "@/components/durationChart";
 import BreakdownChart from "@/components/timeBreakdownChart";
@@ -242,7 +243,8 @@ export default function Page() {
     else setTableCompareIds([]);
   }, [scenarioOrder.join(",")]);
 
-  // helpers per UI corrente
+  // helpers per UI 
+  const handleScrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const names = scenarioOrder;
   const current = selectedScenario ? scenariosData[selectedScenario] : null;
   const activitySummary = useMemo(
@@ -605,6 +607,12 @@ export default function Page() {
           </div>
         )}
       </div>
+      {/* Scroll to top */}
+        <div style={{ position: "fixed", bottom: 30, right: 30, zIndex: 1000 }}>
+          <Fab color="primary" size="large" onClick={() => handleScrollTop()} aria-label="scroll to top">
+            <KeyboardArrowUpIcon />
+          </Fab>
+        </div>
     </div>
   );
 }
