@@ -477,7 +477,7 @@ def whatif_upload_zip():
     """
     f = request.files.get("scenario_zip")
     if not f:
-        return "File ZIP mancante", 400
+        return jsonify({"ok": False, "message": "File ZIP mancante"}), 400
 
     files = {"scenario_zip": (f.filename, f.stream, f.mimetype or "application/zip")}
     data = {"scenario_name": request.form.get("scenario_name", "")}
@@ -486,11 +486,29 @@ def whatif_upload_zip():
         r = requests.post(f"{app.config['WHATIF_API_URL']}/api/uploads/import-zip",
                           files=files, data=data, timeout=120)
         r.raise_for_status()
+        j = r.json()
     except requests.exceptions.RequestException as e:
         app.logger.error(f"/whatif/upload-zip proxy error: {e}")
-        return "Errore durante upload ZIP", 502
+        return jsonify({"ok": False, "message": "Errore durante upload ZIP"}), 502
 
-    return jsonify({"ok": True, "message": "ZIP caricato con successo"})
+    # j contiene: {"ok": True, "root": "<nome_root_creata>"}
+    return jsonify({"ok": True, "root": j.get("root")})
+
+@app.get("/whatif/roots")
+def whatif_roots():
+    """
+    Proxy verso whatif_api per ottenere la lista delle root nel volume condiviso.
+    Usato dall'index.html via fetch() per popolare/aggiornare il select.
+    """
+    try:
+        r = requests.get(f"{app.config['WHATIF_API_URL']}/api/uploads/roots", timeout=5)
+        r.raise_for_status()
+        # inoltra la risposta così com'è, come JSON
+        return (r.text, r.status_code, {"Content-Type": "application/json"})
+    except requests.RequestException as e:
+        app.logger.error(f"/whatif/roots proxy error: {e}")
+        # in caso di errore, restituisci lista vuota (non bloccare la pagina)
+        return jsonify([]), 200
 
 @app.post("/whatif/upload-folder")
 def whatif_upload_folder():

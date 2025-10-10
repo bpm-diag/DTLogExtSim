@@ -110,41 +110,30 @@
                     <!-- Upload ZIP (solo .zip) -->
                     <div class="card border-primary mb-4 mt-4">
                         <div class="card-header bg-primary text-white">
-                        <strong>Option 1 — Upload a ZIP folder from your local device</strong>
+                            <strong>Option 1 — Upload a ZIP folder from your local device</strong>
                         </div>
                         <div class="card-body">
-                        <form id="whatifZipForm" method="POST" action="/whatif/upload-zip" enctype="multipart/form-data">
+                            <form id="whatifZipForm" enctype="multipart/form-data">
                             <div class="form-group my-3">
-                            <label for="whatif_zip">
+                                <label for="whatif_zip">
                                 Upload ZIP (<code>root/{0..S}/{0..R}/log.xes</code> + <code>root/*.bpmn</code>):
-                            </label>
-                            <input
-                                type="file"
-                                class="form-control-file"
-                                id="whatif_zip"
-                                name="scenario_zip"
-                                accept=".zip"
-                                required
-                            />
-                            <br></br>
-                            <small class="form-text text-muted">
-                                The ZIP folder will be extracted inside the shared volume, so it will appear below as a selectable root.
-                            </small>
+                                </label>
+                                <input type="file" class="form-control-file" id="whatif_zip" name="scenario_zip" accept=".zip" required />
+                                <br></br>
+                                <small class="form-text text-muted">
+                                The ZIP will be extracted into the shared volume and will appear below as a selectable root.
+                                </small>
                             </div>
                             <div class="form-group my-3">
-                            <label for="whatif_zip_name">Root name (optional):</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="whatif_zip_name"
-                                name="scenario_name"
-                                placeholder="e.g. store_original"
-                            />
+                                <label for="whatif_zip_name">Root name (optional):</label>
+                                <input type="text" class="form-control" id="whatif_zip_name" name="scenario_name" placeholder="e.g. store_original" />
                             </div>
-                            <button type="submit" class="btn btn-outline-primary">Upload ZIP</button>
-                        </form>
+                            <button id="btnUploadZip" type="submit" class="btn btn-outline-primary">Upload ZIP</button>
+                            <span id="zipUploading" class="text-muted ms-2" style="display:none;">Uploading…</span>
+                            <div id="zipMsg" class="mt-2"></div>
+                            </form>
                         </div>
-                    </div>
+                        </div>
 
                     <!-- Select existing ROOT and SCENARIOS from volume -->
                     <div class="card border-success mb-4">
@@ -223,14 +212,27 @@
             this.action = "/simulator";
         });
 
-        // What-If: carica scenari per root selezionata
-          async function loadScenariosForRoot(root) {
+        // ---- utilities ----
+        function clearSelect(sel) {
+            while (sel && sel.options && sel.options.length > 0) sel.remove(0);
+        }
+        function toUniqueSorted(arr, numeric=false) {
+            const out = [...new Set(arr)];
+            return numeric ? out.sort((a,b)=>Number(a)-Number(b)) : out.sort();
+        }
+
+        // ---- carica scenari per root selezionata (pulisce + deduplica) ----
+        async function loadScenariosForRoot(root) {
             const sel = document.getElementById('whatif_scenarios');
-            sel.innerHTML = '';
+            if (!sel) return;
+            clearSelect(sel);
             if (!root) return;
-            const r = await fetch(`/whatif/scenarios?root=${encodeURIComponent(root)}`);
+
+            const r = await fetch(`/whatif/scenarios?root=${encodeURIComponent(root)}`, { cache: 'no-store' });
             if (!r.ok) return;
-            const arr = await r.json();
+            let arr = await r.json();
+            arr = toUniqueSorted(arr, /*numeric=*/true);
+
             for (const s of arr) {
             const opt = document.createElement('option');
             opt.value = s; opt.textContent = s;
@@ -238,46 +240,114 @@
             }
         }
 
-        document.getElementById('whatif_root')?.addEventListener('change', (e) => {
-            loadScenariosForRoot(e.target.value);
-        });
+        // ---- ricarica roots + carica scenari della root selezionata ----
+        async function refreshRootsAndScenarios(selectRootValue) {
+            const rootSel = document.getElementById('whatif_root');
+            const scenSel = document.getElementById('whatif_scenarios');
+            if (!rootSel || !scenSel) return;
 
-        // valida: almeno 2 scenari → serializza in hidden field
-        document.getElementById('whatifStartForm').addEventListener('submit', function (e) {
+            try {
+            const r = await fetch('/whatif/roots', { cache: 'no-store' });
+            if (!r.ok) throw new Error('Cannot load roots');
+            let roots = await r.json();
+            roots = toUniqueSorted(roots);
+
+            clearSelect(rootSel);
+            for (const rr of roots) {
+                const opt = document.createElement('option');
+                opt.value = rr; opt.textContent = rr;
+                rootSel.appendChild(opt);
+            }
+
+            // seleziona root passata (se esiste), altrimenti prima disponibile
+            if (selectRootValue && roots.includes(selectRootValue)) {
+                rootSel.value = selectRootValue;
+            } else if (roots.length) {
+                rootSel.value = roots[0];
+            }
+
+            // ora carica gli scenari per la root selezionata
+            await loadScenariosForRoot(rootSel.value);
+            } catch (e) {
+            console.warn(e);
+            }
+        }
+
+        // ---- BIND una sola volta agli eventi ----
+        if (!window.__whatif_bound) {
+            window.__whatif_bound = true;
+
+            // Cambio root: ricarica scenari
+            document.getElementById('whatif_root')?.addEventListener('change', (e) => {
+            loadScenariosForRoot(e.target.value);
+            });
+
+            // Submit Start What-If: valida almeno 2 scenari e crea hidden CSV
+            document.getElementById('whatifStartForm')?.addEventListener('submit', function (e) {
             const sel = document.getElementById('whatif_scenarios');
             const selected = Array.from(sel.selectedOptions).map(o => o.value);
             if (selected.length < 2) {
-            e.preventDefault();
-            alert('Seleziona almeno due scenari.');
-            return false;
+                e.preventDefault();
+                alert('Seleziona almeno due scenari.');
+                return false;
             }
-            const hidden = document.createElement('input');
-            hidden.type = 'hidden'; hidden.name = 'scenarios_csv'; hidden.value = selected.join(',');
-            this.appendChild(hidden);
-        });
+            // crea/aggiorna hidden field
+            let hidden = this.querySelector('input[name="scenarios_csv"]');
+            if (!hidden) {
+                hidden = document.createElement('input');
+                hidden.type = 'hidden'; hidden.name = 'scenarios_csv';
+                this.appendChild(hidden);
+            }
+            hidden.value = selected.join(',');
+            });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const rootSel = document.getElementById('whatif_root');
-            if (rootSel && rootSel.value) loadScenariosForRoot(rootSel.value);
-        });
-        document.getElementById('whatifZipForm').addEventListener('submit', async (e) => {
+            // Upload ZIP (via fetch) + refresh roots/scenari senza ricaricare la pagina
+            document.getElementById('whatifZipForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
-            const res = await fetch('/whatif/upload-zip', { method: 'POST', body: formData });
-            const data = await res.json();
-            alert(data.message || (data.ok ? 'Upload completato' : 'Errore'));
-            if (data.ok) {
-                // aggiorna la lista roots senza ricaricare la pagina
-                const rootSel = document.getElementById('whatif_root');
-                if (rootSel) {
-                const r = await fetch('/whatif/roots');
-                if (r.ok) {
-                    const roots = await r.json();
-                    rootSel.innerHTML = roots.map(r => `<option value="${r}">${r}</option>`).join('');
+            const form = e.currentTarget;
+            const btn = document.getElementById('btnUploadZip') || form.querySelector('button[type="submit"]');
+            const spin = document.getElementById('zipUploading');
+            const msg = document.getElementById('zipMsg');
+
+            if (msg) msg.innerHTML = '';
+            if (btn) btn.disabled = true;
+            if (spin) spin.style.display = 'inline';
+
+            try {
+                const fd = new FormData(form);
+                const res = await fetch('/whatif/upload-zip', { method: 'POST', body: fd });
+                const data = await res.json();
+
+                if (!res.ok || !data?.ok) {
+                if (msg) msg.innerHTML = `<div class="alert alert-danger">Upload failed: ${data?.message || res.status}</div>`;
+                return;
                 }
-                }
+
+                const newRoot = data.root;
+                if (msg) msg.innerHTML = `<div class="alert alert-success">ZIP uploaded ✔ — root: <code>${newRoot}</code></div>`;
+
+                // aggiorna roots + scenari selezionando la nuova root
+                await refreshRootsAndScenarios(newRoot);
+            } catch (err) {
+                if (msg) msg.innerHTML = `<div class="alert alert-danger">Unexpected error during upload.</div>`;
+                console.error(err);
+            } finally {
+                if (btn) btn.disabled = false;
+                if (spin) spin.style.display = 'none';
             }
             });
+
+            // Al primo load: se c'è già una root selezionata dal render server, sincronizza gli scenari
+            document.addEventListener('DOMContentLoaded', () => {
+            const rootSel = document.getElementById('whatif_root');
+            if (rootSel && rootSel.value) {
+                // Popola client-side una volta, sostituendo eventuali duplicazioni
+                refreshRootsAndScenarios(rootSel.value);
+            }
+            });
+        }
+
+
     </script>
 </body>
 </html>
