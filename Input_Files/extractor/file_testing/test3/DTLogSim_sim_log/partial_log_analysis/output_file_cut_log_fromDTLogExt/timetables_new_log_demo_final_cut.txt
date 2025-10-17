@@ -1,2 +1,0 @@
-Timetable: Tm1
-  Monday: 09:00 - 13:50

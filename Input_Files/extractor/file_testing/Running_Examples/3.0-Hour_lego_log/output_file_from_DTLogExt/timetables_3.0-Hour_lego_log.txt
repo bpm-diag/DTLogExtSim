@@ -1,2 +1,0 @@
-Timetable: Tm1
-  Wednesday: 15:25 - 18:35

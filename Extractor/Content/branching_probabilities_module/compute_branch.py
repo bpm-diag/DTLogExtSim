@@ -54,7 +54,7 @@ def compute_branch_probabilities(self, log: pd.DataFrame, branches: Dict) -> Dic
                             if source_act != current_activity:
                                 if current_activity in destination_act_list:
                                     counts[(source_act, current_activity)] += 1
-                                break
+                                    break
                             else:
                                 break
         
@@ -79,7 +79,7 @@ def compute_branch_probabilities(self, log: pd.DataFrame, branches: Dict) -> Dic
                     probability = count / total if total != 0 else 0.0
                     
                     branches_probabilities[gateway].append({
-                        "pair": (source, destination),
+                        "pair": [source, destination],
                         "probability": str(probability)
                     })
         

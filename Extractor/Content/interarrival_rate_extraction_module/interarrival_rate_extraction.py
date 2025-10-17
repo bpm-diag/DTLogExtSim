@@ -84,7 +84,7 @@ class InterArrivalCalculation:
             self._interarrival_times = self.calculate_interarrival_times(self._start_activities)
             
             # 3. Identifica distribuzione migliore
-            distribution_name, distribution_params = self.fit_distribution(self._interarrival_times)
+            distribution_name, distribution_params = self.fit_distribution([x for x in self._interarrival_times])
             self._distribution_params = [distribution_name, distribution_params]
             
             # 4. Salva risultati

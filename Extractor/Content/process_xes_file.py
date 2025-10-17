@@ -267,7 +267,6 @@ class ProcessXesFile():
         settings = self.create_base_settings()
         self.settings.append(settings)
         
-        # TODO: Implementare SimulationInputExtraction
         sim_extractor = SimulationInputExtraction(self.log, self.settings, False)
         sim_extractor.process_all_extractions()
         sim_extractor.generate_params_file()

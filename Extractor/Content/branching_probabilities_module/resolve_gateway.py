@@ -14,22 +14,25 @@ def nodes_match(self, activity: Any, node: Any) -> bool:
     """
     try:
         # Normalizza entrambi gli oggetti
-        activity_normalized = activity[0] if isinstance(activity, list) and activity else activity
-        node_normalized = node[0] if isinstance(node, list) and node else node
+        # activity_normalized = activity[0] if isinstance(activity, list) and activity else activity
+        # node_normalized = node[0] if isinstance(node, list) and node else node
         
         # Confronta direttamente se sono lo stesso oggetto
-        if activity_normalized == node_normalized:
+        # if activity_normalize == node_normalize:
+        #     return True
+        
+        if activity == node:
             return True
         
-        # Confronta per nome se hanno il metodo get_name
-        if (hasattr(activity_normalized, 'get_name') and 
-            hasattr(node_normalized, 'get_name')):
-            return activity_normalized.get_name() == node_normalized.get_name()
+        # # Confronta per nome se hanno il metodo get_name
+        # if (hasattr(activity_normalized, 'get_name') and 
+        #     hasattr(node_normalized, 'get_name')):
+        #     return activity_normalized.get_name() == node_normalized.get_name()
         
-        # Confronta per ID se hanno il metodo get_id
-        if (hasattr(activity_normalized, 'get_id') and 
-            hasattr(node_normalized, 'get_id')):
-            return activity_normalized.get_id() == node_normalized.get_id()
+        # # Confronta per ID se hanno il metodo get_id
+        # if (hasattr(activity_normalized, 'get_id') and 
+        #     hasattr(node_normalized, 'get_id')):
+        #     return activity_normalized.get_id() == node_normalized.get_id()
         
         return False
         
@@ -37,8 +40,7 @@ def nodes_match(self, activity: Any, node: Any) -> bool:
         return False
 
 def resolve_target_gateways(self, gateway_path_succ: Dict, gateway_flows: Dict, 
-                               gateway_node_targets: List[Any]) -> Tuple[Dict, Dict]:
-        """Risolve gateway annidati come target."""
+                               gateway_node_targets: List[Any]) -> List[Dict]:
         target_nodes = {}
         
         # Trova task successori per ogni gateway target
@@ -48,36 +50,36 @@ def resolve_target_gateways(self, gateway_path_succ: Dict, gateway_flows: Dict,
         
         # Processa ogni gateway
         for gateway in list(gateway_path_succ.keys()):
-            if gateway not in gateway_path_succ:
-                continue
-                
             nodes_to_process = list(gateway_path_succ[gateway])
             
             for node in nodes_to_process:
                 if node in target_nodes and target_nodes[node]:
-                    # Rimuovi il gateway node
-                    if node in gateway_path_succ[gateway]:
-                        gateway_path_succ[gateway].remove(node)
-                    
-                    # Aggiorna gateway_flows - trova il flusso corrispondente
+                    gateway_path_succ[gateway].remove(node)
                     for i, (flow_id, activity) in enumerate(gateway_flows[gateway]):
+                        activity = activity[0] if isinstance(activity, list) else activity
+                        node = node[0] if isinstance(node, list) else node
                         if self._nodes_match(activity, node):
-                            # Sostituisci con i task risolti
-                            resolved_names = self._extract_task_names(target_nodes[node])
-                            if resolved_names:
-                                gateway_flows[gateway][i] = (flow_id, resolved_names[0] if len(resolved_names) == 1 else resolved_names)
+                            gateway_flows[gateway][i] = [flow_id, target_nodes[0] if isinstance(activity,str) else self._extract_task_names(target_nodes[node])]
+                        else:
+                            if isinstance(activity, str):
+                                gateway_flows[gateway][i] = [flow_id, activity]
                             else:
-                                gateway_flows[gateway][i] = (flow_id, "event")
-                    
-                    # Aggiungi task risolti al path
+                                if activity.get_name():
+                                    gateway_flows[gateway][i] = [flow_id, activity.get_name()]
                     for elem in target_nodes[node]:
                         if elem not in gateway_path_succ[gateway]:
                             gateway_path_succ[gateway].append(elem)
+                else:
+                    for i, (flow_id, activity) in enumerate(gateway_flows[gateway]):
+                        activity = activity[0] if isinstance(activity, list) else activity
+                        node = node[0] if isinstance(node, list) else node
+                        if self._nodes_match(activity, node):
+                            gateway_flows[gateway][i] = [flow_id, activity if isinstance(activity,str) else activity.get_name()]
         
         return gateway_path_succ, gateway_flows
     
 def resolve_source_gateways(self, gateway_path_prec: Dict, gateway_flows: Dict,
-                            gateway_node_sources: List[Any]) -> Tuple[Dict, Dict]:
+                            gateway_node_sources: List[Any]) -> List[Dict]:
     """Risolve gateway annidati come source."""
     target_nodes = {}
     
@@ -87,31 +89,31 @@ def resolve_source_gateways(self, gateway_path_prec: Dict, gateway_flows: Dict,
         target_nodes[node] = list(flatten(predecessors)) if predecessors else []
     
     # Processa ogni gateway
-    for gateway in list(gateway_path_prec.keys()):
-        if gateway not in gateway_path_prec:
-            continue
-            
+    for gateway in list(gateway_path_prec.keys()):            
         nodes_to_process = list(gateway_path_prec[gateway])
         
         for node in nodes_to_process:
             if node in target_nodes and target_nodes[node]:
-                # Rimuovi il gateway node
-                if node in gateway_path_prec[gateway]:
-                    gateway_path_prec[gateway].remove(node)
-                
-                # Aggiorna gateway_flows - trova il flusso corrispondente
+                gateway_path_prec[gateway].remove(node)
                 for i, (flow_id, activity) in enumerate(gateway_flows[gateway]):
+                    activity = activity[0] if isinstance(activity, list) else activity
+                    node = node[0] if isinstance(node, list) else node
                     if self._nodes_match(activity, node):
-                        # Sostituisci con i task risolti
-                        resolved_names = self._extract_task_names(target_nodes[node])
-                        if resolved_names:
-                            gateway_flows[gateway][i] = (flow_id, resolved_names[0] if len(resolved_names) == 1 else resolved_names)
+                        gateway_flows[gateway][i] = [flow_id, target_nodes[0] if isinstance(activity,str) else self._extract_task_names(target_nodes[node])]
+                    else:
+                        if isinstance(activity, str):
+                            gateway_flows[gateway][i] = [flow_id, activity]
                         else:
-                            gateway_flows[gateway][i] = (flow_id, "event")
-                
-                # Aggiungi task risolti al path
+                            if activity.get_name():
+                                gateway_flows[gateway][i] = [flow_id, activity.get_name()]
                 for elem in target_nodes[node]:
                     if elem not in gateway_path_prec[gateway]:
                         gateway_path_prec[gateway].append(elem)
-    
-    return gateway_path_prec, gateway_flows
+            else:
+                for i, (flow_id, activity) in enumerate(gateway_flows[gateway]):
+                    activity = activity[0] if isinstance(activity, list) else activity
+                    node = node[0] if isinstance(node, list) else node
+                    if self._nodes_match(activity, node):
+                        gateway_flows[gateway][i] = [flow_id, activity if isinstance(activity,str) else activity.get_name()]
+        
+        return gateway_path_prec, gateway_flows

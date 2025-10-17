@@ -51,40 +51,10 @@ def safe_get_name(self, obj: Any) -> str:
         return "event"
     
 def extract_task_names(self, task_list: List[Any]) -> List[str]:
-    """
-    Estrae i nomi dai task nella lista.
-    
-    Args:
-        task_list: Lista di task
-        
-    Returns:
-        Lista dei nomi delle attività
-    """
-    if not task_list:
-        return []
-        
-    result = []
-    for elem in task_list:
-        try:
-            if isinstance(elem, list):
-                # Se è una lista, estrai ricorsivamente
-                nested_names = self._extract_task_names(elem)
-                result.extend(nested_names)
-            elif hasattr(elem, 'get_name'):
-                # Se ha il metodo get_name, usalo
-                name = elem.get_name()
-                result.append(name if name and name != "" else "event")
-            elif isinstance(elem, str):
-                # Se è già una stringa, usala direttamente
-                result.append(elem if elem != "" else "event")
-            else:
-                # Fallback per altri tipi
-                result.append("event")
-        except (AttributeError, IndexError) as e:
-            print(f"Errore nell'estrazione nome task: {e}")
-            result.append("event")
-            
-    return result
+    try:
+        return [elem.get_name() if elem.get_name() != "" else "event" for elem in task_list]
+    except Exception as e:
+        raise Exception(f"Errore nell'estrazione dei task: {str(e)}")
 
 def extract_flow_probabilities(self, branch_probabilities: Dict, gateway_flows: Dict) -> Dict[Any, List[Dict]]:
         """
@@ -114,31 +84,69 @@ def extract_flow_probabilities(self, branch_probabilities: Dict, gateway_flows: 
                     
                     if node in branch_probabilities:
                         total_probability = 0.0
-                        source = set()
-                        destination = set()
+                        source = list()
+                        destination = list()
                         
                         for prob_info in branch_probabilities[node]:
                             act1, act2 = prob_info['pair']
                             prob = float(prob_info['probability'])
                             
                             if act2 in activity_list:
-                                source.add(act1)
-                                destination.add(act2)
+                                source.append(act1)
+                                destination.append(act2)
                                 total_probability += prob
                         
                         result[node].append({
                             'flow': flow_id,
-                            'total_probability': round(total_probability, 2),
+                            'total_probability': total_probability,
                             'source': source,
                             'destination': destination
                         })
             
-            # Normalizza probabilità (assicura che sommino a 1)
+            # Normalizza probabilità PER OGNI GATEWAY separatamente
             for node, flows in result.items():
-                total_probability = sum(flow['total_probability'] for flow in flows)
-                if total_probability != 1 and flows:
-                    difference = 1 - total_probability
-                    flows[0]['total_probability'] = round(flows[0]['total_probability'] + difference, 2)
+                if not flows:
+                    continue
+                
+                # Calcola somma totale (senza arrotondamenti)
+                total = sum(flow['total_probability'] for flow in flows)
+                
+                # Usa tolleranza invece di confronto esatto
+                if abs(total - 1.0) > 0.001:  # ← Tolleranza per errori float
+                    print(f"⚠️ Gateway {node.get_id() if hasattr(node, 'get_id') else node}: somma probabilità = {total:.4f}")
+                    
+                    if total > 0:
+                        # METODO 1: Normalizza proporzionalmente TUTTI i flussi
+                        for flow in flows:
+                            flow['total_probability'] = flow['total_probability'] / total
+                        
+                        print(f"   Normalizzate proporzionalmente → somma = 1.0")
+                    else:
+                        # Somma è 0 - distribuisci uniformemente
+                        uniform_prob = 1.0 / len(flows)
+                        for flow in flows:
+                            flow['total_probability'] = uniform_prob
+                        
+                        print(f"   Distribuzione uniforme: {uniform_prob:.4f} per flusso")
+                
+                # ARROTONDA SOLO ALLA FINE, dopo normalizzazione
+                for flow in flows:
+                    flow['total_probability'] = round(flow['total_probability'], 2)
+                
+                # Verifica finale e correggi se necessario
+                final_total = sum(flow['total_probability'] for flow in flows)
+                
+                if abs(final_total - 1.0) > 0.01:  # Dopo arrotondamento, tolleranza più alta
+                    # Aggiusta il flusso con probabilità più alta (non il primo!)
+                    max_flow = max(flows, key=lambda f: f['total_probability'])
+                    difference = 1.0 - final_total
+                    max_flow['total_probability'] = round(max_flow['total_probability'] + difference, 2)
+                    
+                    print(f"   Aggiustato flusso {max_flow['flow']}: +{difference:.2f}")
+                
+                # Log finale
+                final_total = sum(flow['total_probability'] for flow in flows)
+                print(f"✓ Gateway {node.get_id() if hasattr(node, 'get_id') else node}: somma finale = {final_total:.4f}")
             
             print(f"✓ Estratte probabilità di flusso per {len(result)} gateway")
             return result

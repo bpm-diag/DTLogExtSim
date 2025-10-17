@@ -6,8 +6,7 @@ def normalize_gateway_flows(self, gateway_flows: Dict) -> Dict:
     """Normalizza i nomi delle attività nei flussi gateway."""
     for gateway in gateway_flows:
         for i, (flow_id, activity) in enumerate(gateway_flows[gateway]):
-            name = self._safe_get_name(activity)
-            gateway_flows[gateway][i] = (flow_id, name)
+            gateway_flows[gateway][i] = [flow_id, activity if isinstance(activity, str) else self._safe_get_name(activity)]
     
     return gateway_flows
 
@@ -67,6 +66,7 @@ def analyze_gateway_connections(self, exclusive_gateways: Dict[int, Any]) -> Tup
                 )
             
             # Normalizza nomi attività nei flussi
+            # if len(gateway_node_sources) == 0 and len(gateway_node_targets) == 0:
             gateway_flows = self._normalize_gateway_flows(gateway_flows)
             
             print(f"✓ Analizzate connessioni per {len(exclusive_gateways)} gateway")

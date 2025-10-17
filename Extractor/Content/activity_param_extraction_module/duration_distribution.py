@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from typing import List
 import os
+import json
 
 def extract_duration_distribution(self, processed_log: pd.DataFrame) -> List[List]:
         """
@@ -77,11 +78,13 @@ def save_duration_distributions(self, duration_distributions: List[List]) -> str
             output_dir = os.path.join(self.path, 'output_data', 'output_file')
             os.makedirs(output_dir, exist_ok=True)
             
-            file_path = os.path.join(output_dir, f'activity_distr_{self.name}.txt')
+            file_path = os.path.join(output_dir, f'activity_distr_{self.name}.json')
             
+            dict = {}
+            for d in duration_distributions:
+                dict[d[0]] = d
             with open(file_path, 'w') as file:
-                for distribution in duration_distributions:
-                    file.write(f"{distribution}\n")
+                json.dump(dict, file)
             
             print(f"✓ Distribuzioni durata salvate: {file_path}")
             return file_path

@@ -31,7 +31,8 @@ def extract_instance_types(self) -> pd.DataFrame:
     print("Estraendo tipi di istanza...")
     
     try:
-        if self.diag_log and TAG_INSTANCE_TYPE in self.log.columns:
+        instance_types = None
+        if self.diag_log:
             # Per log diagnostici con instanceType
             unique_cases = self.log[[TAG_TRACE_ID, TAG_INSTANCE_TYPE]].drop_duplicates()
             instance_types = unique_cases.groupby(TAG_INSTANCE_TYPE).size().reset_index(name='number_of_traces')

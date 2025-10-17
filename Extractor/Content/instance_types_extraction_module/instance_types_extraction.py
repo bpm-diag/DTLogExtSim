@@ -108,6 +108,7 @@ class InstanceTypesCalculation:
             self._instance_types = self.extract_instance_types()
             self._num_types_instance = len(self._instance_types[TAG_INSTANCE_TYPE])
             
+            self._forced_instance_types = None
             # 2. Estrai tipi forzati se necessario
             if self._num_types_instance > 1:
                 self._forced_instance_types = self.extract_forced_instance_types()

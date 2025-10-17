@@ -508,7 +508,8 @@ class WorklistCalculation:
                             # Nuovo valore più alto, sostituisci
                             del max_pairs[existing_pair]
                             max_pairs[pair] = value
-                        # Se il valore esistente è più alto, mantieni quello
+                        elif pair not in max_pairs:
+                            max_pairs[existing_pair] = max(max_pairs[existing_pair], value)
                 else:
                     # Nessuna sovrapposizione, aggiungi
                     max_pairs[pair] = value
