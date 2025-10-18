@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
+import json
 
 from functions import (
     parse_and_clean_dataframe,
@@ -95,11 +96,20 @@ def analyze_multi_from_uploads():
     try: rootp = _safe_rel(root)
     except: return jsonify({"error":"invalid root"}), 400
     if not rootp.exists(): return jsonify({"error":"root not found"}), 404
-
+    # carica BPMN
     bpmn_files = _files_in(rootp, {".bpmn"})
     if not bpmn_files: return jsonify({"error":"root must contain a .bpmn"}), 400
     bpmn_xml = bpmn_files[0].read_text(encoding="utf-8", errors="ignore")
-
+    
+    # carica extra.json dalla root se presente ***
+    extra_path = rootp / "extra.json"
+    extra_all = None
+    if extra_path.exists():
+        try:
+            with open(extra_path, "r", encoding="utf-8") as f:
+                extra_all = json.load(f)
+        except Exception:
+            extra_all = None
     scenarios = [s.strip() for s in scenarios_csv.split(",") if s.strip()!=""]
     if len(scenarios) < 2: return jsonify({"error":"select at least two scenarios"}), 400
 
@@ -107,11 +117,21 @@ def analyze_multi_from_uploads():
     for scen in scenarios:
         runs = _collect_runs(rootp, scen)
         per_run_metrics: List[Dict[str, Any]] = []
+
+        # estrae il blocco extra dello scenario (string->dict); se non c'è, None
+        extra_scenario = None
+        if extra_all is not None:
+            # extra.json potrebbe usare chiavi intere o stringhe; normalizza a stringa
+            if scen in extra_all:
+                extra_scenario = extra_all.get(scen)
+            elif scen.isdigit() and int(scen) in extra_all:
+                extra_scenario = extra_all.get(int(scen))
+
         for rdir in runs:
             for x in _files_in(rdir, {".xes"}):
                 xes_xml = x.read_text(encoding="utf-8", errors="ignore")
                 df = parse_and_clean_dataframe(xes_xml)
-                per_run_metrics.append(_compute_metrics_for_df(df, bpmn_xml=bpmn_xml))
+                per_run_metrics.append(_compute_metrics_for_df(df, bpmn_xml=bpmn_xml, extra_scenario=extra_scenario))
         if per_run_metrics:
             out[scen] = per_run_metrics[0] if len(per_run_metrics)==1 else aggregate_runs_metrics(per_run_metrics)
 

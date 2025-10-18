@@ -19,6 +19,7 @@ import CompareBarChart, { CompareDatum } from "@/components/CompareBarChart";
 import DeltaTable, { KpiBundle } from "@/components/DeltaTable";
 import ScenarioHeatmapSection, { BottleneckRow } from "@/components/ScenarioHeatmapSection";
 import CompareRadar, { RadarKpi } from "@/components/CompareRadar";
+import ResourceUtilizationTable, { ScenarioUtilization } from "@/components/ResourceUtilizationTable";
 
 import { API_BASE } from "@/utils/api";
 
@@ -53,32 +54,14 @@ const mean = (arr: number[]) =>
     ? arr.reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0) / arr.length
     : 0;
 
-const estimateAvgTotalResourceConsumption = (result: any): number => {
-  const rb = (result?.resource_bubble ?? []) as any[];
-  if (Array.isArray(rb) && rb.length > 0) {
-    const keys = [
-      "total_time",
-      "busy_time",
-      "work_time",
-      "usage",
-      "total_usage",
-      "consumption",
-      "load",
-      "utilization",
-    ];
-    const k = keys.find((key) => Number.isFinite(Number((rb[0] ?? {})[key])));
-    if (k) {
-      const vals = rb
-        .map((x) => Number(x?.[k]) || 0)
-        .filter(Number.isFinite);
-      if (vals.length) return mean(vals);
-    }
-  }
-  const breakdown: RawBreakdown[] = (result?.breakdown ?? []) as RawBreakdown[];
-  const proc = breakdown
-    .map((x) => Number(x.avg_processing_time) || 0)
+
+const estimateAvgPercentageUtilization = (result: any): number => {
+  const arr = (result?.resource_utilization ?? []) as any[];
+  if (!Array.isArray(arr) || arr.length === 0) return 0;
+  const vals = arr
+    .map((x) => Number(x?.percentage_utilization) || 0)
     .filter(Number.isFinite);
-  return mean(proc);
+  return mean(vals);
 };
 
 const extractKpis = (result: any): KpiBundle => {
@@ -93,8 +76,8 @@ const extractKpis = (result: any): KpiBundle => {
   const avgTotalCost = mean(
     costs.map((x) => Number(x.avg_total_cost) || 0)
   );
-  const avgTotalResource = estimateAvgTotalResourceConsumption(result);
-  return { avgCycleMin, avgWaitMin, avgTotalCost, avgTotalResource };
+  const percentageUtilization = estimateAvgPercentageUtilization(result);
+  return { avgCycleMin, avgWaitMin, avgTotalCost, percentageUtilization };
 };
 
 const buildActivitySummary = (
@@ -289,7 +272,7 @@ export default function Page() {
         avgCycleMin,
         avgWaitMin,
         avgTotalCost,
-        avgTotalResource: estimateAvgTotalResourceConsumption(x),
+        percentageUtilization: estimateAvgPercentageUtilization(x),
       };
     };
     if (selectedNames.length) {
@@ -537,6 +520,22 @@ export default function Page() {
               </Box>
             )}
 
+            {/* Resource Utilization Table */}
+            {selectedNames.length > 0 && (
+              <Box sx={{ mt: 3 }}>
+                <ResourceUtilizationTable
+                  title="Resource percentage utilization by scenario (%)"
+                  scenarios={
+                    selectedNames.map((sn) => ({
+                      name: sn,
+                      rows: (scenariosData[sn]?.resource_utilization ?? []) as any[],
+                    })) as ScenarioUtilization[]
+                  }
+                  height={420}
+                />
+              </Box>
+            )}
+            
             {/* Delta table: selezione dedicata (max 2) */}
             <Divider sx={{ my: 3 }}>
               <Chip label="Compare table: pick up to 2 scenarios" />

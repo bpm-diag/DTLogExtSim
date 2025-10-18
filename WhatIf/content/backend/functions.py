@@ -7,6 +7,8 @@ import xml.etree.ElementTree as ET
 from typing import List, Dict, Iterable, Tuple
 import statistics as _stats
 from collections import defaultdict
+from datetime import datetime, timedelta
+import ast
 
 # ------------- funzioni per leggere i file xes e convertirli in un formato che poi viene convertito in un dataframe -----------------
 def get_one_event_dict(one_event, case_name, data_types):
@@ -612,9 +614,262 @@ def compute_resource_bubble_data(df) -> list[dict]:
 
     return result
 # -------------------------------------------------------------------------------------------------------------------------------------
+# ---------- RESOURCE UTILIZATION (per run e aggregazione su N run) ----------
+
+_WEEKDAY_TO_INT = {
+    "MONDAY": 0, "TUESDAY": 1, "WEDNESDAY": 2, "THURSDAY": 3,
+    "FRIDAY": 4, "SATURDAY": 5, "SUNDAY": 6
+}
+
+def _iter_days(start_dt: datetime, end_dt: datetime):
+    """Yield days from floor(start_dt) to floor(end_dt) inclusive."""
+    cur = datetime(start_dt.year, start_dt.month, start_dt.day)
+    last = datetime(end_dt.year, end_dt.month, end_dt.day)
+    one_day = timedelta(days=1)
+    while cur <= last:
+        yield cur
+        cur += one_day
+
+def _seconds_overlap(day_start: datetime, rule_from: str, rule_to: str,
+                     window_start: datetime, window_end: datetime) -> float:
+    """
+    Ritorna i secondi di disponibilità in un 'giorno' limitati alla [window_start, window_end].
+    day_start: mezzanotte del giorno
+    rule_from/to: "HH:MM:SS"
+    """
+    s = datetime.combine(day_start.date(), datetime.strptime(rule_from, "%H:%M:%S").time())
+    e = datetime.combine(day_start.date(), datetime.strptime(rule_to, "%H:%M:%S").time())
+    # clamp alla finestra esatta coperta dal log
+    start = max(s, window_start)
+    end = min(e, window_end)
+    return max(0.0, (end - start).total_seconds())
+
+def _compute_available_seconds(extra_scen: dict, window_start: datetime, window_end: datetime) -> dict:
+    """
+    Calcola i secondi di disponibilità per ciascuna risorsa, tenendo conto:
+    - dei timetable (con più rules possibili)
+    - del numero di unità disponibili (totalAmount)
+    - dell'intervallo temporale effettivo coperto dal log (window_start..window_end)
+    """
+    # name -> list(rules)
+    timetables = {}
+    for tt in extra_scen.get("timetables", []):
+        rules = []
+        for r in tt.get("rules", []):
+            fw = _WEEKDAY_TO_INT.get(str(r.get("fromWeekDay","MONDAY")).upper(), 0)
+            tw = _WEEKDAY_TO_INT.get(str(r.get("toWeekDay","SUNDAY")).upper(), 6)
+            rules.append({
+                "fromTime": r["fromTime"],
+                "toTime": r["toTime"],
+                "fromW": fw,
+                "toW": tw
+            })
+        timetables[tt["name"]] = rules
+
+    avail = {}
+    for res in extra_scen.get("resources", []):
+        rname = str(res.get("name"))
+        amount = float(res.get("totalAmount", 1) or 1)
+        tname = res.get("timetableName")
+        rules = timetables.get(tname, [])
+        total_sec = 0.0
+
+        for day0 in _iter_days(window_start, window_end):
+            w = day0.weekday()
+            # per ogni rule che copre quel weekday
+            for rule in rules:
+                # es: range MONDAY..FRIDAY inclusivo
+                in_range = rule["fromW"] <= w <= rule["toW"] if rule["fromW"] <= rule["toW"] else (w >= rule["fromW"] or w <= rule["toW"])
+                if not in_range:
+                    continue
+                total_sec += _seconds_overlap(day0, rule["fromTime"], rule["toTime"], window_start, window_end)
+
+        avail[rname] = total_sec * amount
+    return avail
+
+def _parse_resources_cell(cell):
+    """
+    Converte la colonna org:resource in lista di risorse "pulita".
+    - Stringhe 'nan', 'None', '' => []
+    - Se la stringa rappresenta una lista => ast.literal_eval
+    - Singola stringa => [stringa]
+    """
+    if cell is None or (isinstance(cell, float) and pd.isna(cell)):
+        return []
+    if isinstance(cell, list):
+        return [str(x) for x in cell if str(x).strip().lower() not in ("nan", "none", "")]
+    if isinstance(cell, str):
+        s = cell.strip()
+        if s.lower() in ("nan", "none", ""):
+            return []
+        try:
+            val = ast.literal_eval(s)
+            if isinstance(val, list):
+                return [str(x) for x in val if str(x).strip().lower() not in ("nan", "none", "")]
+        except Exception:
+            pass
+        return [s]
+    return []
+
+def compute_resource_utilization_for_run(df: pd.DataFrame, extra_scenario: dict) -> list[dict]:
+    """
+    Calcola, per UNA run (df), la % di utilizzazione di ciascuna risorsa usando l'extra dello scenario.
+    % = (tempo_totale_lavorato / tempo_totale_disponibile) * 100
+
+    Regole:
+    - Preferisce coppie START→COMPLETE; se per (activity, traceId) manca START, usa ASSIGN→COMPLETE.
+    - La lista risorse è scelta in ordine: start → assign → complete.
+    - Valori "nan"/"None"/"" in org:resource vengono ignorati.
+    - La disponibilità è calcolata sulla finestra [min(timestamp), max(timestamp)] della run.
+    """
+    if df is None or df.empty or not extra_scenario:
+        return []
+
+    if 'timestamp' not in df.columns or 'lifecycle:transition' not in df.columns:
+        return []
+
+    transitions = set(df['lifecycle:transition'].unique())
+    has_start = 'start' in transitions
+    has_assign = 'assign' in transitions
+    has_complete = 'complete' in transitions
+    if not has_complete or (not has_start and not has_assign):
+        # impossibile costruire coppie significative
+        return []
+
+    # Finestra temporale coperta dal log
+    min_ts = pd.to_datetime(df['timestamp'].min())
+    max_ts = pd.to_datetime(df['timestamp'].max())
+    if pd.isna(min_ts) or pd.isna(max_ts) or max_ts <= min_ts:
+        return []
+
+    # --- COSTRUZIONE COPPIE ---
+    # DataFrame dei COMPLETE (sempre necessario)
+    completes = df[df['lifecycle:transition'] == 'complete'][
+        ['activity', 'traceId', 'timestamp', 'org:resource']
+    ].rename(columns={'timestamp': 'complete_ts', 'org:resource': 'res_complete'})
+
+    pairs = []
+
+    # 1) Coppie START→COMPLETE (preferite)
+    if has_start:
+        starts = df[df['lifecycle:transition'] == 'start'][
+            ['activity', 'traceId', 'timestamp', 'org:resource']
+        ].rename(columns={'timestamp': 'start_ts', 'org:resource': 'res_start'})
+
+        piv_start = pd.merge(starts, completes, on=['activity', 'traceId'], how='inner')
+
+        if has_assign:
+            assigns = df[df['lifecycle:transition'] == 'assign'][
+                ['activity', 'traceId', 'org:resource']
+            ].rename(columns={'org:resource': 'res_assign'})
+            piv_start = pd.merge(piv_start, assigns, on=['activity', 'traceId'], how='left')
+
+        pairs.append(piv_start)
+
+    # 2) Coppie ASSIGN→COMPLETE SOLO dove non esiste START
+    if has_assign:
+        assigns = df[df['lifecycle:transition'] == 'assign'][
+            ['activity', 'traceId', 'timestamp', 'org:resource']
+        ].rename(columns={'timestamp': 'start_ts', 'org:resource': 'res_assign'})
+
+        piv_assign = pd.merge(assigns, completes, on=['activity', 'traceId'], how='inner')
+
+        if has_start:
+            # escludi le (activity, traceId) che già hanno START→COMPLETE
+            if 'piv_start' in locals() and not piv_start.empty:
+                key = ['activity', 'traceId']
+                has_start_keys = piv_start[key].drop_duplicates()
+                piv_assign = piv_assign.merge(has_start_keys, on=key, how='left', indicator=True)
+                piv_assign = piv_assign[piv_assign['_merge'] == 'left_only'].drop(columns=['_merge'])
+
+        pairs.append(piv_assign)
+
+    if not pairs:
+        return []
+
+    piv = pd.concat([p for p in pairs if p is not None and not p.empty], ignore_index=True) if pairs else pd.DataFrame()
+    if piv.empty:
+        return []
+
+    # Durata
+    piv['duration_sec'] = (pd.to_datetime(piv['complete_ts']) - pd.to_datetime(piv['start_ts'])).dt.total_seconds()
+    piv = piv[piv['duration_sec'].notna() & (piv['duration_sec'] > 0)]
+
+    # Scelta risorse: start → assign → complete
+    def _pick_resources(row):
+        for col in ('res_start', 'res_assign', 'res_complete'):
+            if col in row:
+                lst = _parse_resources_cell(row[col])
+                if lst:
+                    return lst
+        return []
+
+    # Worked seconds per risorsa
+    worked: dict[str, float] = {}
+    for _, row in piv.iterrows():
+        res_list = _pick_resources(row)
+        if not res_list:
+            continue
+        dur = float(row['duration_sec'])
+        for r in res_list:
+            worked[r] = worked.get(r, 0.0) + dur
+
+    # Disponibilità per risorsa nella finestra della run
+    available = _compute_available_seconds(extra_scenario, min_ts.to_pydatetime(), max_ts.to_pydatetime())
+
+    # Output unificato (anche risorse presenti nel log ma non nell'extra)
+    out = []
+    for rname, avail_sec in available.items():
+        w_sec = worked.get(rname, 0.0)
+        pct = (w_sec / avail_sec * 100.0) if avail_sec > 0 else 0.0
+        out.append({
+            "resource": rname,
+            "worked_seconds": float(w_sec),
+            "available_seconds": float(avail_sec),
+            "percentage_utilization": float(pct)
+        })
+    for rname, w_sec in worked.items():
+        if rname not in available:
+            out.append({
+                "resource": rname,
+                "worked_seconds": float(w_sec),
+                "available_seconds": 0.0,
+                "percentage_utilization": 0.0
+            })
+
+    return out
+
+def _aggregate_resource_utilization(list_of_runs: list[list[dict]]) -> list[dict]:
+    """
+    Aggrega la resource utilization su N run dello stesso scenario.
+    Politica: media della percentage_utilization per risorsa (e medie dei worked/available).
+    """
+    from collections import defaultdict
+    buf_pct = defaultdict(list)
+    buf_w = defaultdict(list)
+    buf_a = defaultdict(list)
+    for run in list_of_runs:
+        for row in run:
+            r = str(row.get("resource"))
+            buf_pct[r].append(float(row.get("percentage_utilization", 0) or 0))
+            buf_w[r].append(float(row.get("worked_seconds", 0) or 0))
+            buf_a[r].append(float(row.get("available_seconds", 0) or 0))
+    out = []
+    for r in sorted(set(buf_pct.keys()) | set(buf_w.keys()) | set(buf_a.keys())):
+        def _mean(arr): 
+            import statistics as _s
+            return float(_s.mean(arr)) if arr else 0.0
+        out.append({
+            "resource": r,
+            "worked_seconds": _mean(buf_w[r]),
+            "available_seconds": _mean(buf_a[r]),
+            "percentage_utilization": _mean(buf_pct[r]),
+        })
+    return out
+
 # === WHAT-IF HELPERS: calcolo KPI per run singola e media su N run ==================
 
-def _compute_metrics_for_df(df: pd.DataFrame, *, bpmn_xml: str | None = None):
+def _compute_metrics_for_df(df: pd.DataFrame, *, bpmn_xml: str | None = None, extra_scenario: dict | None = None):
     """
     Calcola le KPI di UNA run (un singolo file XES) riutilizzando le funzioni esistenti.
     Ritorna un dict compatibile con /all-graphs/.
@@ -640,6 +895,8 @@ def _compute_metrics_for_df(df: pd.DataFrame, *, bpmn_xml: str | None = None):
     item_costs = compute_item_costs(df)
     item_duration = compute_avg_duration_per_item(df)
     res_bubble = compute_resource_bubble_data(df)
+    resource_util_run = compute_resource_utilization_for_run(df, extra_scenario) if extra_scenario else []
+
 
     return {
         "simulation_summary": {
@@ -654,6 +911,8 @@ def _compute_metrics_for_df(df: pd.DataFrame, *, bpmn_xml: str | None = None):
         "itemCosts": item_costs or [],
         "itemDurations": item_duration or [],
         "resource_bubble": res_bubble or [],
+        "resource_utilization": resource_util_run or []
+
     }
 
 def _mean_over_dict_list(list_of_dicts, key_fields, mean_fields, *, fill_missing_zero=True):
@@ -708,6 +967,7 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
     - 'resource_bubble': media di usage_count e avg_cost per resource (nota: usage_count medio ha senso come “attività media”).
     - 'simulation_summary': total_traces medio e unione degli unique_pools; gli altri due campi sono combinati
       mediando per key uguale.
+    - 'resource_utilization': media di percentage_utilization, worked_seconds, available_seconds per resource.
     """
     if not metrics_list:
         return {
@@ -794,6 +1054,10 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
         key_fields=("resource",),
         mean_fields=["usage_count","avg_cost"]
     )
+    # resource_utilization
+    resource_utilization = _aggregate_resource_utilization(
+        [m.get("resource_utilization", []) for m in metrics_list]
+    )
 
     # simulation_summary (media di total_traces, unione unique_pools; media for key on costs_by_item, execution_by_item)
     # total_traces
@@ -829,7 +1093,8 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
         "costs": costs,
         "itemCosts": item_costs,
         "itemDurations": item_durations,
-        "resource_bubble": resource_bubble
+        "resource_bubble": resource_bubble,
+        "resource_utilization": resource_utilization
     }
 
 # per i grafici “duration/breakdown/costi per attività” si fa la media delle medie (e delle min/max riportate da ciascuna run).
