@@ -17,7 +17,7 @@ import BpmnViewerBox, { FlowMetric } from "@/components/BpmnViewer";
 export type BottleneckRow = {
   activity: string;
   next_activity: string;
-  wait_time: number; // in minuti 
+  wait_time: number; // in secondi
   sequenceFlowIds?: string[];
 };
 
@@ -30,15 +30,15 @@ const HEATMAP_HEIGHT = 520; //px
 
 const unitLabel: Record<TimeUnit, string> = { s: "s", min: "min", h: "h" };
 
-const convertFromMinutes = (valueMin: number, unit: TimeUnit) => {
-  if (!Number.isFinite(valueMin)) return 0;
+const convertFromMinutes = (valuesec: number, unit: TimeUnit) => {
+  if (!Number.isFinite(valuesec)) return 0;
   switch (unit) {
-    case "s":
-      return valueMin * 60;
+    case "min":
+      return valuesec / 60;
     case "h":
-      return valueMin / 60;
+      return valuesec / (60*60);
     default:
-      return valueMin;
+      return valuesec;
   }
 };
 
@@ -70,10 +70,10 @@ const HEAT_COLORS: Record<0 | 1 | 2 | 3 | 4 | 5, string> = {
 // Colore neutro usato da .heat-none (in caso di fallback)
 const NEUTRAL_COLOR = "#646868";
 
-/** Dato un tempo in MINUTI (sorgente) restituisce il colore coerente con i flussi BPMN */
-function waitMinutesToHeatColor(valueMin: number): string {
-  if (!Number.isFinite(valueMin)) return NEUTRAL_COLOR;
-  const b = bucketOf(valueMin);
+/** Dato un tempo in seocndi restituisce il colore coerente con i flussi BPMN */
+function waitMinutesToHeatColor(valuesec: number): string {
+  if (!Number.isFinite(valuesec)) return NEUTRAL_COLOR;
+  const b = bucketOf(valuesec);
   return HEAT_COLORS[b];
 }
 

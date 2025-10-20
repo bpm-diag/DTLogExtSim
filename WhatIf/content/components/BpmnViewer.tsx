@@ -10,10 +10,10 @@ import MoveCanvasModule from "diagram-js/lib/navigation/movecanvas";
 
 
 export type FlowMetric = {
-  from?: string;            // facoltativo se usi flowIds
-  to?: string;              // facoltativo se usi flowIds
+  from?: string;            
+  to?: string;              
   value: number;            // tempo medio (min)
-  flowIds?: string[];       // sequenceFlowId dal backend (preferito!)
+  flowIds?: string[];       // sequenceFlowId dal backend
 };
 
 type Props = {
@@ -25,7 +25,7 @@ type Props = {
   minStroke?: number;
   maxStroke?: number;
   neutralColor?: string;
-  enableHeat?: boolean;     // NEW: se false, niente marker (viewer “pulito”)
+  enableHeat?: boolean;     
   onClose?: () => void;
 };
 

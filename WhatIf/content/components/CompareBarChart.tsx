@@ -19,12 +19,12 @@ export default function CompareBarChart({
   title = "Main KPI comparison",
   data,
   scenarioKeys,
-  valueFormatter, 
+  valueFormatter,
 }: {
   title?: string;
   data: CompareDatum[];
   scenarioKeys: string[];
-  valueFormatter?: (value: number) => string | number; 
+  valueFormatter?: (value: number) => string | number;
 }) {
   const theme = useTheme();
 
@@ -42,9 +42,33 @@ export default function CompareBarChart({
     "#795548",
   ];
 
+  // funzione per evitare "scenario scenario 0"
+  const formatScenarioName = (key: string) => {
+    const lower = key.toLowerCase();
+    return lower.startsWith("scenario")
+      ? key.charAt(0).toUpperCase() + key.slice(1) // già contiene la parola "scenario"
+      : `Scenario ${key}`;
+  };
+
   return (
-    <Box sx={{ height: 360, bgcolor: "background.paper", borderRadius: 2, p: 2, boxShadow: 1 }}>
-      <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1.25rem", color: "#1e293b", lineHeight: 1.2 }}>
+    <Box
+      sx={{
+        height: 360,
+        bgcolor: "background.paper",
+        borderRadius: 2,
+        p: 2,
+        boxShadow: 1,
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 700,
+          fontSize: "1.25rem",
+          color: "#1e293b",
+          lineHeight: 1.2,
+        }}
+      >
         {title}
       </Typography>
 
@@ -52,10 +76,21 @@ export default function CompareBarChart({
         <RBarChart data={data}>
           <XAxis dataKey="metric" />
           <YAxis />
-          <Tooltip formatter={valueFormatter} /> 
-          <Legend />
+          <Tooltip
+            formatter={(value, name) => [
+              valueFormatter ? valueFormatter(value as number) : value,
+              formatScenarioName(name as string),
+            ]}
+          />
+          <Legend formatter={(value) => formatScenarioName(value)} />
           {scenarioKeys.map((key, idx) => (
-            <Bar key={key} dataKey={key} fill={palette[idx % palette.length]} radius={[4, 4, 0, 0]} />
+            <Bar
+              key={key}
+              dataKey={key}
+              name={formatScenarioName(key)}
+              fill={palette[idx % palette.length]}
+              radius={[4, 4, 0, 0]}
+            />
           ))}
         </RBarChart>
       </ResponsiveContainer>
