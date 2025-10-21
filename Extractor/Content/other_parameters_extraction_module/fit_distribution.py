@@ -6,8 +6,11 @@ from fitter import Fitter
 
 def calculate_fixed_mean(self, data: List[float], most_common_value: float, count: int) -> float:
     """Calcola media per distribuzione fissa."""
-    if count == len(data) and data[0] == 0.00001:
-        return 0.0
+    if count == len(data):
+        if data[0] == 0.00001:
+            return 0.0
+        else:
+            return data[0]
     else:
         return round(most_common_value, 2)
     

@@ -19,7 +19,11 @@ def fit_distribution(self, data: List[float]) -> Tuple[str, Dict[str, float]]:
         # Controlla se la maggior parte dei valori è uguale (distribuzione fissa)
         most_common_value, count = Counter(data).most_common(1)[0]
         if count > 0.9 * len(data):
-            mean_value = 1 if count == len(data) and data[0] == 0.00001 else round(most_common_value, 2)
+            mean_value = 1 
+            if count == len(data):
+                mean_value = 1 if data[0] == 0.00001 else data[0]
+            else:
+                mean_value = round(most_common_value, 2)
             return 'fixed', {'mean': mean_value, 'arg1': 0, 'arg2': 0}
         
         # Fit distribuzioni statistiche

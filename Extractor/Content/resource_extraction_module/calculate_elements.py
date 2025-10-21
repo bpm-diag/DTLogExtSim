@@ -35,7 +35,7 @@ def calculate_correlation_matrix(self, log: pd.DataFrame) -> List[Dict[str, Any]
             moment_of_day = event[TAG_MOMENT_OF_DAY]
             resource_list = event[TAG_RESOURCE]
             
-            if isinstance(resource_list, list) and resource_list and not pd.isna(resource_list[0]):
+            if not pd.isna(resource_list[0]):
                 for resource in resource_list:
                     pair = (activity, moment_of_day)
                     res_knowledge_dict[resource][pair] += 1
@@ -143,13 +143,25 @@ def compute_timetables(self, log: pd.DataFrame, res_groups: Dict[str, List[str]]
                 interval_strings = []
                 for interval in intervals:
                     min_time = min(interval).strftime('%H:%M')
-                    max_time_obj = datetime.combine(datetime.today(), max(interval)) + timedelta(minutes=5)
-                    max_time = max_time_obj.time().strftime('%H:%M')
-                    if max_time == '00:00':
+                    
+                    # Salva il max originale per rilevare overflow
+                    original_max = max(interval)
+                    
+                    # Calcola max + 5 minuti
+                    max_time_obj = datetime.combine(datetime.today(), original_max) + timedelta(minutes=5)
+                    max_time_result = max_time_obj.time()
+                    
+                    # Rileva overflow: se il risultato è minore dell'originale, è avvenuto un overflow
+                    # Es: 23:57 + 5 min = 00:02, quindi 00:02 < 23:57 → overflow!
+                    if max_time_result < original_max:
                         max_time = '23:59'
+                    else:
+                        max_time = max_time_result.strftime('%H:%M')
+                    
                     interval_strings.append(f"{min_time} - {max_time}")
-                
-                timetables[timetable][day.capitalize()] = ', '.join(interval_strings)
+
+                interval_str = ', '.join(interval_strings)
+                timetables[timetable][day.capitalize()] = interval_str
         
         print(f"✓ Calcolate {len(timetables)} timetables")
         return timetables

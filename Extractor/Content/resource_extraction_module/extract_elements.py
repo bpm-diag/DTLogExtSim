@@ -78,14 +78,9 @@ def extract_resources_by_activity(self, log: pd.DataFrame, activities: List[str]
             if not filtered_log.empty:
                 # Estrai liste di risorse unique
                 resource_lists = filtered_log[TAG_RESOURCE].tolist()
-                
-                # Converti in set di tuple per unicità, poi back a liste
-                unique_sets = set()
-                for res_list in resource_lists:
-                    if isinstance(res_list, list) and res_list and not any(pd.isna(x) for x in res_list):
-                        unique_sets.add(tuple(res_list))
-                
-                unique_lists = [list(item) for item in unique_sets]
+
+                unique_lists = [list(item) for item in set(tuple(sublist) for sublist in resource_lists)]
+                unique_lists =  [sublist for sublist in unique_lists if sublist and not any(pd.isna(x) for x in sublist)]
                 
                 if unique_lists:
                     resources_by_activity[activity] = unique_lists
@@ -115,7 +110,7 @@ def extract_activities_by_resource(self, log: pd.DataFrame, resources: List[str]
         for resource in resources:
             # Filtra log dove la risorsa è coinvolta
             filtered_log = log[log[TAG_RESOURCE].apply(
-                lambda res_list: isinstance(res_list, list) and resource in res_list
+                lambda res_list: resource in res_list
             )]
             
             if not filtered_log.empty:

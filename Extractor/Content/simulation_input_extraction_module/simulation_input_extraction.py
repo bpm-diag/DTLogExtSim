@@ -103,7 +103,7 @@ class SimulationInputExtraction():
                 # 2. Calcolo probabilità di branching
                 self.calculate_branching_probabilities()
                 
-                # 3. Estrazione tipi di istanza
+                # # 3. Estrazione tipi di istanza
                 self.extract_instance_types()
                 
                 # 4. Estrazione tasso inter-arrivo
@@ -115,7 +115,7 @@ class SimulationInputExtraction():
                 # 6. Estrazione parametri risorse
                 self.extract_resource_parameters()
                 
-                # 7. Estrazione altri parametri
+                # # 7. Estrazione altri parametri
                 self.extract_other_parameters()
                 
                 print("✓ Estrazione completa terminata con successo")

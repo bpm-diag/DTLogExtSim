@@ -166,10 +166,6 @@ class ResourceParameterCalculation:
             raise Exception(f"Errore nell'assegnazione gruppi: {str(e)}")
     
     def _assign_group_to_resources(self, res_list: List[str], res_groups: Dict[str, List[str]]) -> List[str]:
-        """Assegna gruppi a una lista di risorse."""
-        if not isinstance(res_list, list):
-            return []
-        
         groups = []
         for resource in res_list:
             for group_name, group_members in res_groups.items():

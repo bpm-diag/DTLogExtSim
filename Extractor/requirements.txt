@@ -2,7 +2,7 @@ fitter
 networkx
 numpy
 pandas
-pm4py
+pm4py==2.6.1
 scikit_learn
 scipy
 blinker

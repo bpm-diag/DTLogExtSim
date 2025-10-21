@@ -73,31 +73,21 @@ function loadScenarioData(scenarioIndex, scenarioData) {
         const arrival = scenarioData.arrivalRateDistribution;
 
         const typeSelect = document.getElementById(`scenario_${scenarioIndex}_arrival_type`);
+        const meanInput = document.getElementById(`scenario_${scenarioIndex}_arrival_mean`);
+        const arg1Input = document.getElementById(`scenario_${scenarioIndex}_arrival_arg1`);
+        const arg2Input = document.getElementById(`scenario_${scenarioIndex}_arrival_arg2`);
+        const timeUnitSelect = document.getElementById(`scenario_${scenarioIndex}_arrival_time_unit`);
+
+        if (meanInput) meanInput.value = arrival.mean || '';
+        if (arg1Input) arg1Input.value = arrival.arg1 || '';
+        if (arg2Input) arg2Input.value = arrival.arg2 || '';
+        if (timeUnitSelect) timeUnitSelect.value = arrival.timeUnit || 'seconds';
+
         if (typeSelect && arrival.type) {
             typeSelect.value = arrival.type;
-            typeSelect.dispatchEvent(new Event('change'));
+            updateInterArrivalTimeDistribution(scenarioIndex);
         }
-
-        setTimeout(() => {
-            if (arrival.mean) {
-                const meanInput = document.getElementById(`scenario_${scenarioIndex}_arrival_mean`);
-                if (meanInput) meanInput.value = arrival.mean;
-            }
-            if (arrival.arg1) {
-                const arg1Input = document.getElementById(`scenario_${scenarioIndex}_arrival_arg1`);
-                if (arg1Input) arg1Input.value = arrival.arg1;
-            }
-            if (arrival.arg2) {
-                const arg2Input = document.getElementById(`scenario_${scenarioIndex}_arrival_arg2`);
-                if (arg2Input) arg2Input.value = arrival.arg2;
-            }
-        }, 50);
-
-        if (arrival.timeUnit) {
-            const timeUnitSelect = document.getElementById(`scenario_${scenarioIndex}_arrival_time_unit`);
-            if (timeUnitSelect) timeUnitSelect.value = arrival.timeUnit;
-        }
-
+    
         console.log('  ✓ Arrival rate distribution loaded');
     }
 
@@ -196,7 +186,8 @@ function loadScenarioData(scenarioIndex, scenarioData) {
                 }, 100);
             }
             
-            if (resource.setupTime) {
+            // Setup Time 
+            if (resource.setupTime && resource.setupTime.type) {
                 const setupTime = resource.setupTime;
                 
                 const setupTypeSelect = document.getElementById(`${resourceId}_setupTimeType`);
@@ -205,31 +196,18 @@ function loadScenarioData(scenarioIndex, scenarioData) {
                 const setupArg2Input = document.getElementById(`${resourceId}_setupTimeArg2`);
                 const setupTimeUnitSelect = document.getElementById(`${resourceId}_setupTimeUnit`);
                 
-                if (setupTypeSelect && setupTime.type) {
+
+                if (setupMeanInput) setupMeanInput.value = setupTime.mean || '';
+                if (setupArg1Input) setupArg1Input.value = setupTime.arg1 || '';
+                if (setupArg2Input) setupArg2Input.value = setupTime.arg2 || '';
+                if (setupTimeUnitSelect) setupTimeUnitSelect.value = setupTime.timeUnit || 'seconds';
+                
+                if (setupTypeSelect) {
                     setupTypeSelect.value = setupTime.type;
-                    setupTypeSelect.dispatchEvent(new Event('change'));
-                    
-                    setTimeout(() => {
-                        if (setupMeanInput) {
-                            setupMeanInput.value = setupTime.mean || '';
-                            setupMeanInput.dispatchEvent(new Event('input'));
-                        }
-                        if (setupArg1Input) {
-                            setupArg1Input.value = setupTime.arg1 || '';
-                            setupArg1Input.dispatchEvent(new Event('input'));
-                        }
-                        if (setupArg2Input) {
-                            setupArg2Input.value = setupTime.arg2 || '';
-                            setupArg2Input.dispatchEvent(new Event('input'));
-                        }
-                    }, 50);
-                }
-                if (setupTimeUnitSelect) {
-                    setupTimeUnitSelect.value = setupTime.timeUnit || 'seconds';
-                    setupTimeUnitSelect.dispatchEvent(new Event('change'));
+                    updateResourceSetupTimeDistribution(scenarioIndex, resourceId);
                 }
             }
-            
+                
             if (resource.maxUsage) {
                 const maxUsageInput = document.getElementById(`${resourceId}_maxUsage`);
                 if (maxUsageInput) {
@@ -275,16 +253,15 @@ function loadScenarioData(scenarioIndex, scenarioData) {
                     const timeUnitSelect = document.getElementById(`scenario_${scenarioIndex}_durationTimeUnit_${elementId}`);
                     
                     if (typeSelect) {
-                        typeSelect.value = duration.type || 'FIXED';
-                        typeSelect.dispatchEvent(new Event('change'));
+                        if (meanInput) meanInput.value = duration.mean || '';
+                        if (arg1Input) arg1Input.value = duration.arg1 || '';
+                        if (arg2Input) arg2Input.value = duration.arg2 || '';
+                        if (timeUnitSelect) timeUnitSelect.value = duration.timeUnit || 'seconds';
                         
-                        setTimeout(() => {
-                            if (meanInput) meanInput.value = duration.mean || '';
-                            if (arg1Input) arg1Input.value = duration.arg1 || '';
-                            if (arg2Input) arg2Input.value = duration.arg2 || '';
-                        }, 50);
+                        typeSelect.value = duration.type || 'FIXED';
+
+                        updateActivityTimeDistribution(elementId, scenarioIndex);
                     }
-                    if (timeUnitSelect) timeUnitSelect.value = duration.timeUnit || 'seconds';
                 }
                 
                 if (element.durationThreshold) {
@@ -337,16 +314,15 @@ function loadScenarioData(scenarioIndex, scenarioData) {
                 const timeUnitSelect = document.getElementById(`scenario_${scenarioIndex}_catchEventDurationTimeUnit_${eventId}`);
                 
                 if (typeSelect) {
+                    if (meanInput) meanInput.value = eventData.mean || '';
+                    if (arg1Input) arg1Input.value = eventData.arg1 || '';
+                    if (arg2Input) arg2Input.value = eventData.arg2 || '';
+                    if (timeUnitSelect) timeUnitSelect.value = eventData.timeUnit || 'seconds';
+
                     typeSelect.value = eventData.type || 'FIXED';
-                    typeSelect.dispatchEvent(new Event('change'));
-                    
-                    setTimeout(() => {
-                        if (meanInput) meanInput.value = eventData.mean || '';
-                        if (arg1Input) arg1Input.value = eventData.arg1 || '';
-                        if (arg2Input) arg2Input.value = eventData.arg2 || '';
-                    }, 50);
+
+                    updateCatchEventTimeDistribution(eventId, scenarioIndex);
                 }
-                if (timeUnitSelect) timeUnitSelect.value = eventData.timeUnit || 'seconds';
             });
             
             console.log('  ✓ Catch events loaded');

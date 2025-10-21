@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from typing import List
 import os
+import json
 
 def extract_waiting_distribution(self, processed_log: pd.DataFrame) -> List[List]:
         """
@@ -69,11 +70,13 @@ def save_waiting_distributions(self, waiting_distributions: List[List]) -> str:
             output_dir = os.path.join(self.path, 'output_data', 'output_file')
             os.makedirs(output_dir, exist_ok=True)
             
-            file_path = os.path.join(output_dir, f'act_distr_wait_time_{self.name}.txt')
+            file_path = os.path.join(output_dir, f'act_distr_wait_time_{self.name}.json')
+            dict = {}
+            for d in waiting_distributions:
+                dict[d[0]] = d
             
             with open(file_path, 'w') as file:
-                for distribution in waiting_distributions:
-                    file.write(f"{distribution}\n")
+                json.dump(dict, file)
             
             print(f"✓ Distribuzioni tempo di attesa salvate: {file_path}")
             return file_path

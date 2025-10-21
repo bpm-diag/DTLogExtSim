@@ -52,7 +52,7 @@ class ActivityParamExtraction:
         
         self._reorder_events = reorder_events.__get__(self)
         self._reorder_single_timestamp = reorder_single_timestamp.__get__(self)
-        self._reorder_dual_timpestamp = reorder_dual_timestamp.__get__(self)
+        self._reorder_dual_timestamp = reorder_dual_timestamp.__get__(self)
         self._reorder_triple_timestamp = reorder_triple_timestamp.__get__(self)
 
         self._create_reordered_event = create_reordered_event.__get__(self)

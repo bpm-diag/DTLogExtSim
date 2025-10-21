@@ -1,4 +1,5 @@
 import os
+import json
 from typing import Dict, Tuple
 
 def save_results(self, distribution_params: Tuple[str, Dict[str, float]]) -> str:
@@ -15,11 +16,10 @@ def save_results(self, distribution_params: Tuple[str, Dict[str, float]]) -> str
             output_dir = os.path.join(self.path, 'output_data', 'output_file')
             os.makedirs(output_dir, exist_ok=True)
             
-            file_path = os.path.join(output_dir, f'interarrival{self.name}.txt')
+            file_path = os.path.join(output_dir, f'interarrival{self.name}.json')
             
             with open(file_path, 'w') as file:
-                file.write("Interarrival distribution and parameters\n")
-                file.write(f"{list(distribution_params)}\n")
+                json.dump(distribution_params, file, indent=4)
             
             print(f"✓ Risultati salvati: {file_path}")
             return file_path

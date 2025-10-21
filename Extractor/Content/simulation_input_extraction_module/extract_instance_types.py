@@ -15,9 +15,9 @@ def extract_instance_types(self) -> None:
         # Calcolo completo
         results = self._instance_types.calculate_all_instance_types()
 
-        # Accesso ai risultati
-        instance_types = self._instance_types._instance_types
-        forced_types = self._instance_types._forced_instance_types
+        # # Accesso ai risultati
+        # instance_types = self._instance_types._instance_types
+        # forced_types = self._instance_types._forced_instance_types
         print("✓ Tipi di istanza estratti")
         
     except Exception as e:

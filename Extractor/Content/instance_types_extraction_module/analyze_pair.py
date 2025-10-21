@@ -19,14 +19,7 @@ def analyze_pair_executions(self, temp_log: pd.DataFrame, branches_pairs: List[T
     print("Analizzando esecuzioni per coppia...")
     
     try:
-        results = {pair: Counter() for pair in branches_pairs}
-        
-        # Verifica presenza colonna instanceType
-        if TAG_INSTANCE_TYPE not in temp_log.columns:
-            print("⚠ Colonna instanceType non trovata, usando valore di default 'A'")
-            temp_log = temp_log.copy()
-            temp_log[TAG_INSTANCE_TYPE] = 'A'
-        
+        results = {pair: Counter() for pair in branches_pairs}  
         # Analizza ogni traccia
         for trace_id, group in temp_log.groupby(TAG_TRACE_ID):
             sorted_events = group.sort_values(TAG_TIMESTAMP).reset_index(drop=True)
@@ -74,10 +67,8 @@ def analyze_forced_instance_types(self, results: Dict[Tuple[str, str], Counter],
             for pair, counter in results.items():
                 try:
                     # Calcola ratio di esecuzione del gateway
-                    if pair in pair_tot and self._total_num_trace > 0:
-                        ratio_gateway_execution = pair_tot[pair] / self._total_num_trace
-                    else:
-                        ratio_gateway_execution = 0
+                    
+                    ratio_gateway_execution = pair_tot[pair] / self._total_num_trace
                     
                     # Analizza solo se il gateway è eseguito abbastanza frequentemente
                     if ratio_gateway_execution > execution_threshold:

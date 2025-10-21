@@ -128,6 +128,10 @@ class BranchProbCalculation:
                     self._flow_prob[node] = filtered_flows
             
             # 7. Salva risultati
+            print("Salvataggio risultati...")
+            for node, flows in self._flow_prob.copy().items():
+                self._flow_prob.pop(node)
+                self._flow_prob[str(node)] = flows
             results_file = self.save_results(self._flow_prob)
             
             result = {
