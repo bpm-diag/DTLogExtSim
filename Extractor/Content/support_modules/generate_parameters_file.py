@@ -134,29 +134,37 @@ class ParamsFile:
             start_datetime = self._calculate_start_datetime()
             
             # Struttura dati finale per JSON (con ID)
-            data_json = {
-                "processInstances": process_instances,
-                "startDateTime": start_datetime,
-                "arrivalRateDistribution": arrival_rate,
-                "timetables": timetables,
-                "resources": resources,
-                "elements": activities_id,
-                "sequenceFlows": flow,
-                "catchEvents": {},
-                "logging_opt": "1"
+            data_json = {"0":            
+                {
+                    "processInstances": process_instances,
+                    "startDateTime": start_datetime,
+                    "arrivalRateDistribution": arrival_rate,
+                    "timetables": timetables,
+                    "resources": resources,
+                    "elements": activities_id,
+                    "sequenceFlows": flow,
+                    "catchEvents": {}
+                },
+                "logging_opt": "1",
+                "number_of_scenarios": "1",
+                "number_of_repetitions": "1"
             }
             
             # Struttura dati finale per TXT (con nomi)
-            data_txt = {
-                "processInstances": process_instances,
-                "startDateTime": start_datetime,
-                "arrivalRateDistribution": arrival_rate,
-                "timetables": timetables,
-                "resources": resources,
-                "elements": activities_name,
-                "sequenceFlows": flow,
-                "catchEvents": {},
-                "logging_opt": "1"
+            data_txt = {"0":
+                {
+                    "processInstances": process_instances,
+                    "startDateTime": start_datetime,
+                    "arrivalRateDistribution": arrival_rate,
+                    "timetables": timetables,
+                    "resources": resources,
+                    "elements": activities_name,
+                    "sequenceFlows": flow,
+                    "catchEvents": {}
+                },
+                "logging_opt": "1",
+                "number_of_scenarios": "1",
+                "number_of_repetitions": "1"
             }
             
             # Salva file
