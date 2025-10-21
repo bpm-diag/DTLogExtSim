@@ -276,9 +276,9 @@ export default function Page() {
       };
     };
     if (selectedNames.length) {
-      add("Avg cycle time (min)", (x) => getKPIs(x).avgCycleMin);
-      add("Avg waiting time (min)", (x) => getKPIs(x).avgWaitMin);
-      add("Avg total cost (€)", (x) => getKPIs(x).avgTotalCost);
+      add("Avg cycle time", (x) => getKPIs(x).avgCycleMin);
+      add("Avg waiting time", (x) => getKPIs(x).avgWaitMin);
+      add("Avg total cost", (x) => getKPIs(x).avgTotalCost);
     }
     return rows;
   }, [scenariosData, selectedNames.join(",")]);
