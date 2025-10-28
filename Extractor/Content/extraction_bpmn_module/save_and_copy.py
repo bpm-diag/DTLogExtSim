@@ -48,11 +48,10 @@ def copy_to_output_file(self, bpmn_file: str) -> str:
         # Percorso destinazione
         final_bpmn = os.path.join(self.output_file_dir, f"{self.name}_pm4py.bpmn")
         
-        print("QUESTO DIO",bpmn_file)
         # Carica e salva con pm4py per standardizzazione
-        # bpmn_model = pm4py.read_bpmn(bpmn_file)
-        # pm4py.write_bpmn(bpmn_model, final_bpmn)
-        shutil.copy(bpmn_file, final_bpmn)
+        bpmn_model = pm4py.read_bpmn(bpmn_file)
+        pm4py.write_bpmn(bpmn_model, final_bpmn)
+        # shutil.copy(bpmn_file, final_bpmn)
         
         print(f"✓ File BPMN copiato: {final_bpmn}")
         return final_bpmn
