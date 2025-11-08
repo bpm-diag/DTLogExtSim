@@ -104,7 +104,7 @@
                     <div class="tab-pane fade" id="whatif" style="padding-bottom: 80px;">
                     <div class="alert alert-secondary mt-3">
                         <strong>What-If analysis</strong> — Select a <em>root</em> (a folder containing the BPMN)
-                        and at least <strong>two</strong> <em>scenarios folders</em>.
+                        and one or more <em>scenarios folders</em>.
                     </div>
 
                     <!-- Upload ZIP (solo .zip) -->
@@ -160,7 +160,7 @@
 
                             <div class="form-group my-3">
                             <label for="whatif_scenarios">
-                                Scenarios (select at least <strong>two</strong>):
+                                Scenarios (select one or more):
                             </label>
                             <select
                                 class="form-control"
@@ -282,24 +282,25 @@
             loadScenariosForRoot(e.target.value);
             });
 
-            // Submit Start What-If: valida almeno 2 scenari e crea hidden CSV
+            // Submit Start What-If: valida almeno 1 scenario e crea hidden CSV
             document.getElementById('whatifStartForm')?.addEventListener('submit', function (e) {
-            const sel = document.getElementById('whatif_scenarios');
-            const selected = Array.from(sel.selectedOptions).map(o => o.value);
-            if (selected.length < 2) {
-                e.preventDefault();
-                alert('Seleziona almeno due scenari.');
-                return false;
-            }
-            // crea/aggiorna hidden field
-            let hidden = this.querySelector('input[name="scenarios_csv"]');
-            if (!hidden) {
-                hidden = document.createElement('input');
-                hidden.type = 'hidden'; hidden.name = 'scenarios_csv';
-                this.appendChild(hidden);
-            }
-            hidden.value = selected.join(',');
+                const sel = document.getElementById('whatif_scenarios');
+                const selected = Array.from(sel.selectedOptions).map(o => o.value);
+                if (selected.length < 1) {
+                    e.preventDefault();
+                    alert('Seleziona almeno uno scenario.');
+                    return false;
+                }
+                // crea/aggiorna hidden field
+                let hidden = this.querySelector('input[name="scenarios_csv"]');
+                if (!hidden) {
+                    hidden = document.createElement('input');
+                    hidden.type = 'hidden'; hidden.name = 'scenarios_csv';
+                    this.appendChild(hidden);
+                }
+                hidden.value = selected.join(',');
             });
+
 
             // Upload ZIP (via fetch) + refresh roots/scenari senza ricaricare la pagina
             document.getElementById('whatifZipForm')?.addEventListener('submit', async (e) => {

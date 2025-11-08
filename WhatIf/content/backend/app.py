@@ -111,7 +111,8 @@ def analyze_multi_from_uploads():
         except Exception:
             extra_all = None
     scenarios = [s.strip() for s in scenarios_csv.split(",") if s.strip()!=""]
-    if len(scenarios) < 2: return jsonify({"error":"select at least two scenarios"}), 400
+    if len(scenarios) < 1:
+        return jsonify({"error":"select at least one scenario"}), 400
 
     out: Dict[str, Any] = {}
     for scen in scenarios:

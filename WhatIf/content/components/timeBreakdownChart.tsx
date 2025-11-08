@@ -92,7 +92,12 @@ export default function BreakdownChart({ data }: { data: any }) {
                       labelFormatter={(label) => `Activity: ${label}`}
                     />
 
-                    <Legend />
+                    <Legend 
+                    layout="vertical"
+                    verticalAlign="top"
+                    align="right"
+                    iconType="square"
+                    />
                     {showCycle && <Bar dataKey="avg_cycle_time" fill="#3b82f6" name="Cycle Time" />}
                     {showWaiting && <Bar dataKey="avg_waiting_time" fill="#f59e0b" name="Waiting Time" />}
                     {showProcessing && <Bar dataKey="avg_processing_time" fill="#10b981" name="Processing Time" />}

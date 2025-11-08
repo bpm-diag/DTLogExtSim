@@ -180,7 +180,7 @@ export default function Page() {
 
   // Fetch BPMN + multi metrics
   useEffect(() => {
-    if (!root || scenarioIds.length < 2) return;
+    if (!root || scenarioIds.length < 1) return;
     (async () => {
       try {
         setLoading(true);
