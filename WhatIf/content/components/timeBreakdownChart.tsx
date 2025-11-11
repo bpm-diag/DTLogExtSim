@@ -45,7 +45,7 @@ export default function BreakdownChart({ data }: { data: any }) {
     return (
             <div className="bg-white p-6 rounded-xl shadow">
                 <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                  Time Breakdown per Activity (Avg in Minutes)
+                  Time Breakdown per Activity (Avg)
                 </h2>
                 <FormControl size="small" style={{ marginBottom: 16 }}>
                   <InputLabel>Unit</InputLabel>

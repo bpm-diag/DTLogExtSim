@@ -72,26 +72,9 @@ export default function ItemDurationPieChart({ data }: { data: any }) {
                   cx="50%"
                   cy="50%"
                   outerRadius={120}
-                  labelLine={true}
-                  label={({ cx, cy, midAngle, outerRadius, percent, payload }) => {
-                    const RADIAN = Math.PI / 180;
-                    const radius = outerRadius + 20; // distanza dal cerchio
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                    const textAnchor = x > cx ? "start" : "end";
-                    return (
-                      <text
-                        x={x}
-                        y={y}
-                        fill="#4a4a4a"
-                        textAnchor={textAnchor}
-                        dominantBaseline="central"
-                        fontSize={16}
-                      >
-                        {`${payload.instanceType}: ${(percent * 100).toFixed(1)}% (€${payload.duration.toFixed(1)})`}
-                      </text>
-                    );
-                  }}
+                  label={({ percent, payload }) =>
+                    `${payload.instanceType}: ${(percent * 100).toFixed(1)}% (${payload.duration.toFixed(1)} ${formatUnit(unit)})`
+                  }
                 >
                   {convertedData.map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
