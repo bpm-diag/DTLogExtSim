@@ -20,12 +20,12 @@ function formatUnitLabel(unit: string): string {
   switch (unit) {
     case "seconds":
       return "s";
-    case "minutes":
-      return "min";
+    case "hours":
+      return "h"; 
     case "days":
       return "d";
     default:
-      return "h";
+      return "min";
   }
 }
 
@@ -83,10 +83,10 @@ export default function DurationChart({ data }: { data: any }) {
 
             <Tooltip
               formatter={(value: any, name: string) => [
-                `${convertDuration(value, unit).toFixed(2)} ${formatUnitLabel(unit)}`,
-                name.replace("_", " ")
-              ]}
-              labelFormatter={(label) => `Activity: ${label}`}
+                `${value.toFixed(2)} ${formatUnitLabel(unit)}`,
+                 name.replace("_", " ")
+                 ]}
+                labelFormatter={(label) => `Activity: ${label}`}
             />
 
             <Legend layout="vertical" verticalAlign="top"
