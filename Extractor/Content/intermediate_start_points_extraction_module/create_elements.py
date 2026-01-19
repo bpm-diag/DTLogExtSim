@@ -179,13 +179,12 @@ def create_gateway_for_activity(self, model: Any, flow_to_modify: Any,
     gateway.add_in_arc(new_flow)
     gateway.add_out_arc(new_flow1)
     
-    # Rimuovi vecchio flusso e aggiungi nuovi elementi
+    # Rimuovi vecchio flusso (rimuove automaticamente da in_arcs e out_arcs)
+    print(f"DEBUG: Rimuovendo flow_to_modify con ID: {flow_to_modify.get_id()}")
     model.remove_flow(flow_to_modify)
+    print(f"DEBUG: Flow rimosso con successo")
     
-    # Aggiorna connessioni nodi
-    in_arcs = target_flow.get_in_arcs()
-    if in_arcs:
-        target_flow.remove_in_arc(in_arcs[0])
+    # Aggiungi nuove connessioni
     target_flow.add_in_arc(new_flow1)
     source_flow.add_out_arc(new_flow)
     
@@ -218,6 +217,8 @@ def create_intermediate_gateways(self, model: Any, app_model: Any,
             flow_to_modify = self._find_corresponding_flow(model, target_flow)
             
             if flow_to_modify:
+                print(f"DEBUG: Processing activity '{activity_name}' (type: {activity_type})")
+                print(f"DEBUG: flow_to_modify ID: {flow_to_modify.get_id()}")
                 # Crea gateway intermedio
                 gateway_info = self._create_gateway_for_activity(
                     model, flow_to_modify, activity_type, i
@@ -237,7 +238,16 @@ def create_intermediate_gateways(self, model: Any, app_model: Any,
     
     # Rimuovi flusso di start originale
     if start_flow_info['flow_to_delete']:
-        model.remove_flow(start_flow_info['flow_to_delete'])
+        flow_to_delete_id = start_flow_info['flow_to_delete'].get_id()
+        print(f"DEBUG: Tentativo di rimuovere flow_to_delete con ID: {flow_to_delete_id}")
+        # Verifica se il flusso esiste ancora nel modello
+        flow_exists = any(f.get_id() == flow_to_delete_id for f in model.get_flows())
+        print(f"DEBUG: Il flusso esiste ancora nel modello? {flow_exists}")
+        if flow_exists:
+            model.remove_flow(start_flow_info['flow_to_delete'])
+            print(f"DEBUG: Flow di start rimosso con successo")
+        else:
+            print(f"DEBUG: Flow già rimosso, skip")
     
     return forced_flows
 
