@@ -20,35 +20,38 @@ export type ScenarioUtilization = {
 
 type Order = "asc" | "desc";
 
-/**
- * Gradiente invertito:
- * 0% → rosso scuro, 100% → verde vivo
- */
 function colorFor(value: number) {
   const v = Math.max(0, Math.min(100, value));
 
-  // definizione del gradiente 0=rosso, 100=verde
+  // dei punti del gradiente con tonalità HSL
   const stops = [
-    { p: 0, h: 0, s: 98, l: 24 },   // rosso scuro
-    { p: 16, h: 8, s: 95, l: 47 },
-    { p: 33, h: 28, s: 90, l: 51 },
-    { p: 50, h: 55, s: 100, l: 50 },
-    { p: 66, h: 74, s: 82, l: 49 },
-    { p: 100, h: 120, s: 70, l: 45 }, // verde
+    { p: 0,   h: 0,   s: 90, l: 25 }, // rosso scuro
+    { p: 10,  h: 0,   s: 90, l: 45 }, // rosso chiaro
+    { p: 25,  h: 25,  s: 100, l: 50 }, // arancione
+    { p: 35,  h: 45,  s: 100, l: 50 }, // giallo
+    { p: 50,  h: 110, s: 70,  l: 45 }, // verde
+    { p: 66,  h: 45,  s: 100, l: 50 }, // giallo
+    { p: 77,  h: 25,  s: 100, l: 50 }, // arancione
+    { p: 85,  h: 0,   s: 90,  l: 45 }, // rosso chiaro
+    { p: 100, h: 0,   s: 90,  l: 25 }, // rosso scuro
   ];
 
-  // interpolazione lineare tra due punti del gradiente
+  // Trova il segmento del gradiente in cui si trova il valore
   const i = stops.findIndex((s) => v <= s.p);
   if (i <= 0) {
     const s = stops[0];
     return `hsl(${s.h}, ${s.s}%, ${s.l}%)`;
   }
+
   const prev = stops[i - 1];
   const next = stops[i];
   const ratio = (v - prev.p) / (next.p - prev.p);
+
+  // Interpolazione lineare tra i due colori
   const h = prev.h + (next.h - prev.h) * ratio;
   const s = prev.s + (next.s - prev.s) * ratio;
   const l = prev.l + (next.l - prev.l) * ratio;
+
   return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
@@ -179,13 +182,23 @@ export default function ResourceUtilizationTable({
                   const isBest = bestByResource[res] === sn;
                   const bg = Number.isFinite(v) ? colorFor(v as number) : "transparent";
                   // testo leggibile in base alla luminosità
-                  const fg =
-                    !Number.isFinite(v) || v == null
-                      ? "inherit"
-                      : (v as number) > 40
-                      ? "#202020ff"
-                      : "#fff";
+                  // Colore testo leggibile in base alla percentuale (sfondo)
+                  let fg = "#202020ff"; // testo scuro di default
 
+                  if (!Number.isFinite(v) || v == null) {
+                    fg = "inherit";
+                  } else {
+                    const num = v as number;
+
+                    // Testo bianco su rosso/arancione scuro (inizio e fine curva)
+                    if (num <= 25 || num >= 85) {
+                      fg = "#ffffff";
+                    }
+                    // Testo scuro su zone giallo/verde centrali
+                    else {
+                      fg = "#202020ff";
+                    }
+                  }
                   return (
                     <TableCell key={`${res}-${sn}`} align="right" sx={{ p: 1 }}>
                       {Number.isFinite(v) ? (

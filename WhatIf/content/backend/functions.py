@@ -711,114 +711,220 @@ def _parse_resources_cell(cell):
         return [s]
     return []
 
+def _pick_resources_from_cells(*cells) -> list[str]:
+    """
+    Ritorna la prima lista non vuota di risorse tra le celle fornite,
+    usando _parse_resources_cell su ciascuna.
+    Ordine tipico: start -> assign -> complete.
+    """
+    for c in cells:
+        if c is None:
+            continue
+        lst = _parse_resources_cell(c)
+        if lst:
+            return lst
+    return []
+
+def _build_resource_pairs_greedy(df: pd.DataFrame) -> list[dict]:
+    """
+    Costruisce coppie (start_ts, complete_ts, resource) per UNA run
+    evitando il prodotto cartesiano.
+
+    Regole:
+    - Per ogni (traceId, activity), ordina per timestamp.
+    - Per ogni COMPLETE:
+        1) cerca lo START non ancora usato più vicino prima del COMPLETE;
+        2) se non c'è, cerca l'ASSIGN non ancora usato più vicino prima del COMPLETE;
+        3) se non c'è nulla, salta.
+    - La risorsa è scelta in ordine: start -> assign -> complete.
+    - Scarta durate <= 0 o senza risorsa.
+    """
+    pairs: list[dict] = []
+
+    # lavoriamo su copia per sicurezza
+    df = df[['traceId', 'activity', 'timestamp', 'lifecycle:transition', 'org:resource']].copy()
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    df = df.sort_values(['traceId', 'activity', 'timestamp'])
+
+    for (trace, act), g in df.groupby(['traceId', 'activity'], sort=False):
+        g = g.sort_values('timestamp')
+
+        # indici relativi al df originale (li usiamo con df.loc)
+        start_idx = g[g['lifecycle:transition'] == 'start'].index.tolist()
+        assign_idx = g[g['lifecycle:transition'] == 'assign'].index.tolist()
+        completes = g[g['lifecycle:transition'] == 'complete']
+
+        used_starts = set()
+        used_assigns = set()
+
+        for comp_i, comp_row in completes.iterrows():
+            comp_ts = comp_row['timestamp']
+
+            # 1) cerca START candidato: ultimo START non usato prima del COMPLETE
+            best_start = None
+            best_start_ts = None
+            for idx in start_idx:
+                if idx in used_starts:
+                    continue
+                ts = df.at[idx, 'timestamp']
+                if ts <= comp_ts and (best_start_ts is None or ts > best_start_ts):
+                    best_start = idx
+                    best_start_ts = ts
+
+            # 2) se non c'è START, cerca ASSIGN con la stessa logica
+            best_assign = None
+            best_assign_ts = None
+            if best_start is None:
+                for idx in assign_idx:
+                    if idx in used_assigns:
+                        continue
+                    ts = df.at[idx, 'timestamp']
+                    if ts <= comp_ts and (best_assign_ts is None or ts > best_assign_ts):
+                        best_assign = idx
+                        best_assign_ts = ts
+
+            # Se non ho né start né assign, non posso creare coppia
+            if best_start is None and best_assign is None:
+                continue
+
+            if best_start is not None:
+                start_ts = best_start_ts
+                start_row = df.loc[best_start]
+                used_starts.add(best_start)
+                resources = _pick_resources_from_cells(
+                    start_row.get('org:resource'),
+                    comp_row.get('org:resource')
+                )
+            else:
+                start_ts = best_assign_ts
+                assign_row = df.loc[best_assign]
+                used_assigns.add(best_assign)
+                resources = _pick_resources_from_cells(
+                    assign_row.get('org:resource'),
+                    comp_row.get('org:resource')
+                )
+
+            # durata valida?
+            if comp_ts <= start_ts:
+                continue
+
+            duration = (comp_ts - start_ts).total_seconds()
+            if duration <= 0:
+                continue
+
+            if not resources:
+                continue
+
+            for r in resources:
+                pairs.append({
+                    "traceId": trace,
+                    "activity": act,
+                    "resource": str(r),
+                    "duration_sec": float(duration),
+                })
+
+    return pairs
+
+def compute_resource_amounts(extra_scenario: dict | None) -> dict:
+    """
+    Estrae le quantità di risorse definite in extra_scenario.
+    """
+    if not extra_scenario:
+        return {}
+
+    resources = extra_scenario.get("resources")
+    if not isinstance(resources, list):
+        return {}
+
+    out: dict = {}
+
+    for res in resources:
+        if not isinstance(res, dict):
+            continue
+        name = str(res.get("name") or "").strip()
+        if not name:
+            continue
+
+        raw_amount = res.get("totalAmount", 1)
+        try:
+            amt = float(raw_amount)
+        except Exception:
+            amt = 1.0
+
+        # se stesso nome appare più volte, sommiamo
+        out[name] = out.get(name, 0.0) + amt
+
+    # cast a int se il valore è intero
+    cleaned = {}
+    for k, v in out.items():
+        if float(v).is_integer():
+            cleaned[k] = int(v)
+        else:
+            cleaned[k] = float(v)
+
+    return cleaned
+
+
 def compute_resource_utilization_for_run(df: pd.DataFrame, extra_scenario: dict) -> list[dict]:
     """
     Calcola, per UNA run (df), la % di utilizzazione di ciascuna risorsa usando l'extra dello scenario.
+
     % = (tempo_totale_lavorato / tempo_totale_disponibile) * 100
 
     Regole:
-    - Preferisce coppie START→COMPLETE; se per (activity, traceId) manca START, usa ASSIGN→COMPLETE.
-    - La lista risorse è scelta in ordine: start → assign → complete.
+    - Preferisce coppie START→COMPLETE; se per (activity, traceId) non esiste START, usa ASSIGN→COMPLETE.
+    - Pairing 1–to–1 greedy (niente prodotto cartesiano).
+    - La lista risorse per coppia è scelta in ordine: start → assign → complete.
     - Valori "nan"/"None"/"" in org:resource vengono ignorati.
     - La disponibilità è calcolata sulla finestra [min(timestamp), max(timestamp)] della run.
     """
     if df is None or df.empty or not extra_scenario:
         return []
 
-    if 'timestamp' not in df.columns or 'lifecycle:transition' not in df.columns:
+    required_cols = {'timestamp', 'lifecycle:transition', 'activity', 'traceId'}
+    if not required_cols.issubset(df.columns):
         return []
+
+    # normalizzo
+    df = df.copy()
+    df['lifecycle:transition'] = df['lifecycle:transition'].astype(str).str.lower()
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
 
     transitions = set(df['lifecycle:transition'].unique())
-    has_start = 'start' in transitions
-    has_assign = 'assign' in transitions
-    has_complete = 'complete' in transitions
-    if not has_complete or (not has_start and not has_assign):
-        # impossibile costruire coppie significative
+    if 'complete' not in transitions:
+        return []
+    if 'start' not in transitions and 'assign' not in transitions:
         return []
 
-    # Finestra temporale coperta dal log
-    min_ts = pd.to_datetime(df['timestamp'].min())
-    max_ts = pd.to_datetime(df['timestamp'].max())
+    # finestra temporale della run
+    min_ts = df['timestamp'].min()
+    max_ts = df['timestamp'].max()
     if pd.isna(min_ts) or pd.isna(max_ts) or max_ts <= min_ts:
         return []
 
-    # --- COSTRUZIONE COPPIE ---
-    # DataFrame dei COMPLETE (sempre necessario)
-    completes = df[df['lifecycle:transition'] == 'complete'][
-        ['activity', 'traceId', 'timestamp', 'org:resource']
-    ].rename(columns={'timestamp': 'complete_ts', 'org:resource': 'res_complete'})
-
-    pairs = []
-
-    # 1) Coppie START→COMPLETE (preferite)
-    if has_start:
-        starts = df[df['lifecycle:transition'] == 'start'][
-            ['activity', 'traceId', 'timestamp', 'org:resource']
-        ].rename(columns={'timestamp': 'start_ts', 'org:resource': 'res_start'})
-
-        piv_start = pd.merge(starts, completes, on=['activity', 'traceId'], how='inner')
-
-        if has_assign:
-            assigns = df[df['lifecycle:transition'] == 'assign'][
-                ['activity', 'traceId', 'org:resource']
-            ].rename(columns={'org:resource': 'res_assign'})
-            piv_start = pd.merge(piv_start, assigns, on=['activity', 'traceId'], how='left')
-
-        pairs.append(piv_start)
-
-    # 2) Coppie ASSIGN→COMPLETE SOLO dove non esiste START
-    if has_assign:
-        assigns = df[df['lifecycle:transition'] == 'assign'][
-            ['activity', 'traceId', 'timestamp', 'org:resource']
-        ].rename(columns={'timestamp': 'start_ts', 'org:resource': 'res_assign'})
-
-        piv_assign = pd.merge(assigns, completes, on=['activity', 'traceId'], how='inner')
-
-        if has_start:
-            # escludi le (activity, traceId) che già hanno START→COMPLETE
-            if 'piv_start' in locals() and not piv_start.empty:
-                key = ['activity', 'traceId']
-                has_start_keys = piv_start[key].drop_duplicates()
-                piv_assign = piv_assign.merge(has_start_keys, on=key, how='left', indicator=True)
-                piv_assign = piv_assign[piv_assign['_merge'] == 'left_only'].drop(columns=['_merge'])
-
-        pairs.append(piv_assign)
-
+    # costruisco coppie risorsa-durata
+    pairs = _build_resource_pairs_greedy(df)
     if not pairs:
         return []
 
-    piv = pd.concat([p for p in pairs if p is not None and not p.empty], ignore_index=True) if pairs else pd.DataFrame()
-    if piv.empty:
-        return []
-
-    # Durata
-    piv['duration_sec'] = (pd.to_datetime(piv['complete_ts']) - pd.to_datetime(piv['start_ts'])).dt.total_seconds()
-    piv = piv[piv['duration_sec'].notna() & (piv['duration_sec'] > 0)]
-
-    # Scelta risorse: start → assign → complete
-    def _pick_resources(row):
-        for col in ('res_start', 'res_assign', 'res_complete'):
-            if col in row:
-                lst = _parse_resources_cell(row[col])
-                if lst:
-                    return lst
-        return []
-
-    # Worked seconds per risorsa
+    # somma secondi lavorati per risorsa
     worked: dict[str, float] = {}
-    for _, row in piv.iterrows():
-        res_list = _pick_resources(row)
-        if not res_list:
-            continue
+    for row in pairs:
+        r = str(row['resource'])
         dur = float(row['duration_sec'])
-        for r in res_list:
-            worked[r] = worked.get(r, 0.0) + dur
+        worked[r] = worked.get(r, 0.0) + dur
 
-    # Disponibilità per risorsa nella finestra della run
-    available = _compute_available_seconds(extra_scenario, min_ts.to_pydatetime(), max_ts.to_pydatetime())
+    # secondi disponibili nella stessa finestra
+    available = _compute_available_seconds(
+        extra_scenario,
+        min_ts.to_pydatetime(),
+        max_ts.to_pydatetime()
+    )
 
-    # Output unificato (anche risorse presenti nel log ma non nell'extra)
-    out = []
+    # output: includo tutte le risorse dell'extra,
+    # e poi eventuali risorse presenti nel log ma non nell'extra (avail=0)
+    out: list[dict] = []
+
     for rname, avail_sec in available.items():
         w_sec = worked.get(rname, 0.0)
         pct = (w_sec / avail_sec * 100.0) if avail_sec > 0 else 0.0
@@ -826,15 +932,16 @@ def compute_resource_utilization_for_run(df: pd.DataFrame, extra_scenario: dict)
             "resource": rname,
             "worked_seconds": float(w_sec),
             "available_seconds": float(avail_sec),
-            "percentage_utilization": float(pct)
+            "percentage_utilization": float(pct),
         })
+
     for rname, w_sec in worked.items():
         if rname not in available:
             out.append({
                 "resource": rname,
                 "worked_seconds": float(w_sec),
                 "available_seconds": 0.0,
-                "percentage_utilization": 0.0
+                "percentage_utilization": 0.0,
             })
 
     return out
@@ -896,14 +1003,17 @@ def _compute_metrics_for_df(df: pd.DataFrame, *, bpmn_xml: str | None = None, ex
     item_duration = compute_avg_duration_per_item(df)
     res_bubble = compute_resource_bubble_data(df)
     resource_util_run = compute_resource_utilization_for_run(df, extra_scenario) if extra_scenario else []
-
+    resource_amounts = compute_resource_amounts(extra_scenario) if extra_scenario else {}
+    simulation_summary = {
+        **compute_simulation_summary(df),
+        "costs_by_item": compute_cost_summary_by_item(df),
+        "execution_by_item": compute_execution_duration_by_instance(df)
+    }
+    if resource_amounts:
+        simulation_summary["resources"] = resource_amounts
 
     return {
-        "simulation_summary": {
-            **compute_simulation_summary(df),
-            "costs_by_item": compute_cost_summary_by_item(df),
-            "execution_by_item": compute_execution_duration_by_instance(df)
-        },
+        "simulation_summary": simulation_summary,
         "durations": durations or [],
         "breakdown": breakdown or [],
         "bottleneck": bottleneck or [],
@@ -1079,13 +1189,21 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
         key_fields=("instanceType",),
         mean_fields=["total_execution_minutes"]
     )
+    resources_agg = {}
+    for m in metrics_list:
+        sim_sum = m.get("simulation_summary", {})
+        res = sim_sum.get("resources")
+        if isinstance(res, dict) and res:
+            resources_agg = res
+            break
 
     return {
         "simulation_summary": {
             "total_traces": total_traces_mean,
             "unique_pools": unique_pools,
             "costs_by_item": costs_by_item,
-            "execution_by_item": execution_by_item
+            "execution_by_item": execution_by_item,
+            "resources": resources_agg
         },
         "durations": durations,
         "breakdown": breakdown,

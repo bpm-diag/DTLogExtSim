@@ -180,7 +180,7 @@ export default function Page() {
 
   // Fetch BPMN + multi metrics
   useEffect(() => {
-    if (!root || scenarioIds.length < 2) return;
+    if (!root || scenarioIds.length < 1) return;
     (async () => {
       try {
         setLoading(true);
@@ -398,7 +398,7 @@ export default function Page() {
                 {current?.bottleneck?.length > 0 && (
                   <div className="mt-6">
                     <ScenarioHeatmapSection
-                      title={`Scenario ${selectedScenario} – Heatmap`}
+                      title={`Scenario ${selectedScenario} – Bottleneck heatmap`}
                       bpmnFile={bpmnFile}
                       rows={current.bottleneck as BottleneckRow[]}
                     />
