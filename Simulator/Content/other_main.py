@@ -89,19 +89,42 @@ def main(loader, csv_log_path, scenario_idx, rep_idx):
         for i in range(num_instances):
             instance_type = instance_types[instance_index]['type']
 
-            for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
-                process_details = bpmn_dict['process_elements'][participant['processRef']]
+            # Check if collaboration exists (multiple pools)
+            if 'collaboration' in bpmn_dict and 'participants' in bpmn_dict['collaboration']:
+                # Multi-pool scenario
+                for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
+                    process_details = bpmn_dict['process_elements'][participant['processRef']]
 
-                print("PROCESS_DETAILS: ", process_details)
-                print("NODE")
-                for node_id, node in process_details['node_details'].items():
-                    print(node_id)
-                    print(node)
-                    print("---")
+                    print("PROCESS_DETAILS: ", process_details)
+                    print("NODE")
+                    for node_id, node in process_details['node_details'].items():
+                        print(node_id)
+                        print(node)
+                        print("---")
+                        
+                    # for each instance a class Process is created:
+                    SimulatorEngine(env, participant['name'], process_details, i+1, loader, global_resources, logging_opt,
+                     totalCost, timeUsedPerResource, extraLog, rows, delays[i], instance_type)
+            else:
+                # Single-pool scenario (no collaboration)
+                # Assume there's only one process in process_elements
+                for process_id, process_details in bpmn_dict['process_elements'].items():
+                    print("PROCESS_DETAILS: ", process_details)
+                    print("NODE")
+                    for node_id, node in process_details['node_details'].items():
+                        print(node_id)
+                        print(node)
+                        print("---")
                     
-                # for each instance a class Process is created:
-                SimulatorEngine(env, participant['name'], process_details,i+1, loader, global_resources, logging_opt,
-                 totalCost, timeUsedPerResource, extraLog, rows, delays[i], instance_type)
+                    # Use process_id as the name if no participant name is available
+                    process_name = process_details.get('name', process_id)
+                    
+                    # for each instance a class Process is created:
+                    SimulatorEngine(env, process_name, process_details, i+1, loader, global_resources, logging_opt,
+                     totalCost, timeUsedPerResource, extraLog, rows, delays[i], instance_type)
+                    
+                    # Only process the first (and typically only) process in single-pool scenarios
+                    break
 
             instance_count += 1
             if instance_count >= int(instance_types[instance_index]['count']):
@@ -203,5 +226,3 @@ if __name__ == "__main__":
     except ValueError as e:
         print(f"-----ERROR-----: {e}")
         raise ValueError(e)
-
-    

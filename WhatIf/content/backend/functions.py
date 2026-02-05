@@ -91,7 +91,7 @@ def parse_and_clean_dataframe(xml_string: str) -> pd.DataFrame:
   
     df = df.dropna(subset=['timestamp'])
     # drop duplicate columns
-    df = df.drop(columns=['case_name', 'concept:name', 'time:timestamp'], axis=1)
+    df = df.drop(columns=['case_name', 'concept:name', 'time:timestamp'])
 
     return df
 # -------------------------------------------------------------------------------------------------------------------------------------

@@ -65,18 +65,19 @@ def parse_again(bpmnPath):
 
 
     # Populate 'previous' based on message flows
-    for flow_id, flow in bpmn_dict['collaboration']['messageFlows'].items():
-        target_id = flow['targetRef']
+    if 'collaboration' in bpmn_dict and 'messageFlows' in bpmn_dict['collaboration']:
+        for flow_id, flow in bpmn_dict['collaboration']['messageFlows'].items():
+            target_id = flow['targetRef']
 
-        # Find the process that contains the target node
-        for process in bpmn_dict['process_elements'].values():
-            if target_id in process['node_details']:
-                process['node_details'][target_id]['previous'].append(flow['sourceRef'])
-            else:
-                # Check if the target node is in a subprocess
-                for node in process['node_details'].values():
-                    if 'subprocess_details' in node and target_id in node['subprocess_details']:
-                        node['subprocess_details'][target_id]['previous'].append(flow['sourceRef'])
+            # Find the process that contains the target node
+            for process in bpmn_dict['process_elements'].values():
+                if target_id in process['node_details']:
+                    process['node_details'][target_id]['previous'].append(flow['sourceRef'])
+                else:
+                    # Check if the target node is in a subprocess
+                    for node in process['node_details'].values():
+                        if 'subprocess_details' in node and target_id in node['subprocess_details']:
+                            node['subprocess_details'][target_id]['previous'].append(flow['sourceRef'])
 
 
     with open(bpmnPath, "w") as outfile:
