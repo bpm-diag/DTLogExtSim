@@ -5,64 +5,6 @@ from typing import List, Dict, Any, Tuple, Optional
 
 from support_modules.constants import *
 
-def create_reordered_event_for_analysis(self, caseid: str, event_index: int, 
-                                           trace: List[Dict], current_event: Dict) -> Optional[Dict]:
-    """Crea evento riordinato per l'analisi."""
-    task_name = current_event['task']
-    remaining_events = trace[event_index + 1:]
-    
-    if self.num_timestamp == 2:
-        return self._create_dual_timestamp_event_analysis(caseid, current_event, remaining_events, task_name)
-    else:  # num_timestamp == 3
-        return self._create_triple_timestamp_event_analysis(caseid, current_event, remaining_events, task_name)
-
-def create_dual_timestamp_event_analysis(self, caseid: str, start_event: Dict, 
-                                        remaining_events: List[Dict], task_name: str) -> Dict:
-    """Crea evento con 2 timestamp per analisi."""
-    complete_event = next(
-        (event for event in remaining_events 
-            if event['task'] == task_name and event['event_type'] == LIFECYCLE_COMPLETE),
-        None
-    )
-    
-    return {
-        'caseid': caseid,
-        'task': start_event['task'],
-        'start_timestamp': start_event['timestamp'],
-        'end_timestamp': complete_event['timestamp'] if complete_event else "nan"
-    }
-
-def create_triple_timestamp_event_analysis(self, caseid: str, assign_event: Dict,
-                                            remaining_events: List[Dict], task_name: str) -> Dict:
-    """Crea evento con 3 timestamp per analisi."""
-    # Trova eventi correlati
-    # if self.diaglog and not self.correct_order_diag_log:
-    #     start_event = next(
-    #         (event for event in remaining_events 
-    #             if event['task'] == task_name and event['event_type'] == LIFECYCLE_ASSIGN),
-    #         None
-    #     )
-    # else:
-    start_event = next(
-        (event for event in remaining_events 
-            if event['task'] == task_name and event['event_type'] == LIFECYCLE_START),
-        None
-    )
-        
-    complete_event = next(
-        (event for event in remaining_events 
-            if event['task'] == task_name and event['event_type'] == LIFECYCLE_COMPLETE),
-        None
-    )
-    
-    return {
-        'caseid': caseid,
-        'task': assign_event['task'],
-        'assign_timestamp': assign_event['timestamp'],
-        'start_timestamp': start_event['timestamp'] if start_event else "nan",
-        'end_timestamp': complete_event['timestamp'] if complete_event else "nan"
-    }
-
 def create_start_gateway(self, model: Any, gateway_info: Dict[str, Any], index: int,
                         start_gateways: List[Any], start_flow_info: Dict[str, Any],
                         num_final_activities: int) -> Dict[str, Any]:

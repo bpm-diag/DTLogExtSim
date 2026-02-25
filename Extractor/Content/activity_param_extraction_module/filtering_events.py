@@ -57,10 +57,3 @@ def clean_outliers(self, data: List[float]) -> List[float]:
     
 
     
-def find_matching_event(self, events: List[Dict], task_name: str, event_type: str) -> Optional[Dict]:
-    """Trova un evento corrispondente nella lista."""
-    return next(
-        (event for event in events 
-            if event['task'] == task_name and event['event_type'] == event_type),
-        None
-    )

@@ -19,29 +19,26 @@ def extract_process_id(self, bpmn_file_path: str) -> Optional[str]:
         return None
     
 def identify_interrupted_activities(self, reordered_log: pd.DataFrame) -> pd.DataFrame:
-    """Identifica attività con timestamp mancanti (interrotte)."""
-    if self.num_timestamp == 1:
-        # Per singolo timestamp, non ci sono interruzioni da rilevare
-        return pd.DataFrame()
-    
-    # Identifica righe con timestamp "nan"
+    """Identifica attività con timestamp mancanti (interrotte).
+
+    assign_timestamp = None è normale per attività con solo start+complete,
+    quindi non viene considerato come indicatore di interruzione.
+    Solo start_timestamp o end_timestamp mancanti indicano un'interruzione.
+    """
+    # Cerca righe dove start o end timestamp sono None/NaN
     nan_conditions = []
-    
-    if 'assign_timestamp' in reordered_log.columns:
-        nan_conditions.append(reordered_log['assign_timestamp'] == "nan")
+
     if 'start_timestamp' in reordered_log.columns:
-        nan_conditions.append(reordered_log['start_timestamp'] == "nan")
+        nan_conditions.append(reordered_log['start_timestamp'].isna())
     if 'end_timestamp' in reordered_log.columns:
-        nan_conditions.append(reordered_log['end_timestamp'] == "nan")
-    
+        nan_conditions.append(reordered_log['end_timestamp'].isna())
+
     if nan_conditions:
-        # Combina tutte le condizioni con OR
         combined_condition = nan_conditions[0]
         for condition in nan_conditions[1:]:
             combined_condition |= condition
-        
         return reordered_log[combined_condition]
-    
+
     return pd.DataFrame()
 
 def identify_final_completed_activities(self, reordered_log: pd.DataFrame, 
@@ -57,7 +54,7 @@ def identify_final_completed_activities(self, reordered_log: pd.DataFrame,
     # Trova l'ultima attività per ogni traccia (basata su end_timestamp)
     if 'end_timestamp' in completed_traces.columns:
         # Filtra solo eventi con end_timestamp valido
-        valid_completed = completed_traces[completed_traces['end_timestamp'] != "nan"]
+        valid_completed = completed_traces[completed_traces['end_timestamp'].notna()]
         if not valid_completed.empty:
             # Converte timestamp per trovare il massimo
             valid_completed = valid_completed.copy()

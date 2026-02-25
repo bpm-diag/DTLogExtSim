@@ -15,10 +15,7 @@ def extract_waiting_distribution(self, processed_log: pd.DataFrame) -> List[List
             Lista di distribuzioni [attività, tipo_distribuzione, parametri]
         """
         print("Calcolando distribuzioni di tempo di attesa...")
-        
-        if self.num_timestamp != 3:
-            raise ValueError("Tempo di attesa disponibile solo con 3 timestamp (assign, start, complete)")
-        
+
         try:
             activity_waiting_times = {}
             

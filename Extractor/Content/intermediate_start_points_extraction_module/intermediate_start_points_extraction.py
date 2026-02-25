@@ -59,15 +59,12 @@ class IntermediateStartPoint:
         self.calculate_flow_probabilities = calculate_flow_probabilities.__get__(self)
         self.calculate_branching_probabilities_for_modified_model = calculate_branching_probabilities_for_modified_model.__get__(self)
         
-        self._create_reordered_event_for_analysis = create_reordered_event_for_analysis.__get__(self)
-        self._create_dual_timestamp_event_analysis = create_dual_timestamp_event_analysis.__get__(self)
-        self._create_triple_timestamp_event_analysis = create_triple_timestamp_event_analysis.__get__(self)
         self._create_start_gateway = create_start_gateway.__get__(self)
         self._create_gateway_for_activity = create_gateway_for_activity.__get__(self)
         self._create_intermediate_gateways = create_intermediate_gateways.__get__(self)
         self._prepare_final_activities_list = prepare_final_activities_list.__get__(self)
         self.create_modified_bpmn_model = create_modified_bpmn_model.__get__(self)
-        
+
         self._extract_process_id = extract_process_id.__get__(self)
         self._identify_interrupted_activities = identify_interrupted_activities.__get__(self)
         self._identify_final_completed_activities = identify_final_completed_activities.__get__(self)
@@ -78,7 +75,6 @@ class IntermediateStartPoint:
 
         self.analyze_final_activities = analyze_final_activities.__get__(self)
         self._preprocess_log_for_analysis = preprocess_log_for_analysis.__get__(self)
-        self._should_process_event = should_process_event.__get__(self)
         self._reorder_events_for_analysis = reorder_events_for_analysis.__get__(self)
 
         self.save_results = save_results.__get__(self)
