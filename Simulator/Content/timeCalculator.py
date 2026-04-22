@@ -1,6 +1,7 @@
 #this func takes as input the type, mean, arg1 and arg2 and returns an amount of time
 
 import numpy as np
+import math
 
 def convert_to_seconds(input_dict):
     # Define a dictionary to convert time units to seconds
@@ -45,11 +46,14 @@ def convert_to_seconds(input_dict):
         mode = mean
         duration = np.random.triangular(low, mode, high)
     elif type_ == "LOGNORMAL":
-        std_dev = float(input_dict["arg1"])
-        duration = np.random.lognormal(mean, std_dev)
+        variance = float(input_dict["arg1"])
+        sigma2 = math.log(1 + variance / (mean ** 2))
+        mu = math.log(mean) - sigma2 / 2
+        duration = np.random.lognormal(mu, math.sqrt(sigma2))
     elif type_ == "GAMMA":
-        shape = float(input_dict["arg1"])
-        scale = mean / shape
+        variance = float(input_dict["arg1"])
+        shape = (mean ** 2) / variance
+        scale = variance / mean
         duration = np.random.gamma(shape, scale)
     elif type_ == "HISTOGRAM":
         # For histogram, we assume arg1 is a list of bin edges and arg2 is a list of corresponding frequencies

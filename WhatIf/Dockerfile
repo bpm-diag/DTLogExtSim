@@ -23,7 +23,7 @@ ENV UPLOADS_DIR=/app/uploads
 
 EXPOSE 5000
 # avvia gunicorn e tieni il processo in foreground
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "-w", "2", "--timeout", "300", "-b", "0.0.0.0:5000", "app:app"]
 
 # ========= UI (Next.js) =========
 FROM node:20-alpine AS ui

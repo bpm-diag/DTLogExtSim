@@ -18,7 +18,7 @@
                 <i class="bi bi-house-door"></i> Home
             </a>
         </div>
-        <p class="mb-5">Attention: giving the same worklistId to tasks that use different resources will result in the simulation crashing. Only give a worklistId to tasks using identical resources</p>
+        <p class="mb-3">Attention: giving the same worklistId to tasks that use different resources will result in the simulation crashing. Only give a worklistId to tasks using identical resources</p>
 
         <form method="POST" action="{{ url_for('parameters') }}" class="mt-4" id="main_form">
             <input type="hidden" name="simulation_path" value="{{ simulation_path if simulation_path else '' }}">
@@ -40,6 +40,7 @@
                     </li>
                 </ul>
                 <button type="button" class="btn btn-success ms-3" onclick="addScenario()">+ Add Scenario</button>
+                <button type="button" class="btn btn-outline-primary ms-2" onclick="duplicateScenario()">⧉ Duplicate Current</button>
             </div>
 
 
@@ -267,43 +268,10 @@
                     <div class="box">
                         <h5 class="mb-3">XOR and Inclusive Gateways</h5>
                         <div id="gateways-container-0">
-                            {% macro render_gateway(flow_id, source_node, source_id, target_node, target_id, process_id, scenario_idx) %}
-                            {% set gateway_type = 'Exclusive Gateway' if source_node['type'] == 'exclusiveGateway' else 'Inclusive Gateway' %}
-                            {% set target_name = target_node['name'] if target_node else 'Unknown Target' %}
-                            
-                            <div class="gateway-group mb-3 box" data-flow-id="{{ flow_id }}" data-process-id="{{ process_id }}">
-                                <h6>{{ gateway_type }}: {{ source_node['name'] }} (ID: {{ source_id }}) to {{ target_name }} (ID: {{ target_id }})</h6>
-                                <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <label for="scenario_{{ scenario_idx }}_executionProbability_{{ flow_id }}">Execution Probability (0 to 1, i.e. 0.5):</label>
-                                        <input type="number" step="0.01" min="0" max="1" class="form-control" 
-                                               id="scenario_{{ scenario_idx }}_executionProbability_{{ flow_id }}" 
-                                               name="scenario_{{ scenario_idx }}_executionProbability_{{ flow_id }}" required>
-                                    </div>
-                                    <div class="instance-types-container col-md-6" data-flow-id="{{ flow_id }}" data-scenario="{{ scenario_idx }}">
-                                        <div class="instance-type-input row mb-2">
-                                            <div class="form-group">
-                                                <label">Forced Instance Types:</label>
-                                                <select class="form-control" 
-                                                        id="scenario_{{ scenario_idx }}_forcedInstanceType_{{ flow_id }}_1" 
-                                                        name="scenario_{{ scenario_idx }}_forcedInstanceType_{{ flow_id }}_1">
-                                                    <option value=""></option>    
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-secondary btn-sm add-instance-type" 
-                                        data-flow-id="{{ flow_id }}" 
-                                        data-scenario="{{ scenario_idx }}">Add Instance Type</button>
-                            </div>
-                            {% endmacro %}
-                    
                             {% for process_id, process_data in bpmn_dict['process_elements'].items() %}
+                                {% set seen_gw = [] %}
                                 {% for flow_id, flow_data in bpmn_dict['sequence_flows'].items() %}
                                     {% set source_id = flow_data['sourceRef'] %}
-                                    
-                                    {# Trova il nodo sorgente #}
                                     {% set source_node = process_data['node_details'].get(source_id) %}
                                     {% if not source_node %}
                                         {% for node_id, node_data in process_data['node_details'].items() %}
@@ -312,25 +280,65 @@
                                             {% endif %}
                                         {% endfor %}
                                     {% endif %}
-                                    
-                                    {# Verifica se è un gateway con più outgoing flows #}
-                                    {% if source_node and source_node['type'] in ['exclusiveGateway', 'inclusiveGateway'] %}
-                                        {% set outgoing_count = bpmn_dict['sequence_flows'].values() | selectattr('sourceRef', 'equalto', source_id) | list | length %}
-                                        
-                                        {% if outgoing_count >= 2 %}
-                                            {% set target_id = flow_data['targetRef'] %}
-                                            {% set target_node = process_data['node_details'].get(target_id) %}
-                                            
-                                            {# Se target non trovato, cerca nei subprocess #}
-                                            {% if not target_node %}
-                                                {% for node_id, node_data in process_data['node_details'].items() %}
-                                                    {% if node_data['type'] == 'subProcess' and target_id in node_data.get('subprocess_details', {}) %}
-                                                        {% set target_node = node_data['subprocess_details'][target_id] %}
+
+                                    {% if source_node and source_node['type'] in ['exclusiveGateway', 'inclusiveGateway'] and source_id not in seen_gw %}
+                                        {% set outgoing = bpmn_dict['sequence_flows'].items() | selectattr('1.sourceRef', 'equalto', source_id) | list %}
+                                        {% if outgoing | length >= 2 %}
+                                            {% if seen_gw.append(source_id) %}{% endif %}
+                                            {% set gw_type = 'Exclusive Gateway' if source_node['type'] == 'exclusiveGateway' else 'Inclusive Gateway' %}
+
+                                            {# --- un blocco per gateway --- #}
+                                            <div class="gateway-group mb-4 box" data-process-id="{{ process_id }}">
+                                                <h6 class="mb-1">{{ gw_type }}: <strong>{{ source_node['name'] or source_id }}</strong></h6>
+                                                <small class="text-muted">Gateway ID: <code>{{ source_id }}</code></small>
+
+                                                {# --- un sotto-blocco per ogni branch uscente --- #}
+                                                {% for fid, fd in bpmn_dict['sequence_flows'].items() %}
+                                                    {% if fd['sourceRef'] == source_id %}
+                                                        {% set target_id = fd['targetRef'] %}
+                                                        {% set target_node = process_data['node_details'].get(target_id) %}
+                                                        {% if not target_node %}
+                                                            {% for node_id, node_data in process_data['node_details'].items() %}
+                                                                {% if node_data['type'] == 'subProcess' and target_id in node_data.get('subprocess_details', {}) %}
+                                                                    {% set target_node = node_data['subprocess_details'][target_id] %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                        {% set target_name = target_node['name'] if target_node and target_node['name'] else target_id %}
+
+                                                        <div class="mt-3 p-3 border rounded" style="background:#f8f9fa;" data-flow-id="{{ fid }}">
+                                                            <div class="mb-2">
+                                                                <span class="fw-semibold">Branch:</span>
+                                                                arc <code>{{ fid }}</code> &rarr; <strong>{{ target_name }}</strong>
+                                                                {% if target_node %}<span class="text-muted ms-1">({{ target_node['type'] }})</span>{% endif %}
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-group col-md-6">
+                                                                    <label for="scenario_0_executionProbability_{{ fid }}">Execution Probability (0 to 1):</label>
+                                                                    <input type="number" step="0.01" min="0" max="1" class="form-control"
+                                                                           id="scenario_0_executionProbability_{{ fid }}"
+                                                                           name="scenario_0_executionProbability_{{ fid }}" required>
+                                                                </div>
+                                                                <div class="instance-types-container col-md-6" data-flow-id="{{ fid }}" data-scenario="0">
+                                                                    <div class="instance-type-input row mb-2">
+                                                                        <div class="form-group">
+                                                                            <label>Forced Instance Types:</label>
+                                                                            <select class="form-control"
+                                                                                    id="scenario_0_forcedInstanceType_{{ fid }}_1"
+                                                                                    name="scenario_0_forcedInstanceType_{{ fid }}_1">
+                                                                                <option value=""></option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <button type="button" class="btn btn-secondary btn-sm add-instance-type"
+                                                                    data-flow-id="{{ fid }}"
+                                                                    data-scenario="0">Add Instance Type</button>
+                                                        </div>
                                                     {% endif %}
                                                 {% endfor %}
-                                            {% endif %}
-                                            
-                                            {{ render_gateway(flow_id, source_node, source_id, target_node, target_id, process_id, 0) }}
+                                            </div>
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}
@@ -451,6 +459,63 @@
     <!-- Auto-load script (deve venire DOPO la definizione di extraData) -->
     <script src="{{ url_for('static', filename='parameters/auto-load-parameters.js') }}"></script>
 
+    <script>
+    (function() {
+        // Live sum feedback per gateway group
+        function updateGroupSum(gatewayBox) {
+            const inputs = gatewayBox.querySelectorAll('input[name*="_executionProbability_"]');
+            let sum = 0;
+            inputs.forEach(inp => { sum += parseFloat(inp.value) || 0; });
+            const rounded = Math.round(sum * 1000) / 1000;
+
+            let badge = gatewayBox.querySelector('.prob-sum-badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'prob-sum-badge ms-2 badge';
+                gatewayBox.querySelector('h6').appendChild(badge);
+            }
+            const ok = Math.abs(rounded - 1) < 0.001;
+            badge.textContent = 'Sum = ' + rounded;
+            badge.className = 'prob-sum-badge ms-2 badge ' + (ok ? 'bg-success' : 'bg-danger');
+        }
+
+        // Attach listeners to a single gateway box
+        function initBox(box) {
+            box.querySelectorAll('input[name*="_executionProbability_"]').forEach(inp => {
+                inp.addEventListener('input', () => updateGroupSum(box));
+            });
+        }
+
+        // Exposed globally so auto-load and duplicateScenario can call it after values are set
+        window.updateAllGatewaySums = function() {
+            document.querySelectorAll('.gateway-group').forEach(box => {
+                initBox(box);
+                updateGroupSum(box);
+            });
+        };
+
+        // Block submit if any group doesn't sum to 1
+        document.getElementById('main_form').addEventListener('submit', function(e) {
+            let errors = [];
+            document.querySelectorAll('.gateway-group').forEach(box => {
+                const inputs = box.querySelectorAll('input[name*="_executionProbability_"]');
+                let sum = 0;
+                inputs.forEach(inp => { sum += parseFloat(inp.value) || 0; });
+                if (inputs.length > 0 && Math.abs(sum - 1) > 0.001) {
+                    const name = box.querySelector('h6 strong');
+                    errors.push(name ? name.textContent : box.dataset.flowId);
+                }
+            });
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert('Le probabilità dei seguenti gateway non sommano a 1:\n' + errors.join('\n'));
+            }
+        });
+
+        // Initial run: if no extra data, badges show 0 correctly; otherwise auto-load will call it again
+        window.updateAllGatewaySums();
+    })();
+    </script>
 
 </body>
 </html>

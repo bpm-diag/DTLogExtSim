@@ -1,7 +1,5 @@
 # Functions to parse the XES file and extract data in a list of dictionaries format in order to be visualized in the frontend,
 # which will be then converted and analyzed in a Pandas DataFrame.
-import xmltodict
-from json import dumps,loads
 import pandas as pd
 import xml.etree.ElementTree as ET
 from typing import List, Dict, Iterable, Tuple
@@ -9,6 +7,8 @@ import statistics as _stats
 from collections import defaultdict
 from datetime import datetime, timedelta
 import ast
+import bisect
+from io import StringIO
 
 # ------------- funzioni per leggere i file xes e convertirli in un formato che poi viene convertito in un dataframe -----------------
 def get_one_event_dict(one_event, case_name, data_types):
@@ -52,27 +52,48 @@ def gain_one_trace_info(one_trace,data_types):
 
     return one_trace_attri_dict,one_trace_events
 
+_XES_DATA_TYPES = {'string', 'int', 'date', 'float', 'boolean', 'id'}
+
+
+def _local_xml_name(tag: str) -> str:
+    return tag.rsplit('}', 1)[-1] if tag.startswith('{') else tag
+
+
+def _xes_attributes_to_dict(element: ET.Element) -> dict:
+    attrs = {}
+    for child in element:
+        if _local_xml_name(child.tag) not in _XES_DATA_TYPES:
+            continue
+        key = child.get('key')
+        if key is None:
+            continue
+        attrs[key] = child.get('value')
+    return attrs
+
+
 def gain_log_info_table(xml_string):
-    data_types = ['string', 'int', 'date', 'float', 'boolean', 'id']
-
-    log_is = xmltodict.parse(xml_string)
-    log_is = loads(dumps(log_is))
-
-    traces = log_is['log']['trace']
-
-    # Normalizza: se c'è solo una trace, rendila lista
-    if isinstance(traces, dict):
-        traces = [traces]
-        
     trace_attri = []
     trace_event = []
-    j = 0
-    for i in traces:
-        inter = gain_one_trace_info(i,data_types)
-        trace_attri.append(inter[0])
-        trace_event = trace_event + inter[1]
-        j = j +1
-        #print(j)
+
+    # Avoid xmltodict + JSON round-tripping: it duplicates the whole log in
+    # memory and is slow enough to trigger Gunicorn worker timeouts on big XES.
+    for _, elem in ET.iterparse(StringIO(xml_string), events=('end',)):
+        if _local_xml_name(elem.tag) != 'trace':
+            continue
+
+        one_trace_attri = _xes_attributes_to_dict(elem)
+        case_name = one_trace_attri.get('concept:name', '')
+
+        for child in elem:
+            if _local_xml_name(child.tag) != 'event':
+                continue
+            one_event_dict = _xes_attributes_to_dict(child)
+            one_event_dict['case_name'] = case_name
+            trace_event.append(one_event_dict)
+
+        trace_attri.append(one_trace_attri)
+        elem.clear()
+
     return trace_attri, trace_event
 # ---------------------------------------------------------------------------------------------------------------------------------
 # ---------- function to clean and extract meaningful data from the log in a dataframe ---------------------------------------
@@ -109,26 +130,35 @@ def compute_simulation_summary(df) -> dict:
         "total_traces": total_traces,
         "unique_pools": unique_pools
     }
+def _sum_resource_cost(val) -> float:
+    """Parse a resourceCost cell (string repr of list, or list) into a float sum."""
+    if isinstance(val, list):
+        try:
+            return sum(float(x) for x in val)
+        except Exception:
+            return 0.0
+    if isinstance(val, str):
+        try:
+            return sum(float(x) for x in ast.literal_eval(val))
+        except Exception:
+            return 0.0
+    return 0.0
+
+
+def _task_rows_only(df: pd.DataFrame) -> pd.DataFrame:
+    """Keep task rows when nodeType is available, leaving legacy logs untouched."""
+    if 'nodeType' not in df.columns:
+        return df.copy()
+    return df[df['nodeType'].astype(str).str.lower() == 'task'].copy()
+
+
 def compute_cost_summary_by_item(df) -> list[dict]:
-    df = df.copy()
+    df = _task_rows_only(df)
+    if df.empty:
+        return []
 
-    def parse_costs(row):
-        rc = row.get('resourceCost')
-        try:
-            rc_list = eval(rc) if isinstance(rc, str) else []
-            rc_sum = sum(float(x) for x in rc_list)
-        except:
-            rc_sum = 0.0
-
-        try:
-            fixed_raw = row.get('fixedCost', 0)
-            fixed = float(fixed_raw) if fixed_raw not in [None, '', 'nan'] else 0.0
-        except:
-            fixed = 0.0
-
-        return rc_sum + fixed
-    
-    df['totalCost'] = df.apply(parse_costs, axis=1)
+    df['totalCost'] = [_sum_resource_cost(v) for v in df['resourceCost']]
+    df['totalCost'] += pd.to_numeric(df['fixedCost'], errors='coerce').fillna(0.0)
 
     trace_totals = df.groupby(['traceId', 'instanceType'])['totalCost'].sum().reset_index()
     summary = trace_totals.groupby('instanceType')['totalCost'].agg(['mean', 'sum']).reset_index()
@@ -244,7 +274,9 @@ def compute_time_breakdown(df) -> list[dict] | None:
 
     agg = valid_rows.groupby('activity').agg(
         avg_cycle_time=('cycle_time', 'mean'),
+        min_waiting_time=('waiting_time', 'min'),
         avg_waiting_time=('waiting_time', 'mean'),
+        max_waiting_time=('waiting_time', 'max'),
         avg_processing_time=('processing_time', 'mean')
     ).reset_index()
 
@@ -458,32 +490,12 @@ def compute_activity_costs_stacked(df) -> list[dict]:
     Calcola i costi medi fissi, variabili e totali per ogni attività.
     Ritorna: lista di dizionari con chiavi: activity, avg_fixed_cost, avg_variable_cost, avg_total_cost.
     """
-    df = df.copy()
+    df = _task_rows_only(df)
+    if df.empty:
+        return []
 
-    def parse_costs(row):
-        # Costi variabili (da lista di stringhe in float)
-        resource_costs = row.get('resourceCost')
-        if isinstance(resource_costs, str):
-            try:
-                resource_costs = eval(resource_costs)
-            except:
-                resource_costs = []
-        if isinstance(resource_costs, list):
-            try:
-                resource_costs = [float(x) for x in resource_costs]
-            except:
-                resource_costs = []
-        var_cost = sum(resource_costs)
-
-        # Costi fissi
-        try:
-            fixed = float(row.get('fixedCost', 0))
-        except:
-            fixed = 0.0
-
-        return pd.Series({'fixedCostFloat': fixed, 'variableCost': var_cost})
-
-    df[['fixedCostFloat', 'variableCost']] = df.apply(parse_costs, axis=1)
+    df['variableCost'] = [_sum_resource_cost(v) for v in df['resourceCost']]
+    df['fixedCostFloat'] = pd.to_numeric(df['fixedCost'], errors='coerce').fillna(0.0)
 
     # Raggruppare per attività e traceId -> somma dei costi totali
     grouped = df.groupby(['activity', 'traceId'])[['fixedCostFloat', 'variableCost']].sum().reset_index()
@@ -507,25 +519,12 @@ def compute_item_costs(df) -> list[dict]:
     Calcola il costo totale per ogni traceId (somma dei costi attività),
     poi la media per ogni instanceType (item).
     """
-    df = df.copy()
+    df = _task_rows_only(df)
+    if df.empty:
+        return []
 
-    def parse_costs(row):
-        rc = row.get('resourceCost')
-        try:
-            rc_list = eval(rc) if isinstance(rc, str) else []
-            rc_sum = sum(float(x) for x in rc_list)
-        except:
-            rc_sum = 0.0
-
-        try:
-            fixed_raw = row.get('fixedCost', 0)
-            fixed = float(fixed_raw) if fixed_raw not in [None, '', 'nan'] else 0.0
-        except:
-            fixed = 0.0
-
-        return rc_sum + fixed
-
-    df['totalCost'] = df.apply(parse_costs, axis=1)
+    df['totalCost'] = [_sum_resource_cost(v) for v in df['resourceCost']]
+    df['totalCost'] += pd.to_numeric(df['fixedCost'], errors='coerce').fillna(0.0)
 
     # Somma totale per traceId
     trace_totals = df.groupby(['traceId', 'instanceType'])['totalCost'].sum().reset_index()
@@ -747,62 +746,64 @@ def _build_resource_pairs_greedy(df: pd.DataFrame) -> list[dict]:
     df = df.sort_values(['traceId', 'activity', 'timestamp'])
 
     for (trace, act), g in df.groupby(['traceId', 'activity'], sort=False):
-        g = g.sort_values('timestamp')
+        # g is already sorted by timestamp (df was sorted above); no need to re-sort
 
-        # indici relativi al df originale (li usiamo con df.loc)
-        start_idx = g[g['lifecycle:transition'] == 'start'].index.tolist()
-        assign_idx = g[g['lifecycle:transition'] == 'assign'].index.tolist()
-        completes = g[g['lifecycle:transition'] == 'complete']
+        # Build local lists per transition type — avoids slow per-element df.at access
+        start_ts_list: list = []
+        start_res_list: list = []
+        assign_ts_list: list = []
+        assign_res_list: list = []
+        comp_pairs: list = []  # (timestamp, org:resource)
 
-        used_starts = set()
-        used_assigns = set()
+        for lc, ts, res in zip(
+            g['lifecycle:transition'].values,
+            g['timestamp'].tolist(),
+            g['org:resource'].tolist(),
+        ):
+            if lc == 'start':
+                start_ts_list.append(ts)
+                start_res_list.append(res)
+            elif lc == 'assign':
+                assign_ts_list.append(ts)
+                assign_res_list.append(res)
+            elif lc == 'complete':
+                comp_pairs.append((ts, res))
 
-        for comp_i, comp_row in completes.iterrows():
-            comp_ts = comp_row['timestamp']
+        used_starts: set = set()
+        used_assigns: set = set()
 
-            # 1) cerca START candidato: ultimo START non usato prima del COMPLETE
-            best_start = None
-            best_start_ts = None
-            for idx in start_idx:
-                if idx in used_starts:
-                    continue
-                ts = df.at[idx, 'timestamp']
-                if ts <= comp_ts and (best_start_ts is None or ts > best_start_ts):
-                    best_start = idx
-                    best_start_ts = ts
+        for comp_ts, comp_res in comp_pairs:
+            # 1) cerca START candidato: ultimo START non usato con ts <= comp_ts
+            best_start_i = None
+            pos = bisect.bisect_right(start_ts_list, comp_ts) - 1
+            while pos >= 0:
+                if pos not in used_starts:
+                    best_start_i = pos
+                    break
+                pos -= 1
 
             # 2) se non c'è START, cerca ASSIGN con la stessa logica
-            best_assign = None
-            best_assign_ts = None
-            if best_start is None:
-                for idx in assign_idx:
-                    if idx in used_assigns:
-                        continue
-                    ts = df.at[idx, 'timestamp']
-                    if ts <= comp_ts and (best_assign_ts is None or ts > best_assign_ts):
-                        best_assign = idx
-                        best_assign_ts = ts
+            best_assign_i = None
+            if best_start_i is None:
+                pos = bisect.bisect_right(assign_ts_list, comp_ts) - 1
+                while pos >= 0:
+                    if pos not in used_assigns:
+                        best_assign_i = pos
+                        break
+                    pos -= 1
 
             # Se non ho né start né assign, non posso creare coppia
-            if best_start is None and best_assign is None:
+            if best_start_i is None and best_assign_i is None:
                 continue
 
-            if best_start is not None:
-                start_ts = best_start_ts
-                start_row = df.loc[best_start]
-                used_starts.add(best_start)
-                resources = _pick_resources_from_cells(
-                    start_row.get('org:resource'),
-                    comp_row.get('org:resource')
-                )
+            if best_start_i is not None:
+                start_ts = start_ts_list[best_start_i]
+                used_starts.add(best_start_i)
+                resources = _pick_resources_from_cells(start_res_list[best_start_i], comp_res)
             else:
-                start_ts = best_assign_ts
-                assign_row = df.loc[best_assign]
-                used_assigns.add(best_assign)
-                resources = _pick_resources_from_cells(
-                    assign_row.get('org:resource'),
-                    comp_row.get('org:resource')
-                )
+                start_ts = assign_ts_list[best_assign_i]
+                used_assigns.add(best_assign_i)
+                resources = _pick_resources_from_cells(assign_res_list[best_assign_i], comp_res)
 
             # durata valida?
             if comp_ts <= start_ts:
@@ -1097,7 +1098,13 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
     breakdown = _mean_over_dict_list(
         [m.get("breakdown", []) for m in metrics_list],
         key_fields=("activity",),
-        mean_fields=["avg_cycle_time", "avg_waiting_time", "avg_processing_time"]
+        mean_fields=[
+            "avg_cycle_time",
+            "min_waiting_time",
+            "avg_waiting_time",
+            "max_waiting_time",
+            "avg_processing_time"
+        ]
     )
 
     # bottleneck

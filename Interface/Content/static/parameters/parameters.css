@@ -47,3 +47,15 @@
     top: 10px;
     right: 10px;
 }
+.required-label::after {
+    content: " *";
+    color: #dc3545;
+    font-weight: bold;
+}
+.is-required-field.is-invalid {
+    border-color: #dc3545;
+    background-color: #fff5f5;
+}
+.is-required-field {
+    border-left: 3px solid #fd7e14;
+}

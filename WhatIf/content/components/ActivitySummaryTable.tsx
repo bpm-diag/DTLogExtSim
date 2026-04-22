@@ -28,14 +28,14 @@ const ActivitySummaryTable: React.FC<Props> = ({ data }) => {
     setUnit(event.target.value as typeof unit);
   };
 
-  const unitLabel = unit === 'seconds' ? 's' : unit === 'hours' ? 's' : unit === 'days' ? 'd' : 'min';
+  const unitLabel = unit === 'seconds' ? 's' : unit === 'hours' ? 'h' : unit === 'days' ? 'd' : 'min';
 
-  const convertTime = (value: number) => {
+  const convertTime = (hours: number) => {
     switch (unit) {
-      case 'seconds': return value * 60;
-      case 'hours': return value / 60;
-      case 'days': return value / (24*60);
-      default: return value;
+      case 'seconds': return hours * 3600;
+      case 'minutes': return hours * 60;
+      case 'days': return hours / 24;
+      default: return hours;
     }
   };
 

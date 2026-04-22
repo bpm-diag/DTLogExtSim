@@ -3,17 +3,19 @@ import { FormControlLabel, Checkbox, FormGroup } from "@mui/material";
 import { useState } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
-// funzioni di conversione del tempo 
-function convertDuration(minutes: number, unit: string): number {
+// Backend activity breakdown values are expressed in hours.
+function convertDuration(hours: number, unit: string): number {
   switch (unit) {
     case "seconds":
-      return minutes * 60;
+      return hours * 3600;
+    case "minutes":
+      return hours * 60;
     case "hours":
-      return minutes / 60;
+      return hours;
     case "days":
-      return minutes / (24*60) ;
+      return hours / 24;
     default:
-      return minutes;
+      return hours;
   }
 }
 

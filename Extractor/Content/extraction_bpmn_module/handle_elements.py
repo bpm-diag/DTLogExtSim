@@ -51,8 +51,8 @@ def remove_start_end_events(self, log: pd.DataFrame) -> pd.DataFrame:
         log = log[~log[TAG_NODE_TYPE].isin([NODE_TYPE_START, NODE_TYPE_END])].reset_index(drop=True)
     else:
         # Per log normali, rimuovi pattern START/END
-        log = log[~log[TAG_ACTIVITY_NAME].str.contains(r'START', case=False, na=False)]
-        log = log[~log[TAG_ACTIVITY_NAME].str.contains(r'END', case=False, na=False)]
+        log = log[~log[TAG_ACTIVITY_NAME].str.contains(PATTERN_START, case=False, na=False)]
+        log = log[~log[TAG_ACTIVITY_NAME].str.contains(PATTERN_END, case=False, na=False)]
     
     return log
 

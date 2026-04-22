@@ -16,19 +16,24 @@ def index():
         try:
             cmd = ["python", "other_main.py", simulation_path, simulation_no_ext, scenario_idx, rep_idx]
             try:
-                process = subprocess.run(
+                process = subprocess.Popen(
                     cmd,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    check=True,  # Keep this for raising exceptions
                     universal_newlines=True,
                     encoding='utf-8'
                 )
-                print(process.stdout)  # Print output on success
+                for line in process.stdout:
+                    print(line, end='', flush=True)
+                process.wait()
+                if process.returncode != 0:
+                    stderr_output = process.stderr.read()
+                    print(f"-----ERROR-----: Subprocess exited with code {process.returncode}")
+                    print(stderr_output)
+                    return {"Service Name": app.config["SERVICE_NAME"], "parser_output": False}
                 return {"Service Name": app.config["SERVICE_NAME"], "parser_output": True}
-            except subprocess.CalledProcessError as e:
-                print(f"-----ERROR-----: Subprocess exited with code {e.returncode}")
-                print(e.stderr)  # Print the error output
+            except Exception as e:
+                print(f"-----ERROR-----: {str(e)}")
                 return {"Service Name": app.config["SERVICE_NAME"], "parser_output": False}
         except Exception as e:
             print(f"Error Processing BPMN File: {str(e)}")

@@ -196,12 +196,19 @@ function renumberScenarios() {
         });
 
         const gatewaySelects = document.querySelectorAll(`#gateways-container-${oldIndex} select[name*="forcedInstanceType"]`);
+        const gatewayProbInputs = document.querySelectorAll(`#gateways-container-${oldIndex} input[name*="executionProbability"]`);
         if (!window.savedGatewayStates) window.savedGatewayStates = {};
         window.savedGatewayStates[index] = [];
         gatewaySelects.forEach(select => {
             window.savedGatewayStates[index].push({
                 name: select.name,
                 value: select.value
+            });
+        });
+        gatewayProbInputs.forEach(input => {
+            window.savedGatewayStates[index].push({
+                name: input.name,
+                value: input.value
             });
         });
 
@@ -392,12 +399,10 @@ function renumberScenarios() {
         }
 
         if (window.savedGatewayStates && window.savedGatewayStates[i]) {
-            window.savedGatewayStates[i].forEach(savedSelect => {
-                const newName = savedSelect.name.replace(/scenario_\d+/, `scenario_${i}`);
-                const select = document.querySelector(`select[name="${newName}"]`);
-                if (select) {
-                    select.value = savedSelect.value;
-                }
+            window.savedGatewayStates[i].forEach(savedItem => {
+                const newName = savedItem.name.replace(/scenario_\d+/, `scenario_${i}`);
+                const el = document.querySelector(`[name="${newName}"]`);
+                if (el) el.value = savedItem.value;
             });
         }
 
@@ -423,6 +428,9 @@ function renumberScenarios() {
             }
         }
     }
+
+    // Ricalcola e aggiorna i badge somma dopo la rinumerazione
+    if (window.updateAllGatewaySums) window.updateAllGatewaySums();
 }
 
 /**
@@ -645,6 +653,95 @@ function updateElementResourceContainers(container, scenarioIndex) {
             }
         }
     });
+}
+
+/**
+ * Duplica lo scenario attualmente attivo in un nuovo scenario
+ */
+function duplicateScenario() {
+    const activeTab = document.querySelector('#scenarioTabs .nav-link.active');
+    const sourceIndex = parseInt(activeTab.id.match(/scenario-(\d+)-tab/)[1]);
+    const newIndex = scenarioCount;
+
+    const tabsList = document.getElementById('scenarioTabs');
+    const tabContent = document.getElementById('scenarioTabContent');
+    const sourceContent = document.getElementById(`scenario-${sourceIndex}`);
+
+    // 1. Salva tutti i valori correnti prima di clonare
+    const valueMap = {};
+    sourceContent.querySelectorAll('input, select, textarea').forEach(el => {
+        if (!el.name) return;
+        valueMap[el.name] = el.type === 'checkbox' || el.type === 'radio' ? el.checked : el.value;
+    });
+
+    // 2. Crea nuovo tab
+    const newTabLi = document.createElement('li');
+    newTabLi.className = 'nav-item';
+    newTabLi.setAttribute('role', 'presentation');
+    newTabLi.innerHTML = `
+        <button class="nav-link" id="scenario-${newIndex}-tab" data-bs-toggle="tab"
+                data-bs-target="#scenario-${newIndex}" type="button" role="tab">
+            Scenario ${newIndex}
+            <span class="tab-close-btn" onclick="removeScenario(${newIndex}, event)" title="Remove scenario">×</span>
+        </button>
+    `;
+    tabsList.appendChild(newTabLi);
+
+    // 3. Clona il contenuto sorgente
+    const newContent = sourceContent.cloneNode(true);
+    newContent.id = `scenario-${newIndex}`;
+    newContent.className = 'tab-pane fade';
+
+    // 4. Aggiorna nomi/ID/attributi
+    updateScenarioInputNames(newContent, newIndex);
+    updateScenarioLabelFor(newContent, newIndex);
+    updateContainerIds(newContent, newIndex);
+    updateButtonHandlers(newContent, newIndex);
+    updateElementResourceContainers(newContent, newIndex);
+    newContent.querySelectorAll('.duration-type').forEach(s => s.setAttribute('data-scenario', newIndex));
+    newContent.querySelectorAll('.catch-event-duration-type').forEach(s => s.setAttribute('data-scenario', newIndex));
+    newContent.querySelectorAll('.instance-types-container').forEach(c => c.setAttribute('data-scenario', newIndex));
+    newContent.querySelectorAll('.add-instance-type').forEach(b => b.setAttribute('data-scenario', newIndex));
+    newContent.querySelectorAll('.prob-sum-badge').forEach(b => b.remove());
+
+    // 5. Aggiungi al DOM
+    tabContent.appendChild(newContent);
+
+    // 6. Ripristina valori (cloneNode non preserva .value impostati via JS)
+    newContent.querySelectorAll('input, select, textarea').forEach(el => {
+        if (!el.name) return;
+        const origName = el.name.replace(new RegExp(`scenario_${newIndex}`, 'g'), `scenario_${sourceIndex}`);
+        if (origName in valueMap) {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                el.checked = valueMap[origName];
+            } else {
+                el.value = valueMap[origName];
+            }
+        }
+    });
+
+    // 7. Copia contatori
+    instanceCounters[newIndex] = instanceCounters[sourceIndex] || 0;
+    timetableCounters[newIndex] = timetableCounters[sourceIndex] || 0;
+    resourceCounters[newIndex] = resourceCounters[sourceIndex] || 0;
+    Object.keys(elementResourceCounters).forEach(key => {
+        if (key.startsWith(`${sourceIndex}_`)) {
+            const elementId = key.substring(`${sourceIndex}_`.length);
+            elementResourceCounters[`${newIndex}_${elementId}`] = elementResourceCounters[key];
+        }
+    });
+
+    scenarioCount++;
+    updateScenarioCount();
+
+    // 8. Reinizializza listener e badge
+    updateInterArrivalTimeDistribution(newIndex);
+    initializeActivityDurationListeners(newIndex);
+    initializeCatchEventDurationListeners(newIndex);
+    if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+
+    // 9. Attiva il nuovo tab
+    document.getElementById(`scenario-${newIndex}-tab`).click();
 }
 
 /**

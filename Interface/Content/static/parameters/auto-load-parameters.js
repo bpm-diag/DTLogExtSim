@@ -338,7 +338,10 @@ function loadScenarioData(scenarioIndex, scenarioData) {
                 const flowId = flow.elementId;
                 
                 const probInput = document.getElementById(`scenario_${scenarioIndex}_executionProbability_${flowId}`);
-                if (probInput) probInput.value = flow.executionProbability || '';
+                if (probInput) {
+                    probInput.value = flow.executionProbability || '';
+                    probInput.dispatchEvent(new Event('input'));
+                }
                 
                 if (flow.types && flow.types.length > 0) {
                     const instanceTypesContainer = document.querySelector(`.instance-types-container[data-flow-id="${flowId}"][data-scenario="${scenarioIndex}"]`);
@@ -363,5 +366,8 @@ function loadScenarioData(scenarioIndex, scenarioData) {
             
             console.log('  ✓ Sequence flows loaded');
         }
+
+        // Aggiorna i badge somma DOPO che i valori delle probabilità sono stati impostati
+        if (window.updateAllGatewaySums) window.updateAllGatewaySums();
     }, 500);
 }

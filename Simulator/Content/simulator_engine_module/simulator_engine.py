@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from datetime import time as dt_time
 import timeCalculator
 import numpy as np
+import math
 
 
 class SimulatorEngine:
@@ -52,16 +53,49 @@ class SimulatorEngine:
         self.executed_nodes={} #executed nodes are saved here
         self.executed_nodes[self.num]=set()
 
-        self.startDateTime = self.loader.extra_data['startDateTime']
-
         self.terminateEndEvent={} # dictionary of true or false, to tell if that process has been terminated or not
         self.terminateEndEvent[self.num] = False
 
         self.subprocessTerminate={} #this is used for subprocesses for terminate end events
         self.subprocessTerminate[self.num] = {}
 
+        self.startDateTime = self.loader.extra_data['startDateTime']
+        self.start_datetime_obj = datetime.strptime(self.startDateTime, "%Y-%m-%dT%H:%M:%S")
+
+        self.sequence_flows_dict = {item['elementId']: item for item in self.loader.extra_data['sequenceFlows']}
+        
+        self.timetables_dict = {}
+        for t in self.loader.extra_data['timetables']:
+            rules = t.get('rules', [])
+            parsed_rules = []
+            for rule in rules:
+                from_hour, from_minute, from_second = map(int, rule['fromTime'].split(':'))
+                to_hour, to_minute, to_second = map(int, rule['toTime'].split(':'))
+                parsed_rules.append({
+                    'from_time': dt_time(from_hour, from_minute, from_second),
+                    'to_time': dt_time(to_hour, to_minute, to_second),
+                    'from_day_idx': ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'].index(rule['fromWeekDay'].upper()),
+                    'to_day_idx': ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'].index(rule['toWeekDay'].upper())
+                })
+            self.timetables_dict[t['name']] = parsed_rules
+
+        self.task_grouped_resources = {}
+        for element_id, res_list in self.task_resources.items():
+            if res_list:
+                grouped = {}
+                for res in res_list:
+                    if res['groupId'] not in grouped:
+                        grouped[res['groupId']] = []
+                    grouped[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
+                self.task_grouped_resources[element_id] = grouped
+            else:
+                self.task_grouped_resources[element_id] = {}
+
         self.subprocessInternalError = {} #used in error end event
         self.subprocessExternalException = {}
+
+        self.state_changed_event = {}
+        self.state_changed_event[self.num] = self.env.event()
 
 
         #resources is a dict with name as key and a tuple made of simpy resource, cost and timetable.
@@ -70,6 +104,19 @@ class SimulatorEngine:
         for resource_name, resource_info in self.global_resources.items():
             self.timeUsedPerResource[resource_name]=0.0
         
+    def trigger_resource_release(self):
+        if not hasattr(self.env, 'resource_released_event'):
+            self.env.resource_released_event = self.env.event()
+        if not self.env.resource_released_event.triggered:
+            self.env.resource_released_event.succeed()
+            self.env.resource_released_event = self.env.event()
+
+    def mark_node_executed(self, node_id):
+        self.executed_nodes[self.num].add(node_id)
+        if not self.state_changed_event[self.num].triggered:
+            self.state_changed_event[self.num].succeed()
+            self.state_changed_event[self.num] = self.env.event()
+
     def update_resources(self,resource_obj, mode, resource_name, node_id): #this function handles setup time for resources
         #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage, lock
         #mode can either be, increment, instanceTypeChange. First mode means that same instanceType has arrived, counter of usages needs to incremented; second mode is
@@ -143,52 +190,36 @@ class SimulatorEngine:
 
     
     def is_in_timetable(self, timetable_name): #this func is used when gathering resources for a task, to check if a res is in shift
-        start_time = self.startDateTime
-        start_time = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S")
-        current_time = start_time + timedelta(seconds=self.env.now)
-        # Get the timetable from the global timetables variable
-        timetable = next(t for t in self.timetables if t['name'] == timetable_name)
+        current_time = self.start_datetime_obj + timedelta(seconds=self.env.now)
+        parsed_rules = self.timetables_dict.get(timetable_name, [])
 
-        # Extract the current time's hour and minute
         current_hour_minute_second = dt_time(current_time.hour, current_time.minute, current_time.second)
+        current_day_idx = current_time.weekday()
         
-        # Check if the current time falls within any of the rules in the timetable
-        for rule in timetable['rules']:
+        for p_rule in parsed_rules:
             timeFlag=False
-            from_hour, from_minute, from_second = map(int, rule['fromTime'].split(':'))
-            to_hour, to_minute, to_second = map(int, rule['toTime'].split(':'))
+            from_time = p_rule['from_time']
+            to_time = p_rule['to_time']
+            from_day_idx = p_rule['from_day_idx']
+            to_day_idx = p_rule['to_day_idx']
 
-            from_time = dt_time(from_hour, from_minute, from_second)
-            to_time = dt_time(to_hour, to_minute, to_second)
-            from_day = rule['fromWeekDay'].upper()
-            to_day = rule['toWeekDay'].upper()
-
-            # Checks for both ways, from time bigger or lower than to time
-            if from_time > to_time: #ie: 22:00:00 to 04:00:00
+            if from_time > to_time:
                 if not (to_time >= current_hour_minute_second or current_hour_minute_second >= from_time):
-                    continue  # Skip this rule, as current time is outside the range
-                # This variable is true only if current hour minute is less than midnight
-                # This is to avoid a case where shift is 22 to 04 and friday to sunday (morning) and sunday 23:00 would be considered ok (which is not), while sunday 01:00 is ok
+                    continue
                 timeFlag=True  
             elif not from_time <= current_hour_minute_second <= to_time:
-                continue  # Skip this rule, as current time is outside the range
+                continue
 
-            # Check if current day is within the rule's day range
-
-            days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
-
-            # Checks for both ways as before for time
-            if (days.index(to_day) < days.index(from_day)) and timeFlag:
-                if not (days.index(to_day) > days.index(current_time.strftime('%A').upper()) or days.index(current_time.strftime('%A').upper()) >= days.index(from_day)):
-                    continue # Skip this rule, as current day is outside the range
-            elif days.index(to_day) < days.index(from_day) and not timeFlag:
-                if not (days.index(to_day) >= days.index(current_time.strftime('%A').upper()) or days.index(current_time.strftime('%A').upper()) >= days.index(from_day)):
-                    continue  # Skip this rule, as current day is outside the range
-            elif (not (days.index(from_day) <= days.index(current_time.strftime('%A').upper()) < days.index(to_day))) and timeFlag:
-                continue  # Skip this rule, as current day is outside the range
-            elif (not (days.index(from_day) <= days.index(current_time.strftime('%A').upper()) <= days.index(to_day))) and not timeFlag:
-                continue  # Skip this rule, as current day is outside the range
-
+            if (to_day_idx < from_day_idx) and timeFlag:
+                if not (to_day_idx > current_day_idx or current_day_idx >= from_day_idx):
+                    continue
+            elif (to_day_idx < from_day_idx) and not timeFlag:
+                if not (to_day_idx >= current_day_idx or current_day_idx >= from_day_idx):
+                    continue
+            elif (not (from_day_idx <= current_day_idx < to_day_idx)) and timeFlag:
+                continue
+            elif (not (from_day_idx <= current_day_idx <= to_day_idx)) and not timeFlag:
+                continue
 
             return True
 
@@ -196,13 +227,15 @@ class SimulatorEngine:
     # add by LR
     def xeslog(self, node_id, status, nodeType, resourceid=None, taskCost=None, resource_cost_hour=None):
     #def xeslog(self, node_id, status, nodeType):
-        print("-------XESLOG------")
+        # print("-------XESLOG------")
         if nodeType=="parallelGateway":
             nodeType="parallelGatewayOpen"
         if nodeType=="inclusiveGateway":
             nodeType="inclusiveGatewayOpen"
-        start_time = datetime.strptime(self.startDateTime, "%Y-%m-%dT%H:%M:%S")
-        current_time = start_time + timedelta(seconds=self.env.now)
+        if not math.isfinite(self.env.now):
+            print(f"[ERROR] Instance #{self.num}: non-finite simulation time ({self.env.now}) at node {node_id} — skipping log entry", flush=True)
+            return
+        current_time = self.start_datetime_obj + timedelta(seconds=self.env.now)
         if self.logging_opt or status=="complete":
             # add by LR
             act_name = self.process_details['node_details'][node_id].get('name', None)
@@ -242,6 +275,8 @@ class SimulatorEngine:
                 print(f"-------------------\n{element_id} has exceded his cost threshold by {abss}\n-------------------")
                 self.extraLog[f"{element_id} has exceded his COST threshold in instance {self.num} by:"]= abss
 
+        print(f"[SIM] Instance #{self.num} ({self.name}, type={self.instance_type}) completed at sim time {self.env.now:.1f}s", flush=True)
+
 
     def run_node(self, node_id, subprocess_node=None):
 
@@ -259,6 +294,9 @@ class SimulatorEngine:
     
         if node['type'] == 'startEvent':
             if node['subtype']=="timerEventDefinition":
+                #add by mm
+                fullType = node['type'] + '/' + node['subtype'] if node['subtype'] is not None else node['type']
+                
                 waitTime = self.catchEvents[node_id]
                 waitTimeSeconds=timeCalculator.convert_to_seconds(waitTime)
                 self.xeslog(node_id,"start",fullType)
@@ -266,10 +304,10 @@ class SimulatorEngine:
             next_node_id = node['next'][0]
             if len(node['previous'])>0:
                 while not all(prev_node in self.executed_nodes[self.num] for prev_node in node['previous']):
-                    yield self.env.timeout(1)
+                    yield self.state_changed_event[self.num]
             self.xeslog(node_id,"complete",node['type'])
             self.printState(node,node_id,printFlag)
-            self.executed_nodes[self.num].add(node_id)
+            self.mark_node_executed(node_id)
             yield from self.run_node(next_node_id, subprocess_node)
 
 
@@ -293,7 +331,7 @@ class SimulatorEngine:
             #wait for previous messages to be delivered (message pointing to this task)
             if len(node['previous'])>0:
                 while not all(prev_node in self.executed_nodes[self.num] for prev_node in node['previous']):
-                    yield self.env.timeout(1)
+                    yield self.state_changed_event[self.num]
             self.xeslog(node_id,"assign",node['type'])
             taskTime=timeCalculator.convert_to_seconds(self.task_durations[node_id]) # task duration is used here, it is passed before to a converter that transforms the type/mean/arg1/arg2 to a value in seconds, this value the task duration is always different in each instance
             if self.durationThresholds[node_id] is not None:
@@ -310,17 +348,14 @@ class SimulatorEngine:
             taskNeededResources = self.task_resources[node_id]
             worklist_id = self.tasks_worklists[node_id]
             if taskNeededResources: #if the task needs some resources
-                grouped_resources = {}
-                for res in taskNeededResources:
-                    if res['groupId'] not in grouped_resources:
-                        grouped_resources[res['groupId']] = []
-                    grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
+                grouped_resources = self.task_grouped_resources.get(node_id, {})
                 waited={}                                    
                 while True: #iterate till some resources can be allocated
                     #check if terminate end events happened
                     if self.terminateEndEvent[self.num]==True:
                         return
                     resources_allocated = False
+                    failed_due_to_timetable = False
                     i = 0
                     for group_id, resources in grouped_resources.items(): # Check each group of resources
                         timetablebreakFlag=False
@@ -344,6 +379,12 @@ class SimulatorEngine:
                                 available_resources = [res for res in self.global_resources[resource_name] if self.is_in_timetable(res[2]) and res[0].count < res[0].capacity]
                                 resources_in_timetable = [res for res in self.global_resources[resource_name] if self.is_in_timetable(res[2])]
                             if len(available_resources) < amount_needed:
+                                if len(self.global_resources[resource_name]) < amount_needed:
+                                    raise ValueError(f"ERRORE CRITICO DI LOGICA: L'istanza {self.num} nel nodo {node_id} richiede {amount_needed} '{resource_name}', ma ne esistono in totale solo {len(self.global_resources[resource_name])} nel simulatore! La simulazione non può proseguire.")
+                                if len(resources_in_timetable) < amount_needed:
+                                    if self.env.now > 31536000: # 1 year
+                                        raise ValueError(f"ERRORE CRITICO: L'istanza {self.num} aspetta da 1 anno le risorse del nodo {node_id} (risorsa {resource_name}). Turni timetable mancanti o inarrivabili!")
+                                    failed_due_to_timetable = True
                                 for name, req, costPerHour, resourceSimpy,_ in requests:
                                     req.resource.release(req)
                                     req.cancel() # cancel the requests that were accumulated till now since this group is ko
@@ -367,7 +408,7 @@ class SimulatorEngine:
                                     #case where different lastInstanceType so i wait 1 second to give opportunity to other instances of same type to use resource, if there are any.
                                     elif resource_tuple[3] and (resource_tuple[0] not in waited or waited[resource_tuple[0]]==False):
                                         waited[resource_tuple[0]]=True
-                                        yield self.env.timeout(1)
+                                        yield self.env.timeout(0)
 
                                     # Check if resource is with different lastInstanceType, so needs setupTime (after having waited)
                                     elif resource_tuple[3] and waited[resource_tuple[0]]==True: 
@@ -423,7 +464,12 @@ class SimulatorEngine:
                                     req.resource.release(req)
 
                     if not resources_allocated:
-                        yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout
+                        if not hasattr(self.env, 'resource_released_event'):
+                            self.env.resource_released_event = self.env.event()
+                        if failed_due_to_timetable:
+                            yield self.env.resource_released_event | self.env.timeout(60)  # Polling only off shift
+                        else:
+                            yield self.env.resource_released_event  # Waiting fully for capacity
                     else:
                         break  # Break the while loop as resources are allocated
             #END resources
@@ -432,8 +478,11 @@ class SimulatorEngine:
             #self.xeslog(node_id,"assign",node['type'],resourceid_for_task)
             self.xeslog(node_id,"start",node['type'])
 
+            if not math.isfinite(taskTime):
+                print(f"[ERROR] Instance #{self.num}: task {node_id} has non-finite duration ({taskTime}) — check distribution parameters", flush=True)
+                taskTime = 0
             yield self.env.timeout(taskTime)
-            
+
             #EXCEPTIONS check, the check was already done before but it might have happened some stuff during the timeout:
             #check if terminate end events happened
             if self.terminateEndEvent[self.num]==True:
@@ -454,7 +503,7 @@ class SimulatorEngine:
                     return 
                     
 
-            self.executed_nodes[self.num].add(node_id)
+            self.mark_node_executed(node_id)
             self.printState(node,node_id,printFlag)
             next_node_id = node['next'][0]
             taskCost=self.task_costs[node_id]
@@ -474,11 +523,12 @@ class SimulatorEngine:
                     if req.triggered:
                         req.cancel()
                         req.resource.release(req)
+                        self.trigger_resource_release()
             yield from self.run_node(next_node_id, subprocess_node)
 
         # add by LR , modify by LR
         elif node['type'] == 'exclusiveGateway':
-            print("Gateway Code Debug")
+            # print("Gateway Code Debug")
             # Get the flows from bpmn.json that start from the current XOR
             flows_from_xor = [(flow_id, flow) for flow_id, flow in self.loader.process_data['sequence_flows'].items() if flow['sourceRef'] == node_id]
             # Create a dictionary mapping target nodes to their probabilities
@@ -490,7 +540,7 @@ class SimulatorEngine:
             forced_flow_target = None
             for flow_id, flow in flows_from_xor:
                 # Find the corresponding flow in diagbp.json
-                diagbp_flow = next((item for item in self.loader.extra_data['sequenceFlows'] if item['elementId'] == flow_id), None)
+                diagbp_flow = self.sequence_flows_dict.get(flow_id)
                 if diagbp_flow is not None:
                     node_probabilities[flow['targetRef']] = float(diagbp_flow['executionProbability'])
                     # Check if 'types' field exists and if it matches with self.instance_type (to force the current instance into his xor based on the instance type)
@@ -498,13 +548,13 @@ class SimulatorEngine:
                     #if diagbp_flow['types']:
 
                         # add by LR
-                        print("Target: ", flow['targetRef'])
-                        print("Diag Flow: ", diagbp_flow['types'])
+                        # print("Target: ", flow['targetRef'])
+                        # print("Diag Flow: ", diagbp_flow['types'])
                         bool_red = False
                         for type_dict in diagbp_flow['types']:
                             bool_red = False
-                            print("Type dict: ", type_dict['type'])
-                            print("Instance Types: ", self.instance_type)
+                            # print("Type dict: ", type_dict['type'])
+                            # print("Instance Types: ", self.instance_type)
                             if type_dict['type'] == self.instance_type:
                                 forced_flow_target = flow['targetRef']
                                 redistribute_probabilities = False
@@ -522,30 +572,30 @@ class SimulatorEngine:
                     break
 
             # add by LR
-            print("Node Probabilities: ", node_probabilities)
-            print("Forced Flow Target: ", forced_flow_target)
+            # print("Node Probabilities: ", node_probabilities)
+            # print("Forced Flow Target: ", forced_flow_target)
             if redistribute_probabilities:
-                print("Redistribute Probabilities: \n")
-                print(node_probabilities_to_delete)
+                # print("Redistribute Probabilities: \n")
+                # print(node_probabilities_to_delete)
 
                 for key in node_probabilities_to_delete:
                     if key in node_probabilities:
                         del node_probabilities[key]
 
                 remaining_sum = sum(node_probabilities.values())
-                print("Remaining Sum: ", remaining_sum)
+                # print("Remaining Sum: ", remaining_sum)
 
                 for key in node_probabilities:
                     node_probabilities[key] = round(node_probabilities[key] / remaining_sum, 2)
                 
                 rounded_sum = sum(node_probabilities.values())
-                print("Rounded Sum: ", rounded_sum)
+                # print("Rounded Sum: ", rounded_sum)
 
                 if rounded_sum != 1:
                     first_key = list(node_probabilities.keys())[0]
                     node_probabilities[first_key] += (1 - rounded_sum)
 
-                print("New Node Probabilities: ", node_probabilities)
+                # print("New Node Probabilities: ", node_probabilities)
             
             # Check if node_probabilities is empty, if yes then the xor has only one next elem. else if there is a forced target use it, else pick it at random.
             if not node_probabilities:
@@ -586,11 +636,11 @@ class SimulatorEngine:
             return
 
         elif node['type'] == 'inclusiveGateway':
-            flows_from_inclusive = [(flow_id, flow) for flow_id, flow in self.loader.process_data['sequenceFlows'].items() if flow['sourceRef'] == node_id]
+            flows_from_inclusive = [(flow_id, flow) for flow_id, flow in self.loader.process_data['sequence_flows'].items() if flow['sourceRef'] == node_id]
             paths_to_take = []
             for flow_id, flow in flows_from_inclusive:
                 type_matched = False
-                diagbp_flow = next((item for item in self.loader.extra_data['sequenceFlows'] if item['elementId'] == flow_id), None)
+                diagbp_flow = self.sequence_flows_dict.get(flow_id)
                 if diagbp_flow is not None:
                     if 'types' in diagbp_flow:
                         for type_dict in diagbp_flow['types']:
@@ -615,11 +665,10 @@ class SimulatorEngine:
                 inclusive_close_id,next_node_after_inclusive = self.stackInclusive.pop()
                 self.xeslog(inclusive_close_id,"complete",node['type'])
                 yield from self.run_node(next_node_after_inclusive, subprocess_node)
-
-            if not printFlag:
-                print(f"#{self.num}|{self.name}: {inclusive_close_id}, Inclusive gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
-            else:
-                print(f"#{self.num}|{self.name}| (inside subprocess): {inclusive_close_id}, Inclusive gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+                if not printFlag:
+                    print(f"#{self.num}|{self.name}: {inclusive_close_id}, Inclusive gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+                else:
+                    print(f"#{self.num}|{self.name}| (inside subprocess): {inclusive_close_id}, Inclusive gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
             
             
 
@@ -637,14 +686,14 @@ class SimulatorEngine:
             #wait for msg to arrive, if any
             if len(node['previous'])>0:
                 while not all(prev_node in self.executed_nodes[self.num] for prev_node in node['previous']):
-                    yield self.env.timeout(1)
+                    yield self.state_changed_event[self.num]
 
             self.xeslog(node_id,"start",node['type'])
             start_node_id = next(sub_node_id for sub_node_id, sub_node in node['subprocess_details'].items() if sub_node['type'] == 'startEvent')
             self.printState(node,node_id,printFlag)
             yield from self.run_node(start_node_id, node_id)
 
-            self.executed_nodes[self.num].add(node_id)
+            self.mark_node_executed(node_id)
             next_node_id = node['next'][0]
             self.xeslog(node_id,"complete",node['type'])
 
@@ -658,7 +707,7 @@ class SimulatorEngine:
 
         elif node['type'] == 'intermediateThrowEvent':
             next_node_id = node['next'][0]
-            self.executed_nodes[self.num].add(node_id)
+            self.mark_node_executed(node_id)
             self.xeslog(node_id,"complete",node['type'])
             self.printState(node,node_id,printFlag)
             yield from self.run_node(next_node_id, subprocess_node)
@@ -670,15 +719,15 @@ class SimulatorEngine:
                 next_node_id = node['next'][0]
                 if len(node['previous'])>0: #wait for msg
                     while not all(prev_node in self.executed_nodes[self.num] for prev_node in node['previous']):
-                        yield self.env.timeout(1)
-                self.executed_nodes[self.num].add(node_id)
+                        yield self.state_changed_event[self.num]
+                self.mark_node_executed(node_id)
                 self.xeslog(node_id,"complete",fullType)
                 self.printState(node,node_id,printFlag)
                 yield from self.run_node(next_node_id, subprocess_node)
                 return
             else: #otherwise treats it as a timer event, whatever subtype it is
                 next_node_id = node['next'][0]
-                self.executed_nodes[self.num].add(node_id)
+                self.mark_node_executed(node_id)
                 waitTime = self.catchEvents[node_id]
                 waitTimeSeconds=timeCalculator.convert_to_seconds(waitTime)
                 self.xeslog(node_id,"start",fullType)
@@ -691,8 +740,7 @@ class SimulatorEngine:
         elif node['type'] == 'eventBasedGateway':
             smallestTimer=None #variable where the timer that has lower time to wait (attached to the eventBasedGateway) gets saved, if any
             ready=False
-            waitedTimeInEventBasedGateway=0
-            self.executed_nodes[self.num].add(node_id)
+            self.mark_node_executed(node_id)
             self.xeslog(node_id,"complete",node['type'])
             self.printState(node,node_id,printFlag)    
 
@@ -708,7 +756,8 @@ class SimulatorEngine:
                     if smallestTimer is None or timer < smallestTimer:
                         smallestTimer = timer
                         nextNodeToVisit=nextNode['next'][0] #sets this as next node to visit, can only be changed by a msg received later
-            while (not ready) and (smallestTimer is None or waitedTimeInEventBasedGateway < smallestTimer): #while no msg has been received and the smallest timer is not over yet
+            startTime = self.env.now
+            while (not ready) and (smallestTimer is None or (self.env.now - startTime) < smallestTimer): #while no msg has been received and the smallest timer is not over yet
                 for next_node_id in node['next']:
                     if subprocess_node is None:
                         nextNode = self.process_details['node_details'][next_node_id]
@@ -721,8 +770,16 @@ class SimulatorEngine:
                         if ready==True:
                             nextNodeToVisit=nextNode['next'][0]
                             break
-                yield self.env.timeout(1)
-                waitedTimeInEventBasedGateway+=1
+                if ready:
+                    break
+                
+                if smallestTimer is not None:
+                    remainingTime = smallestTimer - (self.env.now - startTime)
+                    if remainingTime <= 0:
+                        break
+                    yield self.state_changed_event[self.num] | self.env.timeout(remainingTime)
+                else:
+                    yield self.state_changed_event[self.num]
 
             self.printState(nextNode,next_node_id,printFlag) # print the state of the intermediate catch event (timer or msg, whatever)
             self.xeslog(next_node_id,"complete",nextNode['type'])        
@@ -732,14 +789,14 @@ class SimulatorEngine:
         elif node['type'] == 'boundaryEvent': 
             self.printState(node,node_id,printFlag)
             self.xeslog(node_id,"complete",node['type'])
-            self.executed_nodes[self.num].add(node_id)
+            self.mark_node_executed(node_id)
             next_node_id = node['next'][0]
             yield from self.run_node(next_node_id, subprocess_node)
             return
 
         elif node['type'] == 'endEvent': 
             fullType = node['type'] + '/' + node['subtype'] if node['subtype'] is not None else node['type']
-            self.executed_nodes[self.num].add(node_id)
+            self.mark_node_executed(node_id)
             self.xeslog(node_id,"complete",fullType)           
             self.printState(node,node_id,printFlag)
             # Terminate end event

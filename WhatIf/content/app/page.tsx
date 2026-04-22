@@ -39,7 +39,9 @@ type RawDuration = {
 type RawBreakdown = {
   activity: string;
   avg_cycle_time: number;
+  min_waiting_time?: number;
   avg_waiting_time: number;
+  max_waiting_time?: number;
   avg_processing_time: number;
 };
 type RawCost = {
@@ -101,9 +103,9 @@ const buildActivitySummary = (
   const safe = (n: number | undefined) => (n !== undefined && !isNaN(n) ? n : 0);
   return Array.from(names).map((act) => ({
     activity: act,
-    waitingTimeMin: 0,
+    waitingTimeMin: safe(b[act]?.min_waiting_time),
     waitingTimeAvg: safe(b[act]?.avg_waiting_time),
-    waitingTimeMax: 0,
+    waitingTimeMax: safe(b[act]?.max_waiting_time),
     durationMin: safe(d[act]?.min_duration),
     durationAvg: safe(d[act]?.avg_duration),
     durationMax: safe(d[act]?.max_duration),
@@ -117,14 +119,16 @@ const buildActivitySummary = (
 };
 
 type TimeUnit = "min" | "sec" | "hour" | "day";
-const convertTimeValue = (value: number, unit: TimeUnit) =>
+const convertTimeValue = (hours: number, unit: TimeUnit) =>
   unit === "sec"
-    ? value * 60
+    ? hours * 3600
+    : unit === "min"
+    ? hours * 60
     : unit === "hour"
-    ? value / 60
+    ? hours
     : unit === "day"
-    ? value / 1440
-    : value;
+    ? hours / 24
+    : hours;
 const formatTimeLabel = (unit: TimeUnit) =>
   unit === "sec" ? "(sec)" : unit === "hour" ? "(h)" : unit === "day" ? "(days)" : "(min)";
 
