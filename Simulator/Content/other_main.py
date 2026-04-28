@@ -191,7 +191,7 @@ def main(loader, csv_log_path, scenario_idx, rep_idx):
         # Redirect sys.stdout to /dev/null to suppress the output
         sys.stdout = open(os.devnull, 'w')    
         # Call the pm4py.write_xes function
-        pm4py.write_xes(event_log, loader.simulation_path + "/" + scenario_idx + "/" + rep_idx + "/log.xes")
+        pm4py.write_xes(event_log, loader.simulation_path + "/" + scenario_idx + "/" + rep_idx + "/log.xes.gz")
     finally:
         # Close the temporary file and restore the original stdout
         sys.stdout.close()

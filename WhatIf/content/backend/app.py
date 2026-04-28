@@ -1,4 +1,4 @@
-import os, zipfile
+import os, zipfile, gzip
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from flask import Flask, request, jsonify, send_file
@@ -28,6 +28,17 @@ def _files_in(root: Path, exts: set[str]) -> List[Path]:
 
 def _dirs_in(root: Path) -> List[Path]:
     return [p for p in root.iterdir() if p.is_dir()]
+
+def _find_xes_files(root: Path) -> List[Path]:
+    """Return .xes and .xes.gz files in root (not recursive)."""
+    return [p for p in root.iterdir() if p.is_file() and (p.suffix.lower() == ".xes" or p.name.lower().endswith(".xes.gz"))]
+
+def _read_xes(path: Path) -> str:
+    """Read an XES file, decompressing gzip if needed."""
+    if path.name.lower().endswith(".xes.gz"):
+        with gzip.open(path, "rt", encoding="utf-8", errors="ignore") as f:
+            return f.read()
+    return path.read_text(encoding="utf-8", errors="ignore")
 
 def _is_int_name(p: Path) -> bool:
     try:
@@ -83,7 +94,7 @@ def bpmn_from_root():
 def _collect_runs(rootp: Path, scenario_name: str) -> List[Path]:
     scen_dir = rootp / scenario_name
     if not scen_dir.exists(): return []
-    runs = [d for d in _dirs_in(scen_dir) if any(p.suffix.lower()==".xes" for p in _files_in(d,{".xes"}))]
+    runs = [d for d in _dirs_in(scen_dir) if _find_xes_files(d)]
     try: runs.sort(key=lambda p: int(p.name))
     except: runs.sort()
     return runs
@@ -129,8 +140,8 @@ def analyze_multi_from_uploads():
                 extra_scenario = extra_all.get(int(scen))
 
         for rdir in runs:
-            for x in _files_in(rdir, {".xes"}):
-                xes_xml = x.read_text(encoding="utf-8", errors="ignore")
+            for x in _find_xes_files(rdir):
+                xes_xml = _read_xes(x)
                 df = parse_and_clean_dataframe(xes_xml)
                 per_run_metrics.append(_compute_metrics_for_df(df, bpmn_xml=bpmn_xml, extra_scenario=extra_scenario))
         if per_run_metrics:
