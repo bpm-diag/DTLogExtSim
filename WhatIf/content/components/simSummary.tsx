@@ -43,7 +43,7 @@ export default function SummaryTable({ data }: { data: any }) {
                 <strong>Total costs by Item Type</strong>
               </TableCell>
               <TableCell align="center">
-                <strong>Total execution Time by Item</strong>
+                <strong>Average simulation Time by Item</strong>
               </TableCell>
               <TableCell align="center">
                 <strong>Resources</strong>
@@ -95,22 +95,23 @@ export default function SummaryTable({ data }: { data: any }) {
                 data.execution_by_item.length > 0 ? (() => {
                   const total = data.execution_by_item.reduce(
                     (sum: number, item: any) =>
-                      sum + (item.total_execution_minutes ?? 0),
+                      sum + (item.avg_execution_minutes ?? 0),
                     0
                   );
+                  const overallAverage = total / data.execution_by_item.length;
                   return (
                     <div className="text-sm text-center">
                       {data.execution_by_item.map((item: any) => (
                         <div key={item.instanceType}>
                           <strong>{item.instanceType}:</strong>{' '}
                           {formatDuration(
-                            Number(item.total_execution_minutes || 0)
+                            Number(item.avg_execution_minutes || 0)
                           )}
                         </div>
                       ))}
                       <hr className="my-1" />
                       <div>
-                        <strong>Total:</strong> {formatDuration(total)}
+                        <strong>Average simulation time across item types:</strong> {formatDuration(overallAverage)}
                       </div>
                     </div>
                   );

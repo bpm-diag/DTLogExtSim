@@ -21,9 +21,13 @@ def save_discovery_log(self, processed_log: pd.DataFrame) -> str:
         
         # Percorso file discovery
         discovery_file = os.path.join(self.input_dir, f"{self.name}_discovery.xes")
-        
+
+        # Mantieni solo le colonne necessarie per SplitMiner2 (evita float NaN nel XES)
+        essential_cols = [TAG_TRACE_ID, TAG_ACTIVITY_NAME, TAG_TIMESTAMP, TAG_LIFECYCLE]
+        discovery_log = processed_log[[c for c in essential_cols if c in processed_log.columns]]
+
         # Salva file XES
-        pm4py.write_xes(processed_log, discovery_file, case_id_key=TAG_TRACE_ID)
+        pm4py.write_xes(discovery_log, discovery_file, case_id_key=TAG_TRACE_ID)
         
         print(f"✓ Log per discovery salvato: {discovery_file}")
         return discovery_file

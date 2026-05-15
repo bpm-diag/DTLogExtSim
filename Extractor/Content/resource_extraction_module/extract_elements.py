@@ -159,6 +159,24 @@ def extract_roles(self, correlation_matrix: List[Dict[str, Any]]) -> Tuple[List[
         
         # Definisci ruoli
         roles, roles_table = self._define_roles(subgraphs)
+
+        if not roles and self._resources:
+            print("⚠ Nessun ruolo estratto dalle correlazioni, uso un gruppo singleton per risorsa")
+            roles = [
+                {
+                    'group': f'Group{i + 1}',
+                    'quantity': 1,
+                    'members': [resource]
+                }
+                for i, resource in enumerate(self._resources)
+            ]
+            roles_table = [
+                {
+                    'group': role['group'],
+                    'resource': role['members'][0]
+                }
+                for role in roles
+            ]
         
         print(f"✓ Identificati {len(roles)} ruoli")
         return roles, roles_table

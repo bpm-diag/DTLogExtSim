@@ -7,6 +7,8 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 import DurationChart from "@/components/durationChart";
 import BreakdownChart from "@/components/timeBreakdownChart";
+import ActivityFrequencyChart from "@/components/ActivityFrequencyChart";
+import ActivityFrequencyCompareChart from "@/components/ActivityFrequencyCompareChart";
 import CostChart from "@/components/activityCost";
 import ItemCostPieChart from "@/components/itemCost";
 import ResourceUsageBubble from "@/components/resourceCostAndUsage";
@@ -394,6 +396,9 @@ export default function Page() {
                 {current?.durations?.length > 0 && (
                   <DurationChart data={current.durations} />
                 )}
+                {current?.activity_frequency?.length > 0 && (
+                  <ActivityFrequencyChart data={current.activity_frequency} />
+                )}
                 {current?.breakdown?.length > 0 && (
                   <BreakdownChart data={current.breakdown} />
                 )}
@@ -540,6 +545,14 @@ export default function Page() {
               </Box>
             )}
             
+            {/* Activity frequency comparison */}
+            {selectedNames.length > 0 && (
+              <ActivityFrequencyCompareChart
+                scenariosData={scenariosData}
+                scenarioNames={selectedNames}
+              />
+            )}
+
             {/* Delta table: selezione dedicata (max 2) */}
             <Divider sx={{ my: 3 }}>
               <Chip label="Compare table: pick up to 2 scenarios" />

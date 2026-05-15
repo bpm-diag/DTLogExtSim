@@ -112,14 +112,24 @@ def extract_cost_hour_normal_log(self, local_log: pd.DataFrame) -> Dict[str, flo
     try:
         # Filtra eventi start e complete
         local_log = local_log[local_log[TAG_LIFECYCLE].isin([LIFECYCLE_START, LIFECYCLE_COMPLETE])].reset_index(drop=True)
-        
+
         # Riordina log per creare eventi strutturati
         reordered_log = self._reorder_events_for_cost_hour(local_log)
         reordered_df = pd.DataFrame(reordered_log)
-        
+
+        # Parsifica resource e cost come liste (possono essere stringhe tipo "['Group1']" o float)
+        reordered_df[TAG_RESOURCE] = reordered_df[TAG_RESOURCE].apply(
+            lambda x: self._safe_literal_eval(str(x)) if not pd.isna(x) else [x]
+        )
+        reordered_df[TAG_COST_HOUR] = reordered_df[TAG_COST_HOUR].apply(
+            lambda x: self._safe_literal_eval(str(x)) if not pd.isna(x) else [x]
+        )
+        reordered_df = reordered_df.explode([TAG_RESOURCE, TAG_COST_HOUR]).reset_index(drop=True)
+        reordered_df[TAG_COST_HOUR] = pd.to_numeric(reordered_df[TAG_COST_HOUR], errors='coerce')
+
         # Estrai costi orari per gruppo
         return self._extract_cost_hour_per_group(reordered_df)
-        
+
     except Exception as e:
         raise Exception(f"Errore nell'estrazione costi normal log: {str(e)}")
     

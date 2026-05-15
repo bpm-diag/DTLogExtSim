@@ -1,9 +1,10 @@
-import os, zipfile, gzip
+import os, zipfile, gzip, hashlib, json
 from pathlib import Path
 from typing import Dict, Any, List, Optional
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from collections import defaultdict
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-import json
 
 from functions import (
     parse_and_clean_dataframe,
@@ -16,6 +17,47 @@ CORS(app, resources={r"/*": {"origins": ["http://localhost:3003","http://127.0.0
 
 UPLOADS_DIR = Path(os.environ.get("UPLOADS_DIR", "/app/uploads"))
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+
+CACHE_DIR = UPLOADS_DIR / ".metrics_cache"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+MAX_WORKERS = int(os.environ.get("WHATIF_WORKERS", "8"))
+
+# ---------- disk cache ----------
+def _cache_key(xes_path: Path, bpmn_xml: str, extra_scenario) -> str:
+    mtime = str(xes_path.stat().st_mtime)
+    h = hashlib.sha256()
+    h.update(xes_path.as_posix().encode())
+    h.update(mtime.encode())
+    h.update(bpmn_xml.encode())
+    h.update(json.dumps(extra_scenario, sort_keys=True).encode() if extra_scenario else b"")
+    return h.hexdigest()[:32]
+
+def _load_cache(key: str) -> dict | None:
+    f = CACHE_DIR / f"{key}.json"
+    if f.exists():
+        try:
+            return json.loads(f.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return None
+
+def _save_cache(key: str, metrics: dict) -> None:
+    try:
+        (CACHE_DIR / f"{key}.json").write_text(json.dumps(metrics), encoding="utf-8")
+    except Exception:
+        pass
+
+# ---------- single-run worker (used in thread pool) ----------
+def _process_one_xes(xes_path: Path, bpmn_xml: str, extra_scenario) -> dict:
+    key = _cache_key(xes_path, bpmn_xml, extra_scenario)
+    cached = _load_cache(key)
+    if cached is not None:
+        return cached
+    xes_xml = _read_xes(xes_path)
+    df = parse_and_clean_dataframe(xes_xml)
+    metrics = _compute_metrics_for_df(df, bpmn_xml=bpmn_xml, extra_scenario=extra_scenario)
+    _save_cache(key, metrics)
+    return metrics
 
 # ---------- helpers ----------
 def _safe_rel(p: str) -> Path:
@@ -125,27 +167,42 @@ def analyze_multi_from_uploads():
     if len(scenarios) < 1:
         return jsonify({"error":"select at least one scenario"}), 400
 
-    out: Dict[str, Any] = {}
+    # Raccoglie tutti i task (scenario, xes_path, extra_scenario)
+    tasks: List[tuple] = []
+    extra_by_scen: Dict[str, Any] = {}
     for scen in scenarios:
-        runs = _collect_runs(rootp, scen)
-        per_run_metrics: List[Dict[str, Any]] = []
-
-        # estrae il blocco extra dello scenario (string->dict); se non c'è, None
         extra_scenario = None
         if extra_all is not None:
-            # extra.json potrebbe usare chiavi intere o stringhe; normalizza a stringa
             if scen in extra_all:
-                extra_scenario = extra_all.get(scen)
+                extra_scenario = extra_all[scen]
             elif scen.isdigit() and int(scen) in extra_all:
-                extra_scenario = extra_all.get(int(scen))
-
-        for rdir in runs:
+                extra_scenario = extra_all[int(scen)]
+        extra_by_scen[scen] = extra_scenario
+        for rdir in _collect_runs(rootp, scen):
             for x in _find_xes_files(rdir):
-                xes_xml = _read_xes(x)
-                df = parse_and_clean_dataframe(xes_xml)
-                per_run_metrics.append(_compute_metrics_for_df(df, bpmn_xml=bpmn_xml, extra_scenario=extra_scenario))
-        if per_run_metrics:
-            out[scen] = per_run_metrics[0] if len(per_run_metrics)==1 else aggregate_runs_metrics(per_run_metrics)
+                tasks.append((scen, x, extra_scenario))
 
-    if not out: return jsonify({"error":"no metrics computed"}), 400
+    if not tasks:
+        return jsonify({"error": "no XES files found"}), 400
+
+    # Processa in parallelo (cache hit = solo lettura JSON dal disco)
+    scen_metrics: Dict[str, List[dict]] = defaultdict(list)
+    n_workers = min(MAX_WORKERS, len(tasks))
+    with ThreadPoolExecutor(max_workers=n_workers) as pool:
+        futures = {pool.submit(_process_one_xes, x, bpmn_xml, es): scen for scen, x, es in tasks}
+        for fut in as_completed(futures):
+            scen = futures[fut]
+            try:
+                scen_metrics[scen].append(fut.result())
+            except Exception as e:
+                app.logger.error("Error processing run for scenario %s: %s", scen, e)
+
+    out: Dict[str, Any] = {}
+    for scen in scenarios:
+        runs_metrics = scen_metrics.get(scen, [])
+        if runs_metrics:
+            out[scen] = runs_metrics[0] if len(runs_metrics) == 1 else aggregate_runs_metrics(runs_metrics)
+
+    if not out:
+        return jsonify({"error": "no metrics computed"}), 400
     return jsonify({"root": root, "scenario_order": [s for s in scenarios if s in out], "scenarios": out})

@@ -34,10 +34,14 @@ def execute_splitminer(self, discovery_file: str) -> str:
         process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         stdout, stderr = process.communicate()
         
+        # Stampa sempre output per diagnostica
+        if stdout:
+            print(f"SplitMiner stdout: {stdout}")
+        if stderr:
+            print(f"SplitMiner stderr: {stderr}")
+
         # Controllo risultato
         if process.returncode != 0:
-            print(f"SplitMiner stdout: {stdout}")
-            print(f"SplitMiner stderr: {stderr}")
             raise Exception(f"SplitMiner2 fallito con codice {process.returncode}")
         
         bpmn_file = f"{output_file}.bpmn"

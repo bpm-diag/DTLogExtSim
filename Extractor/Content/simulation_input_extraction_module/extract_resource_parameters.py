@@ -61,8 +61,25 @@ def safe_literal_eval(self, x) -> List:
     Returns:
         Lista o valore originale wrappato in lista
     """
+    if x is None or pd.isna(x):
+        return []
+
+    if isinstance(x, list):
+        return [str(item) for item in x if str(item).strip().lower() not in ("", "none", "nan")]
+
+    if isinstance(x, str):
+        raw_value = x.strip()
+        if raw_value.lower() in ("", "none", "nan"):
+            return []
+    else:
+        raw_value = str(x).strip()
+
     try:
-        evaluated = ast.literal_eval(x)
-        return evaluated if isinstance(evaluated, (list, dict)) else [x]
-    except (ValueError, SyntaxError):
-        return [x]
+        evaluated = ast.literal_eval(raw_value)
+        if isinstance(evaluated, list):
+            return [str(item) for item in evaluated if str(item).strip().lower() not in ("", "none", "nan")]
+        if evaluated is None:
+            return []
+        return [str(evaluated)]
+    except (ValueError, SyntaxError, TypeError):
+        return [raw_value]

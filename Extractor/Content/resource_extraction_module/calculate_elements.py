@@ -10,6 +10,21 @@ from support_modules.constants import *
 from timetables_extraction_module.timetables_extraction import TimeTablesCalculation
 from worklist_res_extraction_module.worklist_res_extraction import WorklistCalculation
 
+def _clean_resource_list(resource_list: Any) -> List[str]:
+    """Normalizza una cella risorsa in una lista di stringhe non vuote."""
+    if not isinstance(resource_list, list):
+        return []
+
+    cleaned_resources = []
+    for resource in resource_list:
+        if resource is None or pd.isna(resource):
+            continue
+        resource_str = str(resource).strip()
+        if resource_str.lower() in ("", "none", "nan"):
+            continue
+        cleaned_resources.append(resource_str)
+    return cleaned_resources
+
 def calculate_correlation_matrix(self, log: pd.DataFrame) -> List[Dict[str, Any]]:
     """
     Calcola la matrice di correlazione tra risorse.
@@ -33,12 +48,14 @@ def calculate_correlation_matrix(self, log: pd.DataFrame) -> List[Dict[str, Any]
         for _, event in log_with_moments.iterrows():
             activity = event[TAG_ACTIVITY_NAME]
             moment_of_day = event[TAG_MOMENT_OF_DAY]
-            resource_list = event[TAG_RESOURCE]
+            resource_list = _clean_resource_list(event[TAG_RESOURCE])
             
-            if not pd.isna(resource_list[0]):
-                for resource in resource_list:
-                    pair = (activity, moment_of_day)
-                    res_knowledge_dict[resource][pair] += 1
+            if not resource_list:
+                continue
+
+            for resource in resource_list:
+                pair = (activity, moment_of_day)
+                res_knowledge_dict[resource][pair] += 1
         
         # Crea DataFrame e calcola correlazioni
         df = DataFrame.from_dict(res_knowledge_dict, orient='index').fillna(0)

@@ -122,13 +122,29 @@ def compute_simulation_summary(df) -> dict:
     Ritorna:
     - numero totale di traceId
     - insieme dei poolName distinti
+    - inizio/fine simulazione e durata complessiva
     """
     total_traces = df['traceId'].nunique()
     unique_pools = sorted(set(df['poolName'].dropna()))
+    simulation_start = None
+    simulation_end = None
+    simulation_duration_minutes = 0.0
+
+    if 'timestamp' in df.columns and not df.empty:
+        valid_timestamps = df['timestamp'].dropna()
+        if not valid_timestamps.empty:
+            simulation_start = valid_timestamps.min()
+            simulation_end = valid_timestamps.max()
+            simulation_duration_minutes = (
+                (simulation_end - simulation_start).total_seconds() / 60
+            )
 
     return {
         "total_traces": total_traces,
-        "unique_pools": unique_pools
+        "unique_pools": unique_pools,
+        "simulation_start": simulation_start.isoformat() if simulation_start is not None else None,
+        "simulation_end": simulation_end.isoformat() if simulation_end is not None else None,
+        "simulation_duration_minutes": simulation_duration_minutes
     }
 def _sum_resource_cost(val) -> float:
     """Parse a resourceCost cell (string repr of list, or list) into a float sum."""
@@ -168,32 +184,27 @@ def compute_cost_summary_by_item(df) -> list[dict]:
 
 def compute_execution_duration_by_instance(df) -> list[dict]:
     """
-    Calcola la durata totale (in minuti) di esecuzione per ogni instanceType,
-    come differenza tra ultimo e primo timestamp per traceId.
+    Calcola il tempo di simulazione (in minuti) per ogni instanceType
+    dentro una singola simulazione, come differenza tra il primo e l'ultimo
+    timestamp osservati per quel tipo di istanza.
     """
     df = df.copy()
 
     if 'timestamp' not in df.columns or 'instanceType' not in df.columns or 'traceId' not in df.columns:
         return []
 
-    # Calcolo inizio e fine per ogni trace
+    # Calcolo inizio e fine globali per ogni instanceType nella simulazione
     durations = (
-        df.groupby(['traceId', 'instanceType'])['timestamp']
+        df.groupby('instanceType')['timestamp']
         .agg(['min', 'max'])
         .reset_index()
     )
 
     durations['duration_minutes'] = (durations['max'] - durations['min']).dt.total_seconds() / 60
 
-    # Somma totale per instanceType
-    result = (
-        durations.groupby('instanceType')['duration_minutes']
-        .sum()
-        .reset_index()
-        .rename(columns={'duration_minutes': 'total_execution_minutes'})
-    )
-
-    return result.to_dict(orient='records')
+    return durations.rename(columns={'duration_minutes': 'avg_execution_minutes'})[
+        ['instanceType', 'avg_execution_minutes']
+    ].to_dict(orient='records')
 
 # -------------------------------------------------------------------------------------------------------------------------------------
 # --------------function to extract the CYCLE TIME of each activity in the log---------------------------------------------------------------
@@ -975,6 +986,36 @@ def _aggregate_resource_utilization(list_of_runs: list[list[dict]]) -> list[dict
         })
     return out
 
+# -------------------------------------------------------------------------------------------------------------------------------------
+# ----------------------- function to compute activity execution frequency per trace ---------------------------------------------------
+def compute_activity_frequency(df) -> list[dict]:
+    """
+    Calcola la frequenza totale di esecuzione di ciascuna attività nel log.
+    Considera solo le attività che hanno sia transizioni 'assign' che 'complete'
+    (coerente con gli altri grafici, esclude gateway ed eventi).
+    Ritorna per ogni attività: total_count = numero totale di completamenti nel log.
+    """
+    transition_col = 'lifecycle:transition'
+    if transition_col not in df.columns:
+        return []
+
+    has_assign = set(df[df[transition_col] == 'assign']['activity'].unique())
+    has_complete = set(df[df[transition_col] == 'complete']['activity'].unique())
+    valid_activities = has_assign & has_complete
+    if not valid_activities:
+        return []
+
+    complete_df = df[
+        (df[transition_col] == 'complete') &
+        (df['activity'].isin(valid_activities))
+    ]
+    if complete_df.empty:
+        return []
+
+    counts = complete_df.groupby('activity').size().reset_index(name='total_count')
+    return counts.to_dict(orient='records')
+# -------------------------------------------------------------------------------------------------------------------------------------
+
 # === WHAT-IF HELPERS: calcolo KPI per run singola e media su N run ==================
 
 def _compute_metrics_for_df(df: pd.DataFrame, *, bpmn_xml: str | None = None, extra_scenario: dict | None = None):
@@ -1005,6 +1046,7 @@ def _compute_metrics_for_df(df: pd.DataFrame, *, bpmn_xml: str | None = None, ex
     res_bubble = compute_resource_bubble_data(df)
     resource_util_run = compute_resource_utilization_for_run(df, extra_scenario) if extra_scenario else []
     resource_amounts = compute_resource_amounts(extra_scenario) if extra_scenario else {}
+    activity_frequency = compute_activity_frequency(df)
     simulation_summary = {
         **compute_simulation_summary(df),
         "costs_by_item": compute_cost_summary_by_item(df),
@@ -1022,8 +1064,8 @@ def _compute_metrics_for_df(df: pd.DataFrame, *, bpmn_xml: str | None = None, ex
         "itemCosts": item_costs or [],
         "itemDurations": item_duration or [],
         "resource_bubble": res_bubble or [],
-        "resource_utilization": resource_util_run or []
-
+        "resource_utilization": resource_util_run or [],
+        "activity_frequency": activity_frequency or [],
     }
 
 def _mean_over_dict_list(list_of_dicts, key_fields, mean_fields, *, fill_missing_zero=True):
@@ -1084,7 +1126,8 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
         return {
             "simulation_summary": {"total_traces": 0, "unique_pools": []},
             "durations": [], "breakdown": [], "bottleneck": [], "costs": [],
-            "itemCosts": [], "itemDurations": [], "resource_bubble": []
+            "itemCosts": [], "itemDurations": [], "resource_bubble": [],
+            "activity_frequency": [],
         }
 
     # durations
@@ -1176,6 +1219,14 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
         [m.get("resource_utilization", []) for m in metrics_list]
     )
 
+    # activity_frequency
+    activity_frequency = _mean_over_dict_list(
+        [m.get("activity_frequency", []) for m in metrics_list],
+        key_fields=("activity",),
+        mean_fields=["total_count"],
+        fill_missing_zero=True
+    )
+
     # simulation_summary (media di total_traces, unione unique_pools; media for key on costs_by_item, execution_by_item)
     # total_traces
     tt_vals = [m["simulation_summary"].get("total_traces", 0) for m in metrics_list]
@@ -1194,7 +1245,7 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
     execution_by_item = _mean_over_dict_list(
         [m["simulation_summary"].get("execution_by_item", []) for m in metrics_list],
         key_fields=("instanceType",),
-        mean_fields=["total_execution_minutes"]
+        mean_fields=["avg_execution_minutes"]
     )
     resources_agg = {}
     for m in metrics_list:
@@ -1219,7 +1270,8 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
         "itemCosts": item_costs,
         "itemDurations": item_durations,
         "resource_bubble": resource_bubble,
-        "resource_utilization": resource_utilization
+        "resource_utilization": resource_utilization,
+        "activity_frequency": activity_frequency,
     }
 
 # per i grafici “duration/breakdown/costi per attività” si fa la media delle medie (e delle min/max riportate da ciascuna run).
