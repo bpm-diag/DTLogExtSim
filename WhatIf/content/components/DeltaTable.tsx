@@ -26,7 +26,12 @@ function deltaAbs(a: number, b: number) {
   return b - a;
 }
 function deltaPctNum(a: number, b: number) {
-  if (!Number.isFinite(a) || a === 0 || !Number.isFinite(b)) return NaN;
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return NaN;
+  // Use display precision threshold: values that round to "0.00" are treated as zero
+  const epsA = Math.abs(a) < 0.005;
+  const epsB = Math.abs(b) < 0.005;
+  if (epsA && epsB) return NaN;
+  if (epsA) return NaN;
   return ((b - a) / a) * 100;
 }
 

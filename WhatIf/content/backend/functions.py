@@ -890,7 +890,7 @@ def compute_resource_utilization_for_run(df: pd.DataFrame, extra_scenario: dict)
     - Valori "nan"/"None"/"" in org:resource vengono ignorati.
     - La disponibilità è calcolata sulla finestra [min(timestamp), max(timestamp)] della run.
     """
-    if df is None or df.empty or not extra_scenario:
+    if df is None or df.empty:
         return []
 
     required_cols = {'timestamp', 'lifecycle:transition', 'activity', 'traceId'}
@@ -926,15 +926,17 @@ def compute_resource_utilization_for_run(df: pd.DataFrame, extra_scenario: dict)
         dur = float(row['duration_sec'])
         worked[r] = worked.get(r, 0.0) + dur
 
-    # secondi disponibili nella stessa finestra
+    # secondi disponibili nella stessa finestra (da extra_scenario se presente)
     available = _compute_available_seconds(
-        extra_scenario,
+        extra_scenario or {},
         min_ts.to_pydatetime(),
         max_ts.to_pydatetime()
     )
 
-    # output: includo tutte le risorse dell'extra,
-    # e poi eventuali risorse presenti nel log ma non nell'extra (avail=0)
+    # fallback: per risorse senza timetable usa l'intera finestra di simulazione
+    window_sec = (max_ts - min_ts).total_seconds()
+
+    # output: risorse con timetable → % su disponibile; resto → % su finestra simulazione
     out: list[dict] = []
 
     for rname, avail_sec in available.items():
@@ -949,11 +951,12 @@ def compute_resource_utilization_for_run(df: pd.DataFrame, extra_scenario: dict)
 
     for rname, w_sec in worked.items():
         if rname not in available:
+            pct = (w_sec / window_sec * 100.0) if window_sec > 0 else 0.0
             out.append({
                 "resource": rname,
                 "worked_seconds": float(w_sec),
-                "available_seconds": 0.0,
-                "percentage_utilization": 0.0,
+                "available_seconds": float(window_sec),
+                "percentage_utilization": float(pct),
             })
 
     return out
@@ -1044,7 +1047,7 @@ def _compute_metrics_for_df(df: pd.DataFrame, *, bpmn_xml: str | None = None, ex
     item_costs = compute_item_costs(df)
     item_duration = compute_avg_duration_per_item(df)
     res_bubble = compute_resource_bubble_data(df)
-    resource_util_run = compute_resource_utilization_for_run(df, extra_scenario) if extra_scenario else []
+    resource_util_run = compute_resource_utilization_for_run(df, extra_scenario)
     resource_amounts = compute_resource_amounts(extra_scenario) if extra_scenario else {}
     activity_frequency = compute_activity_frequency(df)
     simulation_summary = {
