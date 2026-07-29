@@ -30,12 +30,13 @@ const ActivitySummaryTable: React.FC<Props> = ({ data }) => {
 
   const unitLabel = unit === 'seconds' ? 's' : unit === 'hours' ? 'h' : unit === 'days' ? 'd' : 'min';
 
-  const convertTime = (hours: number) => {
+  // Backend activity summary values are expressed in seconds.
+  const convertTime = (seconds: number) => {
     switch (unit) {
-      case 'seconds': return hours * 3600;
-      case 'minutes': return hours * 60;
-      case 'days': return hours / 24;
-      default: return hours;
+      case 'seconds': return seconds;
+      case 'hours': return seconds / 3600;
+      case 'days': return seconds / 86400;
+      default: return seconds / 60;
     }
   };
 

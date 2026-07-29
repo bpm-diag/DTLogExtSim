@@ -71,12 +71,13 @@ const estimateAvgPercentageUtilization = (result: any): number => {
 const extractKpis = (result: any): KpiBundle => {
   const breakdown: RawBreakdown[] = (result?.breakdown ?? []) as RawBreakdown[];
   const costs: RawCost[] = (result?.costs ?? []) as RawCost[];
+  // avg_cycle_time / avg_waiting_time arrivano dal backend in secondi; qui servono in minuti (DeltaTable li etichetta "(min)")
   const avgCycleMin = mean(
     breakdown.map((x) => Number(x.avg_cycle_time) || 0)
-  );
+  ) / 60;
   const avgWaitMin = mean(
     breakdown.map((x) => Number(x.avg_waiting_time) || 0)
-  );
+  ) / 60;
   const avgTotalCost = mean(
     costs.map((x) => Number(x.avg_total_cost) || 0)
   );
@@ -121,16 +122,17 @@ const buildActivitySummary = (
 };
 
 type TimeUnit = "min" | "sec" | "hour" | "day";
-const convertTimeValue = (hours: number, unit: TimeUnit) =>
+// I valori grezzi (avg_cycle_time, avg_waiting_time, ecc.) arrivano dal backend in secondi.
+const convertTimeValue = (seconds: number, unit: TimeUnit) =>
   unit === "sec"
-    ? hours * 3600
+    ? seconds
     : unit === "min"
-    ? hours * 60
+    ? seconds / 60
     : unit === "hour"
-    ? hours
+    ? seconds / 3600
     : unit === "day"
-    ? hours / 24
-    : hours;
+    ? seconds / 86400
+    : seconds / 60;
 const formatTimeLabel = (unit: TimeUnit) =>
   unit === "sec" ? "(sec)" : unit === "hour" ? "(h)" : unit === "day" ? "(days)" : "(min)";
 
@@ -153,6 +155,8 @@ export default function Page() {
   const [tab, setTab] = useState<"per-scenario" | "compare">("per-scenario");
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("min");
+  const [reloadTick, setReloadTick] = useState(0);
+  const [clearingCache, setClearingCache] = useState(false);
 
   // --- multi-selezione per CHARTS/HEATMAPS (N scenari) ---
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -222,7 +226,28 @@ export default function Page() {
         setLoading(false);
       }
     })();
-  }, [root, scenarioIds.join(",")]);
+  }, [root, scenarioIds.join(","), reloadTick]);
+
+  const handleClearCache = async (scenario: string | null) => {
+    if (!root || !scenario) return;
+    setClearingCache(true);
+    setError(null);
+    try {
+      const url = `${API_BASE}/api/clear-cache?root=${encodeURIComponent(
+        root
+      )}&scenarios=${encodeURIComponent(scenario)}`;
+      const r = await fetch(url, { method: "POST" });
+      if (!r.ok) {
+        const t = await r.text();
+        throw new Error(`Clear cache error (${r.status}): ${t}`);
+      }
+      setReloadTick((n) => n + 1); // forza il refetch delle metriche
+    } catch (e: any) {
+      setError(e?.message ?? "Unexpected error clearing cache");
+    } finally {
+      setClearingCache(false);
+    }
+  };
 
   // Defaults per multi-select e DeltaTable quando arrivano i dati
   useEffect(() => {
@@ -373,6 +398,15 @@ export default function Page() {
                   ))}
                 </Select>
               </FormControl>
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="small"
+                disabled={clearingCache || !selectedScenario}
+                onClick={() => handleClearCache(selectedScenario)}
+              >
+                {clearingCache ? "Clearing cache…" : "Clear cache scenario"}
+              </Button>
             </Box>
 
             {selectedScenario ? (

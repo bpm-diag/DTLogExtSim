@@ -2,19 +2,17 @@ import { useState } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
-// Backend activity duration values are expressed in hours.
-function convertDuration(hours: number, unit: string): number {
+// Backend activity duration values are expressed in seconds.
+function convertDuration(seconds: number, unit: string): number {
   switch (unit) {
     case "seconds":
-      return hours * 3600;
-    case "minutes":
-      return hours * 60;
+      return seconds;
     case "hours":
-      return hours;
+      return seconds / 3600;
     case "days":
-      return hours / 24;
+      return seconds / 86400;
     default:
-      return hours;
+      return seconds / 60;
   }
 }
 

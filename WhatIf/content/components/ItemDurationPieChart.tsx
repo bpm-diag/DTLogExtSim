@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#a0522d", "#8a2be2", "#ff1493", "#00ced1", "#ffa500", "#228b22"];
 
-// funzione per convertire il tempo 
-function convertDuration(minutes: number, unit: string): number {
+// funzione per convertire il tempo (il backend restituisce i secondi)
+function convertDuration(seconds: number, unit: string): number {
     switch (unit) {
-      case "seconds": return minutes * 60;
-      case "hours": return minutes / 60;
-      case "days": return minutes / 1440;
-      default: return minutes;
+      case "seconds": return seconds;
+      case "hours": return seconds / 3600;
+      case "days": return seconds / 86400;
+      default: return seconds / 60;
     }
   }
   
@@ -27,17 +27,17 @@ export default function ItemDurationPieChart({ data }: { data: any }) {
     useEffect(() => {
         if (!data || data.length === 0) return;
       
-        const allMinutes = data.map((item: any) => item.avg_duration_minutes);
-        const mean = allMinutes.reduce((a: number, b: number) => a + b, 0) / allMinutes.length;     
-        if (mean < 1) setUnit("seconds");
-        else if (mean < 60) setUnit("minutes");
-        else if (mean < 1440) setUnit("hours");
+        const allSeconds = data.map((item: any) => item.avg_duration_seconds);
+        const mean = allSeconds.reduce((a: number, b: number) => a + b, 0) / allSeconds.length;
+        if (mean < 60) setUnit("seconds");
+        else if (mean < 3600) setUnit("minutes");
+        else if (mean < 86400) setUnit("hours");
         else setUnit("days");
       }, [data]);
-  
+
     const convertedData = data.map((item: any) => ({
       ...item,
-      duration: convertDuration(item.avg_duration_minutes, unit)
+      duration: convertDuration(item.avg_duration_seconds, unit)
     }));
   
     return (

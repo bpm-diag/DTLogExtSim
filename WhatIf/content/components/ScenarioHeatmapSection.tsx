@@ -30,7 +30,7 @@ const HEATMAP_HEIGHT = 520; //px
 
 const unitLabel: Record<TimeUnit, string> = { s: "s", min: "min", h: "h" };
 
-const convertFromMinutes = (valuesec: number, unit: TimeUnit) => {
+const convertFromSeconds = (valuesec: number, unit: TimeUnit) => {
   if (!Number.isFinite(valuesec)) return 0;
   switch (unit) {
     case "min":
@@ -70,10 +70,10 @@ const HEAT_COLORS: Record<0 | 1 | 2 | 3 | 4 | 5, string> = {
 // Colore neutro usato da .heat-none (in caso di fallback)
 const NEUTRAL_COLOR = "#646868";
 
-/** Dato un tempo in seocndi restituisce il colore coerente con i flussi BPMN */
-function waitMinutesToHeatColor(valuesec: number): string {
+/** Dato un tempo in secondi restituisce il colore coerente con i flussi BPMN (bucket calibrati in minuti) */
+function waitSecondsToHeatColor(valuesec: number): string {
   if (!Number.isFinite(valuesec)) return NEUTRAL_COLOR;
-  const b = bucketOf(valuesec);
+  const b = bucketOf(valuesec / 60);
   return HEAT_COLORS[b];
 }
 
@@ -90,7 +90,7 @@ function FlowWaitList({
   title?: string;
   height?: number | string;
 }) {
-  // Ordinamento per wait_time (minuti) decrescente
+  // Ordinamento per wait_time (secondi) decrescente
   const sorted = React.useMemo(
     () => [...rows].sort((a, b) => (b.wait_time ?? 0) - (a.wait_time ?? 0)),
     [rows]
@@ -114,8 +114,8 @@ function FlowWaitList({
       <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
         <List dense sx={{ bgcolor: "background.paper", borderRadius: 2, boxShadow: 1 }}>
           {sorted.map((r, idx) => {
-            const color = waitMinutesToHeatColor(r.wait_time || 0);
-            const valConv = convertFromMinutes(r.wait_time || 0, unit);
+            const color = waitSecondsToHeatColor(r.wait_time || 0);
+            const valConv = convertFromSeconds(r.wait_time || 0, unit);
 
             return (
               <ListItem
@@ -195,7 +195,7 @@ export default function ScenarioHeatmapSection({
       (rows ?? []).map((x) => ({
         from: String(x.activity),
         to: String(x.next_activity),
-        value: Number.isFinite(x.wait_time) ? Number(x.wait_time) : 0, // minuti → coerente con viewer
+        value: Number.isFinite(x.wait_time) ? Number(x.wait_time) / 60 : 0, // BpmnViewer si aspetta minuti, il backend restituisce secondi
         flowIds: Array.isArray(x.sequenceFlowIds) ? x.sequenceFlowIds : undefined,
       })),
     [rows]

@@ -69,6 +69,23 @@ function addScenario() {
 
     initializeActivityDurationListeners(scenarioIndex);
     initializeCatchEventDurationListeners(scenarioIndex);
+
+    // reset TCG toggles and re-initialize listeners for this new scenario
+    templateContent.querySelectorAll('.tcg-toggle').forEach(toggle => {
+        toggle.setAttribute('data-scenario', scenarioIndex);
+        toggle.checked = false;
+        const timerFields = toggle.closest('[data-gateway-id]') && toggle.closest('[data-gateway-id]').querySelector('.tcg-timer-fields');
+        if (timerFields) timerFields.style.display = 'none';
+        toggle.closest('[data-gateway-id]') && toggle.closest('[data-gateway-id]').querySelectorAll('.tcg-branch-option').forEach(d => d.style.display = 'none');
+        toggle.closest('[data-gateway-id]') && toggle.closest('[data-gateway-id]').querySelectorAll('[class*="probability-field-"]').forEach(el => el.style.opacity = '1');
+    });
+    templateContent.querySelectorAll('.tcg-timeout-checkbox').forEach(cb => {
+        cb.setAttribute('data-scenario', scenarioIndex);
+        cb.checked = false;
+    });
+    if (typeof initializeTcgListeners === 'function') {
+        initializeTcgListeners(templateContent);
+    }
     
     // Inizializza i contatori per il nuovo scenario
     instanceCounters[scenarioIndex] = 0;

@@ -28,6 +28,7 @@ class SimulatorEngine:
 
         self.timetables = self.loader.extra_data['timetables']
         self.catchEvents = self.loader.extra_data['catchEvents']
+        self.timeConstrainedGateways = self.loader.extra_data.get('timeConstrainedGateways', {})
 
         self.task_durations = {element['elementId']: element['durationDistribution'] for element in loader.extra_data['elements']} #dict contains: type, mean, arg1, arg2
         self.task_resources = {element['elementId']: element['resourceIds'] for element in loader.extra_data['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
@@ -528,85 +529,143 @@ class SimulatorEngine:
 
         # add by LR , modify by LR
         elif node['type'] == 'exclusiveGateway':
-            # print("Gateway Code Debug")
-            # Get the flows from bpmn.json that start from the current XOR
-            flows_from_xor = [(flow_id, flow) for flow_id, flow in self.loader.process_data['sequence_flows'].items() if flow['sourceRef'] == node_id]
-            # Create a dictionary mapping target nodes to their probabilities
-            node_probabilities = {}
-            
-            # add by LR
-            node_probabilities_to_delete = {}
-            redistribute_probabilities = False
-            forced_flow_target = None
-            for flow_id, flow in flows_from_xor:
-                # Find the corresponding flow in diagbp.json
-                diagbp_flow = self.sequence_flows_dict.get(flow_id)
-                if diagbp_flow is not None:
-                    node_probabilities[flow['targetRef']] = float(diagbp_flow['executionProbability'])
-                    # Check if 'types' field exists and if it matches with self.instance_type (to force the current instance into his xor based on the instance type)
-                    if 'types' in diagbp_flow:
-                    #if diagbp_flow['types']:
+            if node_id in self.timeConstrainedGateways:
+                timer_dist = self.timeConstrainedGateways[node_id]
+                max_wait = timeCalculator.convert_to_seconds(timer_dist)
+                flows_from_xor_tc = [(flow_id, flow) for flow_id, flow in self.loader.process_data['sequence_flows'].items() if flow['sourceRef'] == node_id]
 
-                        # add by LR
-                        # print("Target: ", flow['targetRef'])
-                        # print("Diag Flow: ", diagbp_flow['types'])
-                        bool_red = False
-                        for type_dict in diagbp_flow['types']:
-                            bool_red = False
-                            # print("Type dict: ", type_dict['type'])
-                            # print("Instance Types: ", self.instance_type)
-                            if type_dict['type'] == self.instance_type:
-                                forced_flow_target = flow['targetRef']
-                                redistribute_probabilities = False
-                                bool_red = False
-                                break
-                            else:
-                                bool_red = True
-                        if bool_red:
-                            #del node_probabilities[flow['targetRef']]
-                            node_probabilities_to_delete[flow['targetRef']] = float(diagbp_flow['executionProbability'])
-                            redistribute_probabilities = True
-                    #else:
-                    #    node_probabilities[flow['targetRef']] = float(diagbp_flow['executionProbability'])
-                if forced_flow_target is not None:
-                    break
+                timeout_path = None
+                normal_paths = {}  # target_node_id -> probability
+                for flow_id, flow in flows_from_xor_tc:
+                    diagbp_flow = self.sequence_flows_dict.get(flow_id)
+                    if diagbp_flow and diagbp_flow.get('isTimeoutPath', False):
+                        timeout_path = flow['targetRef']
+                    elif diagbp_flow:
+                        normal_paths[flow['targetRef']] = float(diagbp_flow.get('executionProbability', 1.0))
 
-            # add by LR
-            # print("Node Probabilities: ", node_probabilities)
-            # print("Forced Flow Target: ", forced_flow_target)
-            if redistribute_probabilities:
-                # print("Redistribute Probabilities: \n")
-                # print(node_probabilities_to_delete)
+                def find_first_task_on_path(start_node_id, max_depth=10):
+                    node_details = self.process_details['node_details'] if subprocess_node is None \
+                        else self.process_details['node_details'][subprocess_node]['subprocess_details']
+                    current_id = start_node_id
+                    for _ in range(max_depth):
+                        n = node_details.get(current_id)
+                        if n is None:
+                            return None
+                        if n['type'] == 'task':
+                            return current_id
+                        nexts = n.get('next', [])
+                        if not nexts:
+                            return None
+                        current_id = nexts[0]
+                    return None
 
-                for key in node_probabilities_to_delete:
-                    if key in node_probabilities:
-                        del node_probabilities[key]
+                def resources_available_for(target_node_id):
+                    task_node_id = find_first_task_on_path(target_node_id)
+                    if task_node_id is None:
+                        # no task reachable on this path → cannot check resources → treat as NOT available
+                        return False
+                    resources_needed = self.task_resources.get(task_node_id, [])
+                    if not resources_needed:
+                        # task exists but has no resources configured → always available
+                        return True
+                    for res_info in resources_needed:
+                        res_name = res_info['resourceName']
+                        amount_needed = int(res_info['amountNeeded'])
+                        if res_name not in self.global_resources:
+                            return False
+                        available = [r for r in self.global_resources[res_name]
+                                     if self.is_in_timetable(r[2]) and r[0].count < r[0].capacity]
+                        if len(available) < amount_needed:
+                            return False
+                    return True
 
-                remaining_sum = sum(node_probabilities.values())
-                # print("Remaining Sum: ", remaining_sum)
+                if timeout_path is None:
+                    print(f"[TCG WARNING] Instance #{self.num}: gateway {node_id} has no timeout path marked — TCG disabled, falling through as normal XOR.", flush=True)
+                    # fall through to regular XOR below
+                elif max_wait <= 0:
+                    print(f"[TCG] Instance #{self.num}: max_wait={max_wait:.6f}s ≤ 0 (timer not configured) → immediate timeout path {timeout_path}", flush=True)
+                    self.xeslog(node_id, "complete", node['type'])
+                    self.printState(node, node_id, printFlag)
+                    yield from self.run_node(timeout_path, subprocess_node)
+                else:
+                    first_tasks = {t: find_first_task_on_path(t) for t in normal_paths}
+                    print(f"[TCG] Instance #{self.num} at {node_id}: max_wait={max_wait:.2f}s | timeout→{timeout_path} | normal paths first tasks: {first_tasks}", flush=True)
 
-                for key in node_probabilities:
-                    node_probabilities[key] = round(node_probabilities[key] / remaining_sum, 2)
-                
-                rounded_sum = sum(node_probabilities.values())
-                # print("Rounded Sum: ", rounded_sum)
+                    start_time = self.env.now
+                    chosen_path = None
+                    while chosen_path is None:
+                        elapsed = self.env.now - start_time
+                        if elapsed >= max_wait:
+                            print(f"[TCG] Instance #{self.num}: TIMEOUT after {elapsed:.2f}s → taking timeout path {timeout_path}", flush=True)
+                            chosen_path = timeout_path
+                            break
+                        # among normal paths, find those with resources available
+                        available_paths = {t: p for t, p in normal_paths.items() if resources_available_for(t)}
+                        if available_paths:
+                            print(f"[TCG] Instance #{self.num}: resources available at t={self.env.now:.1f} (elapsed={elapsed:.2f}s) → taking normal path", flush=True)
+                            total = sum(available_paths.values())
+                            targets = list(available_paths.keys())
+                            probs = [available_paths[t] / total for t in targets]
+                            chosen_path = np.random.choice(targets, p=probs)
+                            break
+                        print(f"[TCG] Instance #{self.num}: no resources available at t={self.env.now:.1f} (elapsed={elapsed:.2f}s), waiting... (remaining={max_wait-elapsed:.2f}s)", flush=True)
+                        remaining = max_wait - elapsed
+                        if not hasattr(self.env, 'resource_released_event'):
+                            self.env.resource_released_event = self.env.event()
+                        yield self.env.resource_released_event | self.env.timeout(remaining)
 
-                if rounded_sum != 1:
-                    first_key = list(node_probabilities.keys())[0]
-                    node_probabilities[first_key] += (1 - rounded_sum)
+                    self.xeslog(node_id, "complete", node['type'])
+                    self.printState(node, node_id, printFlag)
+                    yield from self.run_node(chosen_path, subprocess_node)
 
-                # print("New Node Probabilities: ", node_probabilities)
-            
-            # Check if node_probabilities is empty, if yes then the xor has only one next elem. else if there is a forced target use it, else pick it at random.
-            if not node_probabilities:
-                next_node_id = node['next'][0]
-            elif forced_flow_target is not None:
-                next_node_id = forced_flow_target
             else:
-                next_node_id = np.random.choice(list(node_probabilities.keys()), p=list(node_probabilities.values()))
-            self.xeslog(node_id,"complete",node['type'])
-            self.printState(node,node_id,printFlag)
-            yield from self.run_node(next_node_id, subprocess_node)
+                flows_from_xor = [(flow_id, flow) for flow_id, flow in self.loader.process_data['sequence_flows'].items() if flow['sourceRef'] == node_id]
+                node_probabilities = {}
+                node_probabilities_to_delete = {}
+                redistribute_probabilities = False
+                forced_flow_target = None
+                for flow_id, flow in flows_from_xor:
+                    diagbp_flow = self.sequence_flows_dict.get(flow_id)
+                    if diagbp_flow is not None:
+                        node_probabilities[flow['targetRef']] = float(diagbp_flow['executionProbability'])
+                        if 'types' in diagbp_flow:
+                            bool_red = False
+                            for type_dict in diagbp_flow['types']:
+                                bool_red = False
+                                if type_dict['type'] == self.instance_type:
+                                    forced_flow_target = flow['targetRef']
+                                    redistribute_probabilities = False
+                                    bool_red = False
+                                    break
+                                else:
+                                    bool_red = True
+                            if bool_red:
+                                node_probabilities_to_delete[flow['targetRef']] = float(diagbp_flow['executionProbability'])
+                                redistribute_probabilities = True
+                    if forced_flow_target is not None:
+                        break
+
+                if redistribute_probabilities:
+                    for key in node_probabilities_to_delete:
+                        if key in node_probabilities:
+                            del node_probabilities[key]
+                    remaining_sum = sum(node_probabilities.values())
+                    for key in node_probabilities:
+                        node_probabilities[key] = round(node_probabilities[key] / remaining_sum, 2)
+                    rounded_sum = sum(node_probabilities.values())
+                    if rounded_sum != 1:
+                        first_key = list(node_probabilities.keys())[0]
+                        node_probabilities[first_key] += (1 - rounded_sum)
+
+                if not node_probabilities:
+                    next_node_id = node['next'][0]
+                elif forced_flow_target is not None:
+                    next_node_id = forced_flow_target
+                else:
+                    next_node_id = np.random.choice(list(node_probabilities.keys()), p=list(node_probabilities.values()))
+                self.xeslog(node_id, "complete", node['type'])
+                self.printState(node, node_id, printFlag)
+                yield from self.run_node(next_node_id, subprocess_node)
 
 
         elif node['type'] == 'parallelGateway':

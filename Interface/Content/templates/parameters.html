@@ -288,9 +288,80 @@
                                             {% set gw_type = 'Exclusive Gateway' if source_node['type'] == 'exclusiveGateway' else 'Inclusive Gateway' %}
 
                                             {# --- un blocco per gateway --- #}
-                                            <div class="gateway-group mb-4 box" data-process-id="{{ process_id }}">
+                                            <div class="gateway-group mb-4 box" data-process-id="{{ process_id }}" data-gateway-id="{{ source_id }}">
                                                 <h6 class="mb-1">{{ gw_type }}: <strong>{{ source_node['name'] or source_id }}</strong></h6>
                                                 <small class="text-muted">Gateway ID: <code>{{ source_id }}</code></small>
+
+                                                {% if source_node['type'] == 'exclusiveGateway' %}
+                                                <div class="mt-3 mb-2">
+                                                    <div class="form-check form-switch d-flex align-items-center gap-3 flex-wrap">
+                                                        <div>
+                                                            <input class="form-check-input tcg-toggle" type="checkbox"
+                                                                   id="scenario_0_tcgEnabled_{{ source_id }}"
+                                                                   data-gateway-id="{{ source_id }}" data-scenario="0"
+                                                                   data-gateway-block-id="{{ source_id }}">
+                                                            <label class="form-check-label fw-semibold" for="scenario_0_tcgEnabled_{{ source_id }}">
+                                                                Time Constrained Gateway
+                                                            </label>
+                                                            <input type="hidden" name="scenario_0_tcgEnabled_{{ source_id }}"
+                                                                   id="scenario_0_tcgEnabled_hidden_{{ source_id }}" value="false">
+                                                        </div>
+                                                        <div class="tcg-prob-display" style="display:none;">
+                                                            <small class="text-muted">Non-timeout branches sum:&nbsp;</small>
+                                                            <span class="tcg-prob-sum badge bg-secondary">0</span>
+                                                            <small class="text-muted">&nbsp;/ 1.0</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tcg-timer-fields mt-2 p-3 border rounded bg-white" style="display:none;">
+                                                        <p class="mb-2 fw-bold">Max Wait Time (before timeout path is taken):</p>
+                                                        <div class="row">
+                                                            <div class="form-group col-md-3">
+                                                                <label>Type:</label>
+                                                                <select class="form-control form-control-sm"
+                                                                        name="scenario_0_tcgDurationType_{{ source_id }}"
+                                                                        id="scenario_0_tcgDurationType_{{ source_id }}">
+                                                                    <option value="FIXED">Fixed</option>
+                                                                    <option value="NORMAL">Normal</option>
+                                                                    <option value="EXPONENTIAL">Exponential</option>
+                                                                    <option value="UNIFORM">Uniform</option>
+                                                                    <option value="TRIANGULAR">Triangular</option>
+                                                                    <option value="LOGNORMAL">Log-Normal</option>
+                                                                    <option value="GAMMA">Gamma</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group col-md-2">
+                                                                <label>Mean:</label>
+                                                                <input type="number" step="any" class="form-control form-control-sm"
+                                                                       name="scenario_0_tcgDurationMean_{{ source_id }}"
+                                                                       id="scenario_0_tcgDurationMean_{{ source_id }}">
+                                                            </div>
+                                                            <div class="form-group col-md-2">
+                                                                <label>Arg1:</label>
+                                                                <input type="number" step="any" class="form-control form-control-sm"
+                                                                       name="scenario_0_tcgDurationArg1_{{ source_id }}"
+                                                                       id="scenario_0_tcgDurationArg1_{{ source_id }}">
+                                                            </div>
+                                                            <div class="form-group col-md-2">
+                                                                <label>Arg2:</label>
+                                                                <input type="number" step="any" class="form-control form-control-sm"
+                                                                       name="scenario_0_tcgDurationArg2_{{ source_id }}"
+                                                                       id="scenario_0_tcgDurationArg2_{{ source_id }}">
+                                                            </div>
+                                                            <div class="form-group col-md-3">
+                                                                <label>Time Unit:</label>
+                                                                <select class="form-control form-control-sm"
+                                                                        name="scenario_0_tcgDurationTimeUnit_{{ source_id }}"
+                                                                        id="scenario_0_tcgDurationTimeUnit_{{ source_id }}">
+                                                                    <option value="seconds">Seconds</option>
+                                                                    <option value="minutes">Minutes</option>
+                                                                    <option value="hours">Hours</option>
+                                                                    <option value="days">Days</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
 
                                                 {# --- un sotto-blocco per ogni branch uscente --- #}
                                                 {% for fid, fd in bpmn_dict['sequence_flows'].items() %}
@@ -313,7 +384,7 @@
                                                                 {% if target_node %}<span class="text-muted ms-1">({{ target_node['type'] }})</span>{% endif %}
                                                             </div>
                                                             <div class="row">
-                                                                <div class="form-group col-md-6">
+                                                                <div class="form-group col-md-6 probability-field-{{ source_id }}">
                                                                     <label for="scenario_0_executionProbability_{{ fid }}">Execution Probability (0 to 1):</label>
                                                                     <input type="number" step="0.01" min="0" max="1" class="form-control"
                                                                            id="scenario_0_executionProbability_{{ fid }}"
@@ -332,7 +403,22 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <button type="button" class="btn btn-secondary btn-sm add-instance-type"
+                                                            {% if source_node['type'] == 'exclusiveGateway' %}
+                                                            <div class="tcg-branch-option mt-2" style="display:none;">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input tcg-timeout-checkbox"
+                                                                           type="checkbox"
+                                                                           id="scenario_0_isTimeoutPath_cb_{{ fid }}"
+                                                                           data-flow-id="{{ fid }}" data-gateway-id="{{ source_id }}" data-scenario="0">
+                                                                    <label class="form-check-label text-danger fw-semibold" for="scenario_0_isTimeoutPath_cb_{{ fid }}">
+                                                                        Timeout Path (taken when timer expires)
+                                                                    </label>
+                                                                    <input type="hidden" name="scenario_0_isTimeoutPath_{{ fid }}"
+                                                                           id="scenario_0_isTimeoutPath_{{ fid }}" value="false">
+                                                                </div>
+                                                            </div>
+                                                            {% endif %}
+                                                            <button type="button" class="btn btn-secondary btn-sm add-instance-type mt-2"
                                                                     data-flow-id="{{ fid }}"
                                                                     data-scenario="0">Add Instance Type</button>
                                                         </div>
@@ -461,12 +547,32 @@
 
     <script>
     (function() {
-        // Live sum feedback per gateway group
+        // Returns the flow ID of the timeout branch in a gateway box (null if none marked)
+        function getTimeoutFlowId(gatewayBox) {
+            const cb = gatewayBox.querySelector('.tcg-timeout-checkbox:checked');
+            return cb ? cb.dataset.flowId : null;
+        }
+
+        // Live sum feedback per gateway group, excluding the timeout branch if TCG is active
         function updateGroupSum(gatewayBox) {
+            const tcgHidden = gatewayBox.querySelector('input[name*="_tcgEnabled_"]');
+            const tcgActive = tcgHidden && tcgHidden.value === 'true';
+            const timeoutFlowId = tcgActive ? getTimeoutFlowId(gatewayBox) : null;
+
             const inputs = gatewayBox.querySelectorAll('input[name*="_executionProbability_"]');
             let sum = 0;
-            inputs.forEach(inp => { sum += parseFloat(inp.value) || 0; });
+            inputs.forEach(inp => {
+                if (timeoutFlowId && inp.name.endsWith('_' + timeoutFlowId)) return;
+                sum += parseFloat(inp.value) || 0;
+            });
             const rounded = Math.round(sum * 1000) / 1000;
+
+            // update inline TCG prob sum span
+            const tcgProbSpan = gatewayBox.querySelector('.tcg-prob-sum');
+            if (tcgProbSpan) {
+                tcgProbSpan.textContent = rounded;
+                tcgProbSpan.className = 'tcg-prob-sum badge ' + (Math.abs(rounded - 1) < 0.001 ? 'bg-success' : 'bg-danger');
+            }
 
             let badge = gatewayBox.querySelector('.prob-sum-badge');
             if (!badge) {
@@ -477,6 +583,7 @@
             const ok = Math.abs(rounded - 1) < 0.001;
             badge.textContent = 'Sum = ' + rounded;
             badge.className = 'prob-sum-badge ms-2 badge ' + (ok ? 'bg-success' : 'bg-danger');
+            badge.style.display = tcgActive ? 'none' : '';
         }
 
         // Attach listeners to a single gateway box
@@ -486,7 +593,7 @@
             });
         }
 
-        // Exposed globally so auto-load and duplicateScenario can call it after values are set
+        // Exposed globally so auto-load, duplicateScenario and TCG listeners can call it
         window.updateAllGatewaySums = function() {
             document.querySelectorAll('.gateway-group').forEach(box => {
                 initBox(box);
@@ -494,16 +601,23 @@
             });
         };
 
-        // Block submit if any group doesn't sum to 1
+        // Block submit: for TCG gateways exclude the timeout branch from the sum check
         document.getElementById('main_form').addEventListener('submit', function(e) {
             let errors = [];
             document.querySelectorAll('.gateway-group').forEach(box => {
+                const tcgHidden = box.querySelector('input[name*="_tcgEnabled_"]');
+                const tcgActive = tcgHidden && tcgHidden.value === 'true';
+                const timeoutFlowId = tcgActive ? getTimeoutFlowId(box) : null;
+
                 const inputs = box.querySelectorAll('input[name*="_executionProbability_"]');
                 let sum = 0;
-                inputs.forEach(inp => { sum += parseFloat(inp.value) || 0; });
+                inputs.forEach(inp => {
+                    if (timeoutFlowId && inp.name.endsWith('_' + timeoutFlowId)) return;
+                    sum += parseFloat(inp.value) || 0;
+                });
                 if (inputs.length > 0 && Math.abs(sum - 1) > 0.001) {
                     const name = box.querySelector('h6 strong');
-                    errors.push(name ? name.textContent : box.dataset.flowId);
+                    errors.push(name ? name.textContent : box.dataset.gatewayId);
                 }
             });
             if (errors.length > 0) {
@@ -512,9 +626,86 @@
             }
         });
 
-        // Initial run: if no extra data, badges show 0 correctly; otherwise auto-load will call it again
+        // Initial run
         window.updateAllGatewaySums();
     })();
+    </script>
+
+    <script>
+    function setTcgEnabled(toggleEl, enabled) {
+        const gwContainer = toggleEl.closest('.gateway-group');
+        if (!gwContainer) return;
+        const gwId = gwContainer.dataset.gatewayId;
+        const scenario = toggleEl.dataset.scenario || 0;
+
+        const timerFields = gwContainer.querySelector('.tcg-timer-fields');
+        if (timerFields) timerFields.style.display = enabled ? 'block' : 'none';
+
+        const hidden = gwContainer.querySelector('input[name="scenario_' + scenario + '_tcgEnabled_' + gwId + '"]') ||
+                       document.getElementById('scenario_' + scenario + '_tcgEnabled_hidden_' + gwId);
+        if (hidden) hidden.value = enabled ? 'true' : 'false';
+
+        // show/hide branch timeout option divs inside this gateway container
+        gwContainer.querySelectorAll('.tcg-branch-option').forEach(div => {
+            div.style.display = enabled ? 'block' : 'none';
+            if (!enabled) {
+                const cb = div.querySelector('.tcg-timeout-checkbox');
+                if (cb) {
+                    cb.checked = false;
+                    const flowId = cb.dataset.flowId;
+                    const hid = document.getElementById('scenario_' + scenario + '_isTimeoutPath_' + flowId);
+                    if (hid) hid.value = 'false';
+                }
+            }
+        });
+
+        const probDisplay = gwContainer.querySelector('.tcg-prob-display');
+        if (probDisplay) probDisplay.style.display = enabled ? 'inline-flex' : 'none';
+        if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+    }
+
+    function initializeTcgListeners(container) {
+        container = container || document;
+
+        container.querySelectorAll('.tcg-toggle').forEach(function(toggle) {
+            toggle.addEventListener('change', function() {
+                setTcgEnabled(this, this.checked);
+            });
+        });
+
+        container.querySelectorAll('.tcg-timeout-checkbox').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                const gwContainer = this.closest('.gateway-group');
+                if (!gwContainer) return;
+                const scenario = this.dataset.scenario || 0;
+                const flowId = this.dataset.flowId;
+                if (this.checked) {
+                    // uncheck siblings in same gateway
+                    gwContainer.querySelectorAll('.tcg-timeout-checkbox').forEach(other => {
+                        if (other !== this) {
+                            other.checked = false;
+                            const hid = document.getElementById('scenario_' + scenario + '_isTimeoutPath_' + other.dataset.flowId);
+                            if (hid) hid.value = 'false';
+                        }
+                    });
+                }
+                const hid = document.getElementById('scenario_' + scenario + '_isTimeoutPath_' + flowId);
+                if (hid) hid.value = this.checked ? 'true' : 'false';
+                if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+            });
+        });
+    }
+
+    initializeTcgListeners(document);
+    </script>
+
+    <script>
+    // Prevent mouse wheel from accidentally changing number input values while scrolling
+    document.addEventListener('wheel', function() {
+        if (document.activeElement && document.activeElement.type === 'number') {
+            document.activeElement.blur();
+        }
+    }, { passive: true, capture: true });
     </script>
 
 </body>

@@ -128,15 +128,15 @@ def compute_simulation_summary(df) -> dict:
     unique_pools = sorted(set(df['poolName'].dropna()))
     simulation_start = None
     simulation_end = None
-    simulation_duration_minutes = 0.0
+    simulation_duration_seconds = 0.0
 
     if 'timestamp' in df.columns and not df.empty:
         valid_timestamps = df['timestamp'].dropna()
         if not valid_timestamps.empty:
             simulation_start = valid_timestamps.min()
             simulation_end = valid_timestamps.max()
-            simulation_duration_minutes = (
-                (simulation_end - simulation_start).total_seconds() / 60
+            simulation_duration_seconds = (
+                (simulation_end - simulation_start).total_seconds()
             )
 
     return {
@@ -144,7 +144,7 @@ def compute_simulation_summary(df) -> dict:
         "unique_pools": unique_pools,
         "simulation_start": simulation_start.isoformat() if simulation_start is not None else None,
         "simulation_end": simulation_end.isoformat() if simulation_end is not None else None,
-        "simulation_duration_minutes": simulation_duration_minutes
+        "simulation_duration_seconds": simulation_duration_seconds
     }
 def _sum_resource_cost(val) -> float:
     """Parse a resourceCost cell (string repr of list, or list) into a float sum."""
@@ -200,17 +200,17 @@ def compute_execution_duration_by_instance(df) -> list[dict]:
         .reset_index()
     )
 
-    durations['duration_minutes'] = (durations['max'] - durations['min']).dt.total_seconds() / 60
+    durations['duration_seconds'] = (durations['max'] - durations['min']).dt.total_seconds()
 
-    return durations.rename(columns={'duration_minutes': 'avg_execution_minutes'})[
-        ['instanceType', 'avg_execution_minutes']
+    return durations.rename(columns={'duration_seconds': 'avg_execution_seconds'})[
+        ['instanceType', 'avg_execution_seconds']
     ].to_dict(orient='records')
 
 # -------------------------------------------------------------------------------------------------------------------------------------
 # --------------function to extract the CYCLE TIME of each activity in the log---------------------------------------------------------------
 def compute_activity_durations(df) -> list[dict] | None:
     """
-    Calcola durata media, minima, massima (in ore) delle attività basate su assign/complete per ogni traceId.
+    Calcola durata media, minima, massima (in secondi) delle attività basate su assign/complete per ogni traceId.
 
     Args:
         df (pd.DataFrame): DataFrame con colonne 'activity', 'traceId', 'lifecycle:transition', 'timestamp'
@@ -239,7 +239,7 @@ def compute_activity_durations(df) -> list[dict] | None:
     ).reset_index()
 
     # calcolare la durata della singola attività per ogni traceId
-    df_pivot['duration'] = (df_pivot['complete'] - df_pivot['assign']).dt.total_seconds()/(60*60) # in ore
+    df_pivot['duration'] = (df_pivot['complete'] - df_pivot['assign']).dt.total_seconds() # in secondi
 
     # calcolare durata media, min, max per ogni attività
     agg_stats = df_pivot.groupby('activity').agg(
@@ -277,9 +277,9 @@ def compute_time_breakdown(df) -> list[dict] | None:
 
     pivoted.columns.name = None
 
-    pivoted['cycle_time'] = (pivoted['complete'] - pivoted['assign']).dt.total_seconds() / 3600
-    pivoted['waiting_time'] = (pivoted['start'] - pivoted['assign']).dt.total_seconds() / 3600
-    pivoted['processing_time'] = (pivoted['complete'] - pivoted['start']).dt.total_seconds() / 3600
+    pivoted['cycle_time'] = (pivoted['complete'] - pivoted['assign']).dt.total_seconds()
+    pivoted['waiting_time'] = (pivoted['start'] - pivoted['assign']).dt.total_seconds()
+    pivoted['processing_time'] = (pivoted['complete'] - pivoted['start']).dt.total_seconds()
 
     valid_rows = pivoted.dropna(subset=['cycle_time', 'waiting_time', 'processing_time'])
 
@@ -296,6 +296,7 @@ def compute_time_breakdown(df) -> list[dict] | None:
     return agg.to_dict(orient='records')
 # ------------------------------ function to analyze bottlenecks in the simulation-----------------------------------------------------
 def compute_bottleneck_heatmap(df) -> list[dict] | None:
+    """Output: [{'activity','next_activity','wait_time'}], wait_time in secondi."""
 
     if df is None or df.empty:
         return []
@@ -337,9 +338,9 @@ def compute_bottleneck_heatmap(df) -> list[dict] | None:
             if to_act is None:
                 continue
 
-            wait_min = (pd.Timestamp(to_ts) - pd.Timestamp(t_i)).total_seconds() / 60.0
-            if wait_min >= 0:
-                rows.append((str(a_i), str(to_act), float(wait_min)))
+            wait_sec = (pd.Timestamp(to_ts) - pd.Timestamp(t_i)).total_seconds()
+            if wait_sec >= 0:
+                rows.append((str(a_i), str(to_act), float(wait_sec)))
 
     if not rows:
         return []
@@ -427,7 +428,7 @@ def compute_bottleneck_heatmap_bpmn_only(
     - Tempo per trace: dal 'complete' di A al primo evento di B successivo (tra transitions_considered).
     - Media su trace dove A→B è osservata.
     - Se fill_missing_with_zero=True, include TUTTE le coppie ammesse con wait_time=0.0 se mai osservate.
-    Output: [{'activity','next_activity','wait_time'}]
+    Output: [{'activity','next_activity','wait_time'}], wait_time in secondi.
     """
     if df is None or df.empty:
         return ([{'activity': p['activity'], 'next_activity': p['next_activity'], 'wait_time': 0.0}
@@ -468,9 +469,9 @@ def compute_bottleneck_heatmap_bpmn_only(
             if to_act is None:
                 continue
 
-            wait_min = (pd.Timestamp(to_ts) - pd.Timestamp(t_i)).total_seconds() / 60.0
-            if wait_min >= 0:
-                rows.append((str(a_i), str(to_act), float(wait_min)))
+            wait_sec = (pd.Timestamp(to_ts) - pd.Timestamp(t_i)).total_seconds()
+            if wait_sec >= 0:
+                rows.append((str(a_i), str(to_act), float(wait_sec)))
 
     if not rows:
         return (
@@ -564,14 +565,14 @@ def compute_avg_duration_per_item(df) -> list[dict]:
         .reset_index()
     )
 
-    durations['duration_minutes'] = (durations['max'] - durations['min']).dt.total_seconds() / 60
+    durations['duration_seconds'] = (durations['max'] - durations['min']).dt.total_seconds()
 
     # Media per instanceType
     result = (
-        durations.groupby('instanceType')['duration_minutes']
+        durations.groupby('instanceType')['duration_seconds']
         .mean()
         .reset_index()
-        .rename(columns={'duration_minutes': 'avg_duration_minutes'})
+        .rename(columns={'duration_seconds': 'avg_duration_seconds'})
     )
 
     return result.to_dict(orient='records')
@@ -1119,7 +1120,7 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
     - 'bottleneck': media di wait_time su (activity,next_activity) con fill_missing_zero=True (grafici stabili).
     - 'costs': media di avg_fixed_cost, avg_variable_cost, avg_total_cost per attività.
     - 'itemCosts': media di avg_item_cost e total_item_cost per instanceType (average of totals inteso per run).
-    - 'itemDurations': media di avg_duration_minutes per instanceType.
+    - 'itemDurations': media di avg_duration_seconds per instanceType.
     - 'resource_bubble': media di usage_count e avg_cost per resource (nota: usage_count medio ha senso come “attività media”).
     - 'simulation_summary': total_traces medio e unione degli unique_pools; gli altri due campi sono combinati
       mediando per key uguale.
@@ -1208,7 +1209,7 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
     item_durations = _mean_over_dict_list(
         [m.get("itemDurations", []) for m in metrics_list],
         key_fields=("instanceType",),
-        mean_fields=["avg_duration_minutes"]
+        mean_fields=["avg_duration_seconds"]
     )
 
     # resource_bubble
@@ -1248,7 +1249,7 @@ def aggregate_runs_metrics(metrics_list: list[dict]) -> dict:
     execution_by_item = _mean_over_dict_list(
         [m["simulation_summary"].get("execution_by_item", []) for m in metrics_list],
         key_fields=("instanceType",),
-        mean_fields=["avg_execution_minutes"]
+        mean_fields=["avg_execution_seconds"]
     )
     resources_agg = {}
     for m in metrics_list:

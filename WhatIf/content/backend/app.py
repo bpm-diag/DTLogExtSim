@@ -141,20 +141,15 @@ def _collect_runs(rootp: Path, scenario_name: str) -> List[Path]:
     except: runs.sort()
     return runs
 
-@app.get("/api/analyze-multi-from-uploads")
-def analyze_multi_from_uploads():
-    root = request.args.get("root")
-    scenarios_csv = request.args.get("scenarios")
-    if not root or not scenarios_csv: return jsonify({"error":"missing root or scenarios"}), 400
-    try: rootp = _safe_rel(root)
-    except: return jsonify({"error":"invalid root"}), 400
-    if not rootp.exists(): return jsonify({"error":"root not found"}), 404
-    # carica BPMN
+def _collect_tasks(rootp: Path, scenarios_csv: str):
+    """Ritorna (tasks, bpmn_xml) oppure (None, error_response) se qualcosa non va.
+    tasks: lista di (scenario, xes_path, extra_scenario)."""
     bpmn_files = _files_in(rootp, {".bpmn"})
-    if not bpmn_files: return jsonify({"error":"root must contain a .bpmn"}), 400
+    if not bpmn_files:
+        return None, (jsonify({"error": "root must contain a .bpmn"}), 400)
     bpmn_xml = bpmn_files[0].read_text(encoding="utf-8", errors="ignore")
-    
-    # carica extra.json dalla root se presente ***
+
+    # carica extra.json dalla root se presente
     extra_path = rootp / "extra.json"
     extra_all = None
     if extra_path.exists():
@@ -163,13 +158,12 @@ def analyze_multi_from_uploads():
                 extra_all = json.load(f)
         except Exception:
             extra_all = None
-    scenarios = [s.strip() for s in scenarios_csv.split(",") if s.strip()!=""]
-    if len(scenarios) < 1:
-        return jsonify({"error":"select at least one scenario"}), 400
 
-    # Raccoglie tutti i task (scenario, xes_path, extra_scenario)
+    scenarios = [s.strip() for s in scenarios_csv.split(",") if s.strip() != ""]
+    if len(scenarios) < 1:
+        return None, (jsonify({"error": "select at least one scenario"}), 400)
+
     tasks: List[tuple] = []
-    extra_by_scen: Dict[str, Any] = {}
     for scen in scenarios:
         extra_scenario = None
         if extra_all is not None:
@@ -177,13 +171,29 @@ def analyze_multi_from_uploads():
                 extra_scenario = extra_all[scen]
             elif scen.isdigit() and int(scen) in extra_all:
                 extra_scenario = extra_all[int(scen)]
-        extra_by_scen[scen] = extra_scenario
         for rdir in _collect_runs(rootp, scen):
             for x in _find_xes_files(rdir):
                 tasks.append((scen, x, extra_scenario))
 
     if not tasks:
-        return jsonify({"error": "no XES files found"}), 400
+        return None, (jsonify({"error": "no XES files found"}), 400)
+
+    return (tasks, bpmn_xml), None
+
+@app.get("/api/analyze-multi-from-uploads")
+def analyze_multi_from_uploads():
+    root = request.args.get("root")
+    scenarios_csv = request.args.get("scenarios")
+    if not root or not scenarios_csv: return jsonify({"error":"missing root or scenarios"}), 400
+    try: rootp = _safe_rel(root)
+    except: return jsonify({"error":"invalid root"}), 400
+    if not rootp.exists(): return jsonify({"error":"root not found"}), 404
+
+    result, err = _collect_tasks(rootp, scenarios_csv)
+    if err is not None:
+        return err
+    tasks, bpmn_xml = result
+    scenarios = [s.strip() for s in scenarios_csv.split(",") if s.strip() != ""]
 
     # Processa in parallelo (cache hit = solo lettura JSON dal disco)
     scen_metrics: Dict[str, List[dict]] = defaultdict(list)
@@ -206,3 +216,32 @@ def analyze_multi_from_uploads():
     if not out:
         return jsonify({"error": "no metrics computed"}), 400
     return jsonify({"root": root, "scenario_order": [s for s in scenarios if s in out], "scenarios": out})
+
+# ---------- svuota la cache metriche per root/scenari selezionati ----------
+@app.post("/api/clear-cache")
+def clear_cache():
+    root = request.args.get("root")
+    scenarios_csv = request.args.get("scenarios")
+    if not root or not scenarios_csv:
+        return jsonify({"error": "missing root or scenarios"}), 400
+    try: rootp = _safe_rel(root)
+    except: return jsonify({"error": "invalid root"}), 400
+    if not rootp.exists(): return jsonify({"error": "root not found"}), 404
+
+    result, err = _collect_tasks(rootp, scenarios_csv)
+    if err is not None:
+        return err
+    tasks, bpmn_xml = result
+
+    deleted = 0
+    for _scen, xes_path, extra_scenario in tasks:
+        key = _cache_key(xes_path, bpmn_xml, extra_scenario)
+        f = CACHE_DIR / f"{key}.json"
+        if f.exists():
+            try:
+                f.unlink()
+                deleted += 1
+            except Exception as e:
+                app.logger.error("Error deleting cache file %s: %s", f, e)
+
+    return jsonify({"ok": True, "deleted": deleted, "total": len(tasks)})

@@ -205,7 +205,8 @@ def parameters():
                 "resources": [],
                 "elements": [],
                 "sequenceFlows": [],
-                "catchEvents": {}
+                "catchEvents": {},
+                "timeConstrainedGateways": {}
             }
 
             timetable_data = {}
@@ -333,6 +334,15 @@ def parameters():
                         "arg2": request.form.get(f'scenario_{i}_catchEventDurationArg2_{node_id}', ''),
                         "timeUnit": request.form.get(f'scenario_{i}_catchEventDurationTimeUnit_{node_id}', 'seconds')
                     }
+                elif node_data['type'] == 'exclusiveGateway':
+                    if request.form.get(f'scenario_{i}_tcgEnabled_{node_id}') == 'true':
+                        extra_data[i]["timeConstrainedGateways"][node_id] = {
+                            "type": request.form.get(f'scenario_{i}_tcgDurationType_{node_id}', 'FIXED'),
+                            "mean": request.form.get(f'scenario_{i}_tcgDurationMean_{node_id}', ''),
+                            "arg1": request.form.get(f'scenario_{i}_tcgDurationArg1_{node_id}', ''),
+                            "arg2": request.form.get(f'scenario_{i}_tcgDurationArg2_{node_id}', ''),
+                            "timeUnit": request.form.get(f'scenario_{i}_tcgDurationTimeUnit_{node_id}', 'seconds')
+                        }
 
             if 'sequence_flows' in bpmn_dict:
                 print(bpmn_dict['sequence_flows'])
@@ -352,7 +362,8 @@ def parameters():
                     extra_data[i]["sequenceFlows"].append({
                         "elementId": flow_id,
                         "executionProbability": execution_probability,
-                        "types": forced_instance_types
+                        "types": forced_instance_types,
+                        "isTimeoutPath": request.form.get(f'scenario_{i}_isTimeoutPath_{flow_id}') == 'true'
                     })
                 
 
@@ -549,6 +560,26 @@ def whatif_start():
     # http://localhost:3003?root=<root>&scenarios=0,1,2
     return redirect(f"{app.config['WHATIF_UI_URL']}?root={quote_plus(root)}&scenarios={quote_plus(scenarios_csv)}")
 
+
+@app.post("/whatif/clear-cache")
+def whatif_clear_cache():
+    """
+    Proxy verso whatif_api per svuotare la cache metriche di root+scenari scelti,
+    prima ancora di aprire la UI di WhatIf.
+    """
+    root = request.form.get("root", "").strip()
+    scenarios_csv = request.form.get("scenarios_csv", "").strip()
+    if not root or not scenarios_csv:
+        return jsonify({"ok": False, "message": "Seleziona una root e almeno uno scenario."}), 400
+    try:
+        r = requests.post(f"{app.config['WHATIF_API_URL']}/api/clear-cache",
+                          params={"root": root, "scenarios": scenarios_csv}, timeout=30)
+        r.raise_for_status()
+        j = r.json()
+    except requests.exceptions.RequestException as e:
+        app.logger.error(f"/whatif/clear-cache proxy error: {e}")
+        return jsonify({"ok": False, "message": "Errore durante la pulizia della cache"}), 502
+    return jsonify(j)
 
 @app.get("/whatif/scenarios")
 def whatif_scenarios():

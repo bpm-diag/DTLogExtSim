@@ -333,38 +333,68 @@ function loadScenarioData(scenarioIndex, scenarioData) {
     setTimeout(() => {
         if (scenarioData.sequenceFlows && scenarioData.sequenceFlows.length > 0) {
             console.log('  Loading sequence flows:', scenarioData.sequenceFlows.length);
-            
+
             scenarioData.sequenceFlows.forEach((flow, index) => {
                 const flowId = flow.elementId;
-                
+
                 const probInput = document.getElementById(`scenario_${scenarioIndex}_executionProbability_${flowId}`);
                 if (probInput) {
                     probInput.value = flow.executionProbability || '';
                     probInput.dispatchEvent(new Event('input'));
                 }
-                
+
                 if (flow.types && flow.types.length > 0) {
                     const instanceTypesContainer = document.querySelector(`.instance-types-container[data-flow-id="${flowId}"][data-scenario="${scenarioIndex}"]`);
-                    
+
                     if (instanceTypesContainer) {
                         const existingInstances = instanceTypesContainer.querySelectorAll('.instance-type-input');
                         existingInstances.forEach(inst => inst.remove());
-                        
+
                         flow.types.forEach((typeObj, typeIndex) => {
                             addInstanceTypeInput(flowId, scenarioIndex);
-                            
+
                             const typeIndex1Based = instanceTypesContainer.querySelectorAll('.instance-type-input').length;
                             const typeSelect = document.getElementById(`scenario_${scenarioIndex}_forcedInstanceType_${flowId}_${typeIndex1Based}`);
-                            
+
                             setTimeout(() => {
                                 if (typeSelect) typeSelect.value = typeObj.type || '';
                             }, 100);
                         });
                     }
                 }
+
+                // restore isTimeoutPath
+                if (flow.isTimeoutPath) {
+                    const cb = document.getElementById(`scenario_${scenarioIndex}_isTimeoutPath_cb_${flowId}`);
+                    const hid = document.getElementById(`scenario_${scenarioIndex}_isTimeoutPath_${flowId}`);
+                    if (cb) cb.checked = true;
+                    if (hid) hid.value = 'true';
+                }
             });
-            
+
             console.log('  ✓ Sequence flows loaded');
+        }
+
+        // restore timeConstrainedGateways
+        if (scenarioData.timeConstrainedGateways) {
+            Object.keys(scenarioData.timeConstrainedGateways).forEach(gwId => {
+                const gwData = scenarioData.timeConstrainedGateways[gwId];
+                const toggle = document.getElementById(`scenario_${scenarioIndex}_tcgEnabled_${gwId}`);
+                if (toggle) {
+                    toggle.checked = true;
+                    if (typeof setTcgEnabled === 'function') setTcgEnabled(toggle, true);
+                }
+                const typeEl = document.getElementById(`scenario_${scenarioIndex}_tcgDurationType_${gwId}`);
+                const meanEl = document.getElementById(`scenario_${scenarioIndex}_tcgDurationMean_${gwId}`);
+                const arg1El = document.getElementById(`scenario_${scenarioIndex}_tcgDurationArg1_${gwId}`);
+                const arg2El = document.getElementById(`scenario_${scenarioIndex}_tcgDurationArg2_${gwId}`);
+                const unitEl = document.getElementById(`scenario_${scenarioIndex}_tcgDurationTimeUnit_${gwId}`);
+                if (typeEl) typeEl.value = gwData.type || 'FIXED';
+                if (meanEl) meanEl.value = gwData.mean || '';
+                if (arg1El) arg1El.value = gwData.arg1 || '';
+                if (arg2El) arg2El.value = gwData.arg2 || '';
+                if (unitEl) unitEl.value = gwData.timeUnit || 'seconds';
+            });
         }
 
         // Aggiorna i badge somma DOPO che i valori delle probabilità sono stati impostati

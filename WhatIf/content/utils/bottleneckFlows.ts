@@ -3,17 +3,17 @@ export type BottleneckRow = {
   traceId: string | number;
   activity: string;
   next_activity: string;
-  wait_time: number;   // in minuti (come dal backend)
+  wait_time: number;   // in secondi (come dal backend)
   order: number;
 };
 
 // stessa logica della tua heatmap (seconds/minutes/hours/days)
-export function convertDuration(minutes: number, unit: "seconds"|"minutes"|"hours"|"days"): number {
+export function convertDuration(seconds: number, unit: "seconds"|"minutes"|"hours"|"days"): number {
   switch (unit) {
-    case "seconds": return minutes * 60;
-    case "hours":   return minutes / 60;
-    case "days":    return minutes / 1440;
-    default:        return minutes;
+    case "minutes": return seconds / 60;
+    case "hours":   return seconds / 3600;
+    case "days":    return seconds / 86400;
+    default:        return seconds;
   }
 }
 

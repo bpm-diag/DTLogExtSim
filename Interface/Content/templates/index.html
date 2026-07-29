@@ -176,6 +176,8 @@
                             </div>
 
                             <button type="submit" class="btn btn-success">Start What-If</button>
+                            <button type="button" id="btnClearWhatifCache" class="btn btn-outline-warning ms-2">Clear cache for selection</button>
+                            <span id="whatifClearCacheStatus" class="text-muted ms-2"></span>
                         </form>
                         </div>
                     </div>
@@ -301,6 +303,41 @@
                 hidden.value = selected.join(',');
             });
 
+            // Clear cache per root+scenari attualmente selezionati (senza aprire la UI di WhatIf)
+            document.getElementById('btnClearWhatifCache')?.addEventListener('click', async () => {
+                const rootSel = document.getElementById('whatif_root');
+                const scenSel = document.getElementById('whatif_scenarios');
+                const status = document.getElementById('whatifClearCacheStatus');
+                const root = rootSel?.value || '';
+                const selected = scenSel ? Array.from(scenSel.selectedOptions).map(o => o.value) : [];
+
+                if (!root || selected.length < 1) {
+                    if (status) status.innerHTML = '<span class="text-danger">Seleziona una root e almeno uno scenario.</span>';
+                    return;
+                }
+
+                const btn = document.getElementById('btnClearWhatifCache');
+                if (btn) btn.disabled = true;
+                if (status) status.textContent = 'Clearing cache…';
+
+                try {
+                    const fd = new FormData();
+                    fd.append('root', root);
+                    fd.append('scenarios_csv', selected.join(','));
+                    const res = await fetch('/whatif/clear-cache', { method: 'POST', body: fd });
+                    const data = await res.json();
+                    if (!res.ok || !data?.ok) {
+                        if (status) status.innerHTML = `<span class="text-danger">Errore: ${data?.message || res.status}</span>`;
+                        return;
+                    }
+                    if (status) status.innerHTML = `<span class="text-success">Cache svuotata (${data.deleted}/${data.total} file).</span>`;
+                } catch (err) {
+                    if (status) status.innerHTML = '<span class="text-danger">Errore imprevisto durante la pulizia della cache.</span>';
+                    console.error(err);
+                } finally {
+                    if (btn) btn.disabled = false;
+                }
+            });
 
             // Upload ZIP (via fetch) + refresh roots/scenari senza ricaricare la pagina
             document.getElementById('whatifZipForm')?.addEventListener('submit', async (e) => {

@@ -8,19 +8,16 @@ import {
   Paper
 } from '@mui/material';
 
-// funzione per convertire i minuti in un formato leggibile
-function formatDuration(minutes: number): string {
-  if (minutes < 1) {
-    const seconds = minutes * 60;
+// funzione per convertire i secondi (come restituiti dal backend) in un formato leggibile
+function formatDuration(seconds: number): string {
+  if (seconds < 60) {
     return `${seconds.toFixed(0)} sec`;
-  } else if (minutes < 60) {
-    return `${minutes.toFixed(1)} min`;
-  } else if (minutes < 1440) {
-    const hours = minutes / 60;
-    return `${hours.toFixed(1)} hours`;
+  } else if (seconds < 3600) {
+    return `${(seconds / 60).toFixed(1)} min`;
+  } else if (seconds < 86400) {
+    return `${(seconds / 3600).toFixed(1)} hours`;
   } else {
-    const days = minutes / 1440;
-    return `${days.toFixed(1)} day(s)`;
+    return `${(seconds / 86400).toFixed(1)} day(s)`;
   }
 }
 
@@ -95,7 +92,7 @@ export default function SummaryTable({ data }: { data: any }) {
                 data.execution_by_item.length > 0 ? (() => {
                   const total = data.execution_by_item.reduce(
                     (sum: number, item: any) =>
-                      sum + (item.avg_execution_minutes ?? 0),
+                      sum + (item.avg_execution_seconds ?? 0),
                     0
                   );
                   const overallAverage = total / data.execution_by_item.length;
@@ -105,7 +102,7 @@ export default function SummaryTable({ data }: { data: any }) {
                         <div key={item.instanceType}>
                           <strong>{item.instanceType}:</strong>{' '}
                           {formatDuration(
-                            Number(item.avg_execution_minutes || 0)
+                            Number(item.avg_execution_seconds || 0)
                           )}
                         </div>
                       ))}
