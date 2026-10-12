@@ -296,6 +296,11 @@ def parameters():
                     duration_threshold = request.form.get(f'scenario_{i}_durationThreshold_{node_id}', '')
                     duration_threshold_time_unit = request.form.get(f'scenario_{i}_durationThresholdTimeUnit_{node_id}', 'seconds') if duration_threshold else ''
 
+                    batch_enabled = request.form.get(f'scenario_{i}_batchEnabled_{node_id}') == 'true'
+                    batch_max_size = request.form.get(f'scenario_{i}_batchMaxSize_{node_id}', '') if batch_enabled else ''
+                    batch_min_size = request.form.get(f'scenario_{i}_batchMinSize_{node_id}', '') if batch_enabled else ''
+                    batch_allow_mixed_types = request.form.get(f'scenario_{i}_batchAllowMixedTypes_{node_id}') == 'true'
+
                     element_data = {
                             "elementId": node_id,
                             "worklistId": request.form.get(f'scenario_{i}_worklistId_{node_id}', ''),
@@ -310,6 +315,9 @@ def parameters():
                             },
                             "durationThreshold": duration_threshold,
                             "durationThresholdTimeUnit": duration_threshold_time_unit,
+                            "batchMaxSize": batch_max_size,
+                            "batchMinSize": batch_min_size,
+                            "batchAllowMixedTypes": batch_allow_mixed_types,
                             "resourceIds": []
                         }
                     resource_idx = 1
@@ -335,10 +343,14 @@ def parameters():
                         "timeUnit": request.form.get(f'scenario_{i}_catchEventDurationTimeUnit_{node_id}', 'seconds')
                     }
                 elif node_data['type'] == 'exclusiveGateway':
-                    if request.form.get(f'scenario_{i}_tcgEnabled_{node_id}') == 'true':
+                    #Gateway "default timer": used by any branch with its own timer enabled but its own
+                    #Mean left blank. No longer an enable/disable switch for the whole gateway -- recorded
+                    #whenever Mean is filled, same optionality convention as Setup Time elsewhere.
+                    tcg_mean = request.form.get(f'scenario_{i}_tcgDurationMean_{node_id}', '')
+                    if tcg_mean != '':
                         extra_data[i]["timeConstrainedGateways"][node_id] = {
                             "type": request.form.get(f'scenario_{i}_tcgDurationType_{node_id}', 'FIXED'),
-                            "mean": request.form.get(f'scenario_{i}_tcgDurationMean_{node_id}', ''),
+                            "mean": tcg_mean,
                             "arg1": request.form.get(f'scenario_{i}_tcgDurationArg1_{node_id}', ''),
                             "arg2": request.form.get(f'scenario_{i}_tcgDurationArg2_{node_id}', ''),
                             "timeUnit": request.form.get(f'scenario_{i}_tcgDurationTimeUnit_{node_id}', 'seconds')
@@ -346,10 +358,11 @@ def parameters():
 
             if 'sequence_flows' in bpmn_dict:
                 print(bpmn_dict['sequence_flows'])
-                for flow_id in bpmn_dict['sequence_flows']:
+                seen_condition_sets = {}  # gatewayId -> list of condition-sets already seen, for the duplicate warning below
+                for flow_id, flow_data in bpmn_dict['sequence_flows'].items():
                     execution_probability = request.form.get(f'scenario_{i}_executionProbability_{flow_id}')
                     if execution_probability is None:  # Skip if not provided
-                        continue 
+                        continue
                     forced_instance_types = []
                     type_idx = 1
                     while True:
@@ -359,13 +372,80 @@ def parameters():
                         forced_instance_types.append({"type": forced_instance_type})
                         type_idx += 1
 
+                    has_own_timer = request.form.get(f'scenario_{i}_hasOwnTimer_{flow_id}') == 'true'
+                    own_timer = {
+                        "type": request.form.get(f'scenario_{i}_ownTimerType_{flow_id}', 'FIXED'),
+                        "mean": request.form.get(f'scenario_{i}_ownTimerMean_{flow_id}', ''),
+                        "arg1": request.form.get(f'scenario_{i}_ownTimerArg1_{flow_id}', ''),
+                        "arg2": request.form.get(f'scenario_{i}_ownTimerArg2_{flow_id}', ''),
+                        "timeUnit": request.form.get(f'scenario_{i}_ownTimerTimeUnit_{flow_id}', 'seconds')
+                    } if has_own_timer else {}
+
+                    #Conditions are a list of groups: conditions inside a group combine with that
+                    #group's own operator (default AND). Groups combine with each other left to right,
+                    #each via its own 'connector' to the group right before it (group 1 has none) --
+                    #e.g. "G1 OR G2 AND G3" is group1=[..], group2=[..]/connector OR, group3=[..]/
+                    #connector AND, evaluated as (G1 OR G2) AND G3, no AND-before-OR precedence. A
+                    #group exists as long as its operator field is present; within a group, rows stop
+                    #at the first missing kind (same as before).
+                    condition_groups = []
+                    group_idx = 1
+                    while True:
+                        group_op = request.form.get(f'scenario_{i}_conditionGroupOp_{flow_id}_{group_idx}')
+                        if group_op is None:
+                            break
+                        group_conditions = []
+                        row_idx = 1
+                        while True:
+                            cond_kind = request.form.get(f'scenario_{i}_condition_{flow_id}_{group_idx}_{row_idx}_kind')
+                            if not cond_kind:
+                                break
+                            if cond_kind in ('instanceType', 'notInstanceType'):
+                                cond_value = request.form.get(f'scenario_{i}_condition_{flow_id}_{group_idx}_{row_idx}_instanceType', '')
+                            else:
+                                cond_value = request.form.get(f'scenario_{i}_condition_{flow_id}_{group_idx}_{row_idx}_activityId', '')
+                            if cond_value:
+                                cond_dict = {"kind": cond_kind, "value": cond_value}
+                                if cond_kind == 'visitedCount':
+                                    cond_dict["comparator"] = request.form.get(
+                                        f'scenario_{i}_condition_{flow_id}_{group_idx}_{row_idx}_comparator', '>=')
+                                    cond_dict["count"] = request.form.get(
+                                        f'scenario_{i}_condition_{flow_id}_{group_idx}_{row_idx}_count', '0')
+                                group_conditions.append(cond_dict)
+                            row_idx += 1
+                        if group_conditions:
+                            group_dict = {"operator": group_op, "conditions": group_conditions}
+                            if group_idx > 1:
+                                group_dict["connector"] = request.form.get(
+                                    f'scenario_{i}_conditionGroupConnector_{flow_id}_{group_idx}', 'OR')
+                            condition_groups.append(group_dict)
+                        group_idx += 1
+
                     extra_data[i]["sequenceFlows"].append({
                         "elementId": flow_id,
                         "executionProbability": execution_probability,
                         "types": forced_instance_types,
-                        "isTimeoutPath": request.form.get(f'scenario_{i}_isTimeoutPath_{flow_id}') == 'true'
+                        "hasOwnTimer": has_own_timer,
+                        "ownTimer": own_timer,
+                        "conditionGroups": condition_groups
                     })
-                
+
+                    #Best-effort validation: can't prove in general that two branches' conditions never
+                    #overlap (would need full graph analysis), but an EXACT duplicate condition
+                    #structure on the same gateway is always a modeling mistake -- warn so it doesn't
+                    #rely on silent first-by-definition-order tie-breaking at runtime. Order matters
+                    #here (mixed AND/OR connectors aren't commutative), so the key is an ordered tuple.
+                    if condition_groups and not has_own_timer:
+                        gateway_id = flow_data.get('sourceRef')
+                        condition_key = tuple(
+                            (g.get('connector', ''), g['operator'], frozenset((c['kind'], c['value']) for c in g['conditions']))
+                            for g in condition_groups
+                        )
+                        seen = seen_condition_sets.setdefault(gateway_id, [])
+                        if condition_key in seen:
+                            print(f"[GATEWAY WARNING] Scenario {i}: gateway {gateway_id} has two condition-only branches with identical conditions — one will never be reachable.")
+                        seen.append(condition_key)
+
 
 
         # realize the diagbp file corresponding to simulation parameters
@@ -428,6 +508,28 @@ def parameters():
         return render_template('parameters.html', simulation_path=simulation_path, simulation_no_ext=simulation_no_ext, flag_extra=1, bpmn_dict=bpmn_dict, extra=extra, number_of_repetitions=number_of_repetitions)
     else:
         return render_template('parameters.html', simulation_path=simulation_path, simulation_no_ext=simulation_no_ext, flag_extra=0, bpmn_dict=bpmn_dict, number_of_repetitions=number_of_repetitions)
+
+
+@app.route('/bpmn_source')
+def bpmn_source():
+    # Serves the raw .bpmn XML (with layout/DI info) so the browser can render the diagram.
+    # bpmn_dict (built by bpmn_parser.py) only has semantic data, no coordinates.
+    simulation_path = request.args.get('simulation_path')
+    simulation_no_ext = request.args.get('simulation_no_ext')
+    if not simulation_path or not simulation_no_ext:
+        return "Missing parameters", 400
+
+    uploads_root = os.path.abspath(UPLOAD_FOLDER)
+    resolved_dir = os.path.abspath(simulation_path)
+    if os.path.commonpath([uploads_root, resolved_dir]) != uploads_root:
+        return "Invalid path", 400
+
+    bpmn_filename = simulation_no_ext + ".bpmn"
+    if not os.path.isfile(os.path.join(resolved_dir, bpmn_filename)):
+        return "File not found", 404
+
+    return send_from_directory(resolved_dir, bpmn_filename, mimetype='application/xml')
+
 
 @app.route('/download_extractor')
 def download_extractor():

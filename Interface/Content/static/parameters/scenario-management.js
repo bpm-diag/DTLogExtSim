@@ -70,23 +70,68 @@ function addScenario() {
     initializeActivityDurationListeners(scenarioIndex);
     initializeCatchEventDurationListeners(scenarioIndex);
 
-    // reset TCG toggles and re-initialize listeners for this new scenario
+    // reset TCG (gateway default timer) toggles and re-initialize listeners for this new scenario
     templateContent.querySelectorAll('.tcg-toggle').forEach(toggle => {
         toggle.setAttribute('data-scenario', scenarioIndex);
         toggle.checked = false;
         const timerFields = toggle.closest('[data-gateway-id]') && toggle.closest('[data-gateway-id]').querySelector('.tcg-timer-fields');
         if (timerFields) timerFields.style.display = 'none';
-        toggle.closest('[data-gateway-id]') && toggle.closest('[data-gateway-id]').querySelectorAll('.tcg-branch-option').forEach(d => d.style.display = 'none');
-        toggle.closest('[data-gateway-id]') && toggle.closest('[data-gateway-id]').querySelectorAll('[class*="probability-field-"]').forEach(el => el.style.opacity = '1');
-    });
-    templateContent.querySelectorAll('.tcg-timeout-checkbox').forEach(cb => {
-        cb.setAttribute('data-scenario', scenarioIndex);
-        cb.checked = false;
     });
     if (typeof initializeTcgListeners === 'function') {
         initializeTcgListeners(templateContent);
     }
-    
+
+    // reset per-branch timer toggles and extra condition rows for this new scenario
+    templateContent.querySelectorAll('.branch-timer-toggle').forEach(toggle => {
+        toggle.setAttribute('data-scenario', scenarioIndex);
+        toggle.checked = false;
+        const fields = toggle.closest('[data-flow-id]') && toggle.closest('[data-flow-id]').querySelector('.branch-timer-fields');
+        if (fields) fields.style.display = 'none';
+    });
+    templateContent.querySelectorAll('.conditions-container').forEach(container => {
+        container.setAttribute('data-scenario', scenarioIndex);
+        // Reset to the blank baseline: exactly one group, one empty row, no connectors -- a newly
+        // added scenario starts blank here (duplicateScenario() is the one meant to copy data).
+        container.querySelectorAll('.condition-group-connector').forEach(c => c.remove());
+        container.querySelectorAll('.condition-group').forEach((group, gIdx) => { if (gIdx > 0) group.remove(); });
+        const firstGroup = container.querySelector('.condition-group');
+        if (firstGroup) {
+            firstGroup.dataset.groupIdx = 1;
+            const opSelect = firstGroup.querySelector('.group-operator-select');
+            if (opSelect) opSelect.value = 'AND';
+            firstGroup.querySelectorAll('.condition-input').forEach((row, idx) => { if (idx > 0) row.remove(); });
+            const kindSelect = firstGroup.querySelector('select[name$="_kind"]');
+            const activitySelect = firstGroup.querySelector('.condition-activity-select');
+            const typeSelect = firstGroup.querySelector('.condition-instancetype-select');
+            const comparatorSelect = firstGroup.querySelector('.condition-comparator-select');
+            const countInput = firstGroup.querySelector('.condition-count-input');
+            if (kindSelect) kindSelect.value = '';
+            if (activitySelect) activitySelect.value = '';
+            if (typeSelect) typeSelect.value = '';
+            if (comparatorSelect) comparatorSelect.value = '>=';
+            if (countInput) countInput.value = '1';
+            const remainingRow = firstGroup.querySelector('.condition-input');
+            if (remainingRow && typeof updateConditionValueVisibility === 'function') updateConditionValueVisibility(remainingRow);
+        }
+    });
+    templateContent.querySelectorAll('.add-condition').forEach(b => b.setAttribute('data-scenario', scenarioIndex));
+    templateContent.querySelectorAll('.add-condition-group').forEach(b => b.setAttribute('data-scenario', scenarioIndex));
+    if (typeof initializeBranchTimerListeners === 'function') {
+        initializeBranchTimerListeners(templateContent);
+    }
+
+    // reset batch toggles and re-initialize listeners for this new scenario
+    templateContent.querySelectorAll('.batch-toggle').forEach(toggle => {
+        toggle.setAttribute('data-scenario', scenarioIndex);
+        toggle.checked = false;
+        const container = toggle.closest('.element-group');
+        const fields = container && container.querySelector('.batch-fields');
+        if (fields) fields.style.display = 'none';
+    });
+    if (typeof initializeBatchListeners === 'function') {
+        initializeBatchListeners(templateContent);
+    }
+
     // Inizializza i contatori per il nuovo scenario
     instanceCounters[scenarioIndex] = 0;
     timetableCounters[scenarioIndex] = 0;
@@ -102,7 +147,11 @@ function addScenario() {
 function removeScenario(scenarioIndex, event) {
     event.stopPropagation();
     event.preventDefault();
-    
+
+    // If a gateway's fields are currently open in the diagram's edit modal, put them back before
+    // the DOM gets rebuilt below, otherwise that gateway's block is silently lost (see bpmn-diagram.js).
+    if (typeof window.closeGatewayModalIfOpen === 'function') window.closeGatewayModalIfOpen();
+
     const allTabs = Array.from(document.querySelectorAll('#scenarioTabs .nav-item'));
     
     // Non permettere di rimuovere se è l'ultimo scenario
@@ -191,9 +240,23 @@ function renumberScenarios() {
                     durationType: select.value,
                     durationTimeUnit: null,
                     durationThresholdTimeUnit: null,
-                    elementResources: []
+                    elementResources: [],
+                    batchEnabled: null,
+                    batchMaxSize: null,
+                    batchMinSize: null,
+                    batchAllowMixedTypes: null
                 };
-                
+
+                // Salva anche lo stato del batch (non preservato da cloneNode)
+                const batchEnabledHidden = document.getElementById(`scenario_${oldIndex}_batchEnabled_hidden_${elementId}`);
+                if (batchEnabledHidden) bpmnElementSelects[elementId].batchEnabled = batchEnabledHidden.value;
+                const batchMaxSizeInput = document.getElementById(`scenario_${oldIndex}_batchMaxSize_${elementId}`);
+                if (batchMaxSizeInput) bpmnElementSelects[elementId].batchMaxSize = batchMaxSizeInput.value;
+                const batchMinSizeInput = document.getElementById(`scenario_${oldIndex}_batchMinSize_${elementId}`);
+                if (batchMinSizeInput) bpmnElementSelects[elementId].batchMinSize = batchMinSizeInput.value;
+                const batchMixedInput = document.getElementById(`scenario_${oldIndex}_batchAllowMixedTypes_${elementId}`);
+                if (batchMixedInput) bpmnElementSelects[elementId].batchAllowMixedTypes = batchMixedInput.checked;
+
                 // Salva anche time unit e threshold time unit
                 const timeUnitSelect = document.getElementById(`scenario_${oldIndex}_durationTimeUnit_${elementId}`);
                 if (timeUnitSelect) {
@@ -212,20 +275,15 @@ function renumberScenarios() {
             }
         });
 
-        const gatewaySelects = document.querySelectorAll(`#gateways-container-${oldIndex} select[name*="forcedInstanceType"]`);
-        const gatewayProbInputs = document.querySelectorAll(`#gateways-container-${oldIndex} input[name*="executionProbability"]`);
+        // Generic capture of every named field in the gateway section (probability, forced instance
+        // type, TCG default timer, per-branch own timer, per-branch conditions) -- deliberately not a
+        // field-by-field whitelist, so anything added to that section later doesn't need this updated too.
         if (!window.savedGatewayStates) window.savedGatewayStates = {};
         window.savedGatewayStates[index] = [];
-        gatewaySelects.forEach(select => {
+        document.querySelectorAll(`#gateways-container-${oldIndex} input[name], #gateways-container-${oldIndex} select[name]`).forEach(el => {
             window.savedGatewayStates[index].push({
-                name: select.name,
-                value: select.value
-            });
-        });
-        gatewayProbInputs.forEach(input => {
-            window.savedGatewayStates[index].push({
-                name: input.name,
-                value: input.value
+                name: el.name,
+                value: el.value
             });
         });
 
@@ -327,17 +385,28 @@ function renumberScenarios() {
     
     scenarioCount = newTabs.length;
 
-    // Aggiorna i data attributes per ogni scenario rinumerato
+    // Aggiorna i data attributes per ogni scenario rinumerato -- stessa lista di elementi che
+    // duplicateScenario() già aggiorna dopo il proprio clone (vedi sotto), altrimenti questi elementi
+    // restano con il data-scenario vecchio e smettono di essere trovati (es. getConditionsContainer)
+    // dopo che uno scenario viene rimosso e gli altri si rinumerano.
     newContents.forEach((content, idx) => {
         const durationSelects = content.querySelectorAll('.duration-type');
         durationSelects.forEach(select => {
             select.setAttribute('data-scenario', idx);
         });
-        
+
         const catchEventSelects = content.querySelectorAll('.catch-event-duration-type');
         catchEventSelects.forEach(select => {
             select.setAttribute('data-scenario', idx);
         });
+
+        content.querySelectorAll('.instance-types-container').forEach(c => c.setAttribute('data-scenario', idx));
+        content.querySelectorAll('.add-instance-type').forEach(b => b.setAttribute('data-scenario', idx));
+        content.querySelectorAll('.conditions-container').forEach(c => c.setAttribute('data-scenario', idx));
+        content.querySelectorAll('.add-condition').forEach(b => b.setAttribute('data-scenario', idx));
+        content.querySelectorAll('.add-condition-group').forEach(b => b.setAttribute('data-scenario', idx));
+        content.querySelectorAll('.branch-timer-toggle').forEach(t => t.setAttribute('data-scenario', idx));
+        content.querySelectorAll('.tcg-toggle').forEach(t => t.setAttribute('data-scenario', idx));
     });
     
     // RIPRISTINA i valori e aggiorna la UI
@@ -412,6 +481,26 @@ function renumberScenarios() {
                         }
                     });
                 }
+
+                // Ripristina lo stato del batch (checkbox + valori), non preservato da cloneNode
+                if (state.batchMaxSize !== null) {
+                    const maxSizeInput = document.getElementById(`scenario_${i}_batchMaxSize_${elementId}`);
+                    if (maxSizeInput) maxSizeInput.value = state.batchMaxSize;
+                }
+                if (state.batchMinSize !== null) {
+                    const minSizeInput = document.getElementById(`scenario_${i}_batchMinSize_${elementId}`);
+                    if (minSizeInput) minSizeInput.value = state.batchMinSize;
+                }
+                if (state.batchAllowMixedTypes !== null) {
+                    const mixedInput = document.getElementById(`scenario_${i}_batchAllowMixedTypes_${elementId}`);
+                    if (mixedInput) mixedInput.checked = state.batchAllowMixedTypes;
+                }
+                const batchToggle = document.getElementById(`scenario_${i}_batchEnabled_${elementId}`);
+                if (batchToggle) {
+                    const enabled = state.batchEnabled === 'true';
+                    batchToggle.checked = enabled;
+                    if (typeof setBatchEnabled === 'function') setBatchEnabled(batchToggle, enabled);
+                }
             }
         }
 
@@ -420,6 +509,21 @@ function renumberScenarios() {
                 const newName = savedItem.name.replace(/scenario_\d+/, `scenario_${i}`);
                 const el = document.querySelector(`[name="${newName}"]`);
                 if (el) el.value = savedItem.value;
+            });
+            // The values above only set the hidden mirror fields -- re-sync the visible toggle
+            // checkboxes and their fields' show/hide from those restored values (cloneNode doesn't
+            // preserve .checked, and setting a hidden input's .value alone doesn't update either).
+            document.querySelectorAll(`#gateways-container-${i} .tcg-toggle`).forEach(toggle => {
+                const hidden = document.getElementById(`scenario_${i}_tcgEnabled_hidden_${toggle.dataset.gatewayId}`);
+                const enabled = !!hidden && hidden.value === 'true';
+                toggle.checked = enabled;
+                if (typeof setTcgEnabled === 'function') setTcgEnabled(toggle, enabled);
+            });
+            document.querySelectorAll(`#gateways-container-${i} .branch-timer-toggle`).forEach(toggle => {
+                const hidden = document.getElementById(`scenario_${i}_hasOwnTimer_hidden_${toggle.dataset.flowId}`);
+                const enabled = !!hidden && hidden.value === 'true';
+                toggle.checked = enabled;
+                if (typeof setBranchTimerEnabled === 'function') setBranchTimerEnabled(toggle, enabled);
             });
         }
 
@@ -445,6 +549,14 @@ function renumberScenarios() {
             }
         }
     }
+
+    // cloneNode non porta con sé i listener JS -- vanno ricollegati su ogni scenario rinumerato,
+    // altrimenti i toggle (TCG, batch, timer di branch) restano visivamente corretti ma non rispondono più ai click
+    newContents.forEach(content => {
+        if (typeof initializeTcgListeners === 'function') initializeTcgListeners(content);
+        if (typeof initializeBatchListeners === 'function') initializeBatchListeners(content);
+        if (typeof initializeBranchTimerListeners === 'function') initializeBranchTimerListeners(content);
+    });
 
     // Ricalcola e aggiorna i badge somma dopo la rinumerazione
     if (window.updateAllGatewaySums) window.updateAllGatewaySums();
@@ -676,6 +788,10 @@ function updateElementResourceContainers(container, scenarioIndex) {
  * Duplica lo scenario attualmente attivo in un nuovo scenario
  */
 function duplicateScenario() {
+    // Same reason as in removeScenario(): the source scenario is read via cloneNode(true) below,
+    // so a gateway block currently borrowed by the modal would be missing from the duplicate.
+    if (typeof window.closeGatewayModalIfOpen === 'function') window.closeGatewayModalIfOpen();
+
     const activeTab = document.querySelector('#scenarioTabs .nav-link.active');
     const sourceIndex = parseInt(activeTab.id.match(/scenario-(\d+)-tab/)[1]);
     const newIndex = scenarioCount;
@@ -719,6 +835,11 @@ function duplicateScenario() {
     newContent.querySelectorAll('.catch-event-duration-type').forEach(s => s.setAttribute('data-scenario', newIndex));
     newContent.querySelectorAll('.instance-types-container').forEach(c => c.setAttribute('data-scenario', newIndex));
     newContent.querySelectorAll('.add-instance-type').forEach(b => b.setAttribute('data-scenario', newIndex));
+    newContent.querySelectorAll('.conditions-container').forEach(c => c.setAttribute('data-scenario', newIndex));
+    newContent.querySelectorAll('.add-condition').forEach(b => b.setAttribute('data-scenario', newIndex));
+    newContent.querySelectorAll('.add-condition-group').forEach(b => b.setAttribute('data-scenario', newIndex));
+    newContent.querySelectorAll('.branch-timer-toggle').forEach(t => t.setAttribute('data-scenario', newIndex));
+    newContent.querySelectorAll('.tcg-toggle').forEach(t => t.setAttribute('data-scenario', newIndex));
     newContent.querySelectorAll('.prob-sum-badge').forEach(b => b.remove());
 
     // 5. Aggiungi al DOM
@@ -735,6 +856,31 @@ function duplicateScenario() {
                 el.value = valueMap[origName];
             }
         }
+    });
+
+    // 6b. I toggle senza "name" (batch/TCG/timer di branch, che riflettono lo stato solo sul campo
+    // hidden gemello) non vengono presi dal loop sopra -- vanno risincronizzati esplicitamente,
+    // checkbox visibile + visibilità dei campi, dal valore appena ripristinato sul campo hidden.
+    newContent.querySelectorAll('.batch-toggle').forEach(toggle => {
+        const flowOrElementId = toggle.dataset.elementId;
+        const hidden = document.getElementById(`scenario_${newIndex}_batchEnabled_hidden_${flowOrElementId}`);
+        const enabled = !!hidden && hidden.value === 'true';
+        toggle.checked = enabled;
+        if (typeof setBatchEnabled === 'function') setBatchEnabled(toggle, enabled);
+    });
+    newContent.querySelectorAll('.tcg-toggle').forEach(toggle => {
+        const gwId = toggle.dataset.gatewayId;
+        const hidden = document.getElementById(`scenario_${newIndex}_tcgEnabled_hidden_${gwId}`);
+        const enabled = !!hidden && hidden.value === 'true';
+        toggle.checked = enabled;
+        if (typeof setTcgEnabled === 'function') setTcgEnabled(toggle, enabled);
+    });
+    newContent.querySelectorAll('.branch-timer-toggle').forEach(toggle => {
+        const flowId = toggle.dataset.flowId;
+        const hidden = document.getElementById(`scenario_${newIndex}_hasOwnTimer_hidden_${flowId}`);
+        const enabled = !!hidden && hidden.value === 'true';
+        toggle.checked = enabled;
+        if (typeof setBranchTimerEnabled === 'function') setBranchTimerEnabled(toggle, enabled);
     });
 
     // 7. Copia contatori
@@ -756,6 +902,11 @@ function duplicateScenario() {
     initializeActivityDurationListeners(newIndex);
     initializeCatchEventDurationListeners(newIndex);
     if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+    // cloneNode does not carry over JS event listeners (checked/value are restored above,
+    // but toggle behavior needs re-wiring or the checkboxes become unresponsive in the clone)
+    if (typeof initializeTcgListeners === 'function') initializeTcgListeners(newContent);
+    if (typeof initializeBatchListeners === 'function') initializeBatchListeners(newContent);
+    if (typeof initializeBranchTimerListeners === 'function') initializeBranchTimerListeners(newContent);
 
     // 9. Attiva il nuovo tab
     document.getElementById(`scenario-${newIndex}-tab`).click();

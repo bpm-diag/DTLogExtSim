@@ -12,6 +12,19 @@
     background-color: white;
     margin-bottom: 20px;
 }
+#bpmn-canvas {
+    height: 550px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: #fafafa;
+}
+.bpmn-gateway-configurable .djs-visual > :first-child {
+    stroke: #fd7e14 !important;
+    stroke-width: 3px !important;
+}
+.bpmn-gateway-configurable {
+    cursor: pointer;
+}
 .scenario-name-input {
     font-weight: bold;
     font-size: 1.1rem;

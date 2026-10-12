@@ -81,6 +81,7 @@ def main(loader, csv_log_path, scenario_idx, rep_idx):
     timeUsedPerResource = {}
     extraLog = {}
     rows = []
+    batch_state = {}  # shared across all instances: one entry per batch-enabled node_id
 
     def simulate_bpmn(bpmn_dict):
         instance_index = 0
@@ -104,7 +105,7 @@ def main(loader, csv_log_path, scenario_idx, rep_idx):
                         
                     # for each instance a class Process is created:
                     SimulatorEngine(env, participant['name'], process_details, i+1, loader, global_resources, logging_opt,
-                     totalCost, timeUsedPerResource, extraLog, rows, delays[i], instance_type)
+                     totalCost, timeUsedPerResource, extraLog, rows, delays[i], instance_type, batch_state)
             else:
                 # Single-pool scenario (no collaboration)
                 # Assume there's only one process in process_elements
@@ -121,7 +122,7 @@ def main(loader, csv_log_path, scenario_idx, rep_idx):
                     
                     # for each instance a class Process is created:
                     SimulatorEngine(env, process_name, process_details, i+1, loader, global_resources, logging_opt,
-                     totalCost, timeUsedPerResource, extraLog, rows, delays[i], instance_type)
+                     totalCost, timeUsedPerResource, extraLog, rows, delays[i], instance_type, batch_state)
                     
                     # Only process the first (and typically only) process in single-pool scenarios
                     break

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulation Parameters</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bpmn-js/diagram-js.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bpmn-js/bpmn-js.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bpmn-js/bpmn-font/css/bpmn.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='parameters/parameters.css') }}">
 </head>
 <body>
@@ -43,6 +46,28 @@
                 <button type="button" class="btn btn-outline-primary ms-2" onclick="duplicateScenario()">⧉ Duplicate Current</button>
             </div>
 
+            <!-- BPMN Diagram: click a highlighted gateway to edit its probabilities. Shared across all
+                 scenarios (not inside a tab-pane) -- the active scenario tab only affects which gateway
+                 data the click modal pulls from, not the diagram itself. -->
+            <div class="box">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="mb-1">BPMN Diagram</h5>
+                        <small class="text-muted">Click a highlighted gateway to configure its branch probabilities (for the active scenario tab). Click a branch (arrow) to see its ID. If the diagram fails to load, use the list below instead.</small>
+                    </div>
+                    <div class="btn-group btn-group-sm flex-shrink-0 ms-3" role="group" aria-label="Zoom controls">
+                        <button type="button" class="btn btn-outline-secondary" id="bpmn-zoom-out" title="Zoom out">&minus;</button>
+                        <button type="button" class="btn btn-outline-secondary" id="bpmn-zoom-fit" title="Fit to view">Fit</button>
+                        <button type="button" class="btn btn-outline-secondary" id="bpmn-zoom-in" title="Zoom in">&plus;</button>
+                    </div>
+                </div>
+                <div id="bpmn-branch-info" class="alert alert-info py-1 px-2 mb-2 d-flex justify-content-between align-items-center" style="display:none;">
+                    <span id="bpmn-branch-info-text"></span>
+                    <button type="button" class="btn-close" id="bpmn-branch-info-close" aria-label="Close"></button>
+                </div>
+                <div id="bpmn-canvas" data-simulation-path="{{ simulation_path }}" data-simulation-no-ext="{{ simulation_no_ext }}"></div>
+                <div id="bpmn-canvas-error" class="text-danger mt-2" style="display:none;"></div>
+            </div>
 
             <!-- Tab Content -->
             <div class="tab-content scenario-tab-content" id="scenarioTabContent">
@@ -243,8 +268,50 @@
                                         <div class="element-resources-container-{{ scenario_idx }}-{{ node_id }}">
                                             <!-- Resources will be added via JS if needed -->
                                         </div>
-                                        <button type="button" class="btn btn-secondary btn-sm" 
+                                        <button type="button" class="btn btn-secondary btn-sm"
                                                 onclick="addElementResource({{ scenario_idx }}, '{{ node_id }}')">+ Add Resource</button>
+
+                                        <div class="mt-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input batch-toggle" type="checkbox"
+                                                       id="scenario_{{ scenario_idx }}_batchEnabled_{{ node_id }}"
+                                                       data-element-id="{{ node_id }}" data-scenario="{{ scenario_idx }}">
+                                                <label class="form-check-label fw-semibold" for="scenario_{{ scenario_idx }}_batchEnabled_{{ node_id }}">
+                                                    Batch Processing
+                                                </label>
+                                                <input type="hidden" name="scenario_{{ scenario_idx }}_batchEnabled_{{ node_id }}"
+                                                       id="scenario_{{ scenario_idx }}_batchEnabled_hidden_{{ node_id }}" value="false">
+                                            </div>
+                                            <div class="batch-fields mt-2 p-3 border rounded bg-white" style="display:none;">
+                                                <div class="row">
+                                                    <div class="form-group col-md-3">
+                                                        <label for="scenario_{{ scenario_idx }}_batchMinSize_{{ node_id }}">Min Batch Size:</label>
+                                                        <input type="number" step="1" min="1" class="form-control form-control-sm"
+                                                                name="scenario_{{ scenario_idx }}_batchMinSize_{{ node_id }}"
+                                                                id="scenario_{{ scenario_idx }}_batchMinSize_{{ node_id }}"
+                                                                placeholder="1">
+                                                    </div>
+                                                    <div class="form-group col-md-3">
+                                                        <label for="scenario_{{ scenario_idx }}_batchMaxSize_{{ node_id }}">Max Batch Size:</label>
+                                                        <input type="number" step="1" min="1" class="form-control form-control-sm"
+                                                                name="scenario_{{ scenario_idx }}_batchMaxSize_{{ node_id }}"
+                                                                id="scenario_{{ scenario_idx }}_batchMaxSize_{{ node_id }}">
+                                                    </div>
+                                                    <div class="form-group col-md-6 d-flex align-items-end">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                   name="scenario_{{ scenario_idx }}_batchAllowMixedTypes_{{ node_id }}"
+                                                                   id="scenario_{{ scenario_idx }}_batchAllowMixedTypes_{{ node_id }}"
+                                                                   value="true">
+                                                            <label class="form-check-label" for="scenario_{{ scenario_idx }}_batchAllowMixedTypes_{{ node_id }}">
+                                                                Allow mixing instance types in the same batch
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">Min Batch Size defaults to 1 if left blank (starts as soon as at least one instance is queued and the resource is free). If set higher, the activity won't start until enough instances have queued up — there's no built-in time limit for that wait, so route it through a Time Constrained Gateway upstream if you need one (each instance's own TCG timer cancels just that instance if the minimum is never reached in time). If any resource used by this activity has Setup Time configured, batches are automatically restricted to a single instance type regardless of the checkbox below.</small>
+                                            </div>
+                                        </div>
                                     </div>
                                     {% endmacro %}
 
@@ -301,19 +368,14 @@
                                                                    data-gateway-id="{{ source_id }}" data-scenario="0"
                                                                    data-gateway-block-id="{{ source_id }}">
                                                             <label class="form-check-label fw-semibold" for="scenario_0_tcgEnabled_{{ source_id }}">
-                                                                Time Constrained Gateway
+                                                                Default Branch Timer (optional)
                                                             </label>
                                                             <input type="hidden" name="scenario_0_tcgEnabled_{{ source_id }}"
                                                                    id="scenario_0_tcgEnabled_hidden_{{ source_id }}" value="false">
                                                         </div>
-                                                        <div class="tcg-prob-display" style="display:none;">
-                                                            <small class="text-muted">Non-timeout branches sum:&nbsp;</small>
-                                                            <span class="tcg-prob-sum badge bg-secondary">0</span>
-                                                            <small class="text-muted">&nbsp;/ 1.0</small>
-                                                        </div>
                                                     </div>
                                                     <div class="tcg-timer-fields mt-2 p-3 border rounded bg-white" style="display:none;">
-                                                        <p class="mb-2 fw-bold">Max Wait Time (before timeout path is taken):</p>
+                                                        <p class="mb-2 fw-bold">Default timer (used by any branch below with "Has own timer" checked and no Mean of its own):</p>
                                                         <div class="row">
                                                             <div class="form-group col-md-3">
                                                                 <label>Type:</label>
@@ -384,12 +446,13 @@
                                                                 {% if target_node %}<span class="text-muted ms-1">({{ target_node['type'] }})</span>{% endif %}
                                                             </div>
                                                             <div class="row">
-                                                                <div class="form-group col-md-6 probability-field-{{ source_id }}">
+                                                                <div class="form-group {{ 'col-md-6' if source_node['type'] == 'inclusiveGateway' else 'col-md-12' }} probability-field-{{ source_id }}">
                                                                     <label for="scenario_0_executionProbability_{{ fid }}">Execution Probability (0 to 1):</label>
                                                                     <input type="number" step="0.01" min="0" max="1" class="form-control"
                                                                            id="scenario_0_executionProbability_{{ fid }}"
                                                                            name="scenario_0_executionProbability_{{ fid }}" required>
                                                                 </div>
+                                                                {% if source_node['type'] == 'inclusiveGateway' %}
                                                                 <div class="instance-types-container col-md-6" data-flow-id="{{ fid }}" data-scenario="0">
                                                                     <div class="instance-type-input row mb-2">
                                                                         <div class="form-group">
@@ -402,25 +465,124 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                {% endif %}
                                                             </div>
                                                             {% if source_node['type'] == 'exclusiveGateway' %}
-                                                            <div class="tcg-branch-option mt-2" style="display:none;">
+                                                            <div class="mt-3">
                                                                 <div class="form-check">
-                                                                    <input class="form-check-input tcg-timeout-checkbox"
-                                                                           type="checkbox"
-                                                                           id="scenario_0_isTimeoutPath_cb_{{ fid }}"
-                                                                           data-flow-id="{{ fid }}" data-gateway-id="{{ source_id }}" data-scenario="0">
-                                                                    <label class="form-check-label text-danger fw-semibold" for="scenario_0_isTimeoutPath_cb_{{ fid }}">
-                                                                        Timeout Path (taken when timer expires)
+                                                                    <input class="form-check-input branch-timer-toggle" type="checkbox"
+                                                                           id="scenario_0_hasOwnTimer_{{ fid }}"
+                                                                           data-flow-id="{{ fid }}" data-scenario="0">
+                                                                    <label class="form-check-label fw-semibold" for="scenario_0_hasOwnTimer_{{ fid }}">
+                                                                        Has own timer
                                                                     </label>
-                                                                    <input type="hidden" name="scenario_0_isTimeoutPath_{{ fid }}"
-                                                                           id="scenario_0_isTimeoutPath_{{ fid }}" value="false">
+                                                                    <input type="hidden" name="scenario_0_hasOwnTimer_{{ fid }}"
+                                                                           id="scenario_0_hasOwnTimer_hidden_{{ fid }}" value="false">
+                                                                </div>
+                                                                <div class="branch-timer-fields mt-2 p-2 border rounded bg-white" style="display:none;">
+                                                                    <small class="text-muted d-block mb-1">Leave Mean blank to inherit the gateway's default timer above.</small>
+                                                                    <div class="row">
+                                                                        <div class="form-group col-md-3">
+                                                                            <label>Type:</label>
+                                                                            <select class="form-control form-control-sm" name="scenario_0_ownTimerType_{{ fid }}" id="scenario_0_ownTimerType_{{ fid }}">
+                                                                                <option value="FIXED">Fixed</option>
+                                                                                <option value="NORMAL">Normal</option>
+                                                                                <option value="EXPONENTIAL">Exponential</option>
+                                                                                <option value="UNIFORM">Uniform</option>
+                                                                                <option value="TRIANGULAR">Triangular</option>
+                                                                                <option value="LOGNORMAL">Log-Normal</option>
+                                                                                <option value="GAMMA">Gamma</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group col-md-2">
+                                                                            <label>Mean:</label>
+                                                                            <input type="number" step="any" class="form-control form-control-sm" name="scenario_0_ownTimerMean_{{ fid }}" id="scenario_0_ownTimerMean_{{ fid }}">
+                                                                        </div>
+                                                                        <div class="form-group col-md-2">
+                                                                            <label>Arg1:</label>
+                                                                            <input type="number" step="any" class="form-control form-control-sm" name="scenario_0_ownTimerArg1_{{ fid }}" id="scenario_0_ownTimerArg1_{{ fid }}">
+                                                                        </div>
+                                                                        <div class="form-group col-md-2">
+                                                                            <label>Arg2:</label>
+                                                                            <input type="number" step="any" class="form-control form-control-sm" name="scenario_0_ownTimerArg2_{{ fid }}" id="scenario_0_ownTimerArg2_{{ fid }}">
+                                                                        </div>
+                                                                        <div class="form-group col-md-3">
+                                                                            <label>Time Unit:</label>
+                                                                            <select class="form-control form-control-sm" name="scenario_0_ownTimerTimeUnit_{{ fid }}" id="scenario_0_ownTimerTimeUnit_{{ fid }}">
+                                                                                <option value="seconds">Seconds</option>
+                                                                                <option value="minutes">Minutes</option>
+                                                                                <option value="hours">Hours</option>
+                                                                                <option value="days">Days</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
+                                                            <div class="conditions-container mt-2" data-flow-id="{{ fid }}" data-scenario="0">
+                                                                <label class="fw-semibold d-block mb-2">Conditions:</label>
+                                                                <div class="condition-group border rounded p-2 mb-2" data-group-idx="1">
+                                                                    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                                                                        <div class="d-flex align-items-center gap-2">
+                                                                            <span class="fw-semibold small condition-group-label">Group 1 &mdash; combine with:</span>
+                                                                            <select class="form-control form-control-sm group-operator-select" style="width:auto"
+                                                                                    name="scenario_0_conditionGroupOp_{{ fid }}_1" id="scenario_0_conditionGroupOp_{{ fid }}_1">
+                                                                                <option value="AND">AND</option>
+                                                                                <option value="OR">OR</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <button type="button" class="btn btn-outline-danger btn-sm remove-condition-group">Remove group</button>
+                                                                    </div>
+                                                                    <div class="condition-rows">
+                                                                        <div class="condition-input row mb-2 gx-2">
+                                                                            <div class="form-group col-md-5">
+                                                                                <select class="form-control form-control-sm" name="scenario_0_condition_{{ fid }}_1_1_kind" id="scenario_0_condition_{{ fid }}_1_1_kind">
+                                                                                    <option value=""></option>
+                                                                                    <option value="visited">Has visited activity</option>
+                                                                                    <option value="notVisited">Has NOT visited activity</option>
+                                                                                    <option value="visitedCount">Visited N times</option>
+                                                                                    <option value="instanceType">Instance type is</option>
+                                                                                    <option value="notInstanceType">Instance type is NOT</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="form-group col-md-6">
+                                                                                <select class="form-control form-control-sm condition-activity-select" name="scenario_0_condition_{{ fid }}_1_1_activityId" id="scenario_0_condition_{{ fid }}_1_1_activityId">
+                                                                                    <option value=""></option>
+                                                                                    {% for act_id, act_data in process_data['node_details'].items() %}
+                                                                                        {% if act_data['type'] == 'task' %}
+                                                                                            <option value="{{ act_id }}">{{ act_data['name'] or act_id }}</option>
+                                                                                        {% endif %}
+                                                                                    {% endfor %}
+                                                                                </select>
+                                                                                <select class="form-control form-control-sm condition-instancetype-select" style="display:none"
+                                                                                        name="scenario_0_condition_{{ fid }}_1_1_instanceType" id="scenario_0_condition_{{ fid }}_1_1_instanceType">
+                                                                                    <option value=""></option>
+                                                                                </select>
+                                                                                <div class="condition-count-fields align-items-center gap-2 mt-1" style="display:none">
+                                                                                    <select class="form-control form-control-sm condition-comparator-select" style="width:auto"
+                                                                                            name="scenario_0_condition_{{ fid }}_1_1_comparator" id="scenario_0_condition_{{ fid }}_1_1_comparator">
+                                                                                        <option value=">=">at least</option>
+                                                                                        <option value="=">exactly</option>
+                                                                                        <option value="<=">at most</option>
+                                                                                    </select>
+                                                                                    <input type="number" min="0" step="1" class="form-control form-control-sm condition-count-input" style="width:80px"
+                                                                                           name="scenario_0_condition_{{ fid }}_1_1_count" id="scenario_0_condition_{{ fid }}_1_1_count" value="1">
+                                                                                    <span class="text-muted small">times</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-secondary btn-sm add-condition mt-1"
+                                                                            data-flow-id="{{ fid }}" data-scenario="0" data-group-idx="1">Add Condition</button>
+                                                                </div>
+                                                                <button type="button" class="btn btn-outline-secondary btn-sm add-condition-group"
+                                                                        data-flow-id="{{ fid }}" data-scenario="0">+ Add Group</button>
+                                                            </div>
                                                             {% endif %}
+                                                            {% if source_node['type'] == 'inclusiveGateway' %}
                                                             <button type="button" class="btn btn-secondary btn-sm add-instance-type mt-2"
                                                                     data-flow-id="{{ fid }}"
                                                                     data-scenario="0">Add Instance Type</button>
+                                                            {% endif %}
                                                         </div>
                                                     {% endif %}
                                                 {% endfor %}
@@ -525,11 +687,25 @@
                     Save Parameters and Run Simulation
                 </button>
             </div>
+
+            <!-- Gateway edit modal: a .gateway-group block is moved in here on diagram click -->
+            <div class="modal fade" id="gatewayModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="gatewayModalLabel">Gateway</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="gatewayModalBody"></div>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     <script src="{{ url_for('static', filename='js/jquery-3.5.1.slim.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bpmn-js/bpmn-navigated-viewer.production.min.js') }}"></script>
     <script>
         window.bpmn_dict = {{ bpmn_dict | tojson | safe }};
     </script>
@@ -538,6 +714,7 @@
     <script src="{{ url_for('static', filename='parameters/timetable-elements.js') }}"></script>
     <script src="{{ url_for('static', filename='parameters/resource-elements.js') }}"></script>
     <script src="{{ url_for('static', filename='parameters/bpmn-elements.js') }}"></script>
+    <script src="{{ url_for('static', filename='parameters/bpmn-diagram.js') }}"></script>
     <script src="{{ url_for('static', filename='parameters/dynamic-elements.js') }}"></script>
     <script>
         const extraData = {% if flag_extra == 1 %}{{ extra | tojson | safe }}{% else %}null{% endif %};
@@ -547,32 +724,29 @@
 
     <script>
     (function() {
-        // Returns the flow ID of the timeout branch in a gateway box (null if none marked)
-        function getTimeoutFlowId(gatewayBox) {
-            const cb = gatewayBox.querySelector('.tcg-timeout-checkbox:checked');
-            return cb ? cb.dataset.flowId : null;
+        // A branch only participates in the probability pool (category P) if it has neither its own
+        // timer nor any condition set -- those are C/T/TC branches, resolved independently of probability.
+        function isProbabilityBranch(branchBox) {
+            const timerHidden = branchBox.querySelector('input[name*="_hasOwnTimer_"]');
+            if (timerHidden && timerHidden.value === 'true') return false;
+            const kindSelects = branchBox.querySelectorAll('select[name*="_condition_"][name$="_kind"]');
+            for (const sel of kindSelects) {
+                if (sel.value) return false;
+            }
+            return true;
         }
 
-        // Live sum feedback per gateway group, excluding the timeout branch if TCG is active
+        // Live sum feedback per gateway group, excluding C/T/TC branches from the probability check
         function updateGroupSum(gatewayBox) {
-            const tcgHidden = gatewayBox.querySelector('input[name*="_tcgEnabled_"]');
-            const tcgActive = tcgHidden && tcgHidden.value === 'true';
-            const timeoutFlowId = tcgActive ? getTimeoutFlowId(gatewayBox) : null;
-
-            const inputs = gatewayBox.querySelectorAll('input[name*="_executionProbability_"]');
             let sum = 0;
-            inputs.forEach(inp => {
-                if (timeoutFlowId && inp.name.endsWith('_' + timeoutFlowId)) return;
+            let count = 0;
+            gatewayBox.querySelectorAll('[data-flow-id]').forEach(branchBox => {
+                const inp = branchBox.querySelector('input[name*="_executionProbability_"]');
+                if (!inp || !isProbabilityBranch(branchBox)) return;
                 sum += parseFloat(inp.value) || 0;
+                count += 1;
             });
             const rounded = Math.round(sum * 1000) / 1000;
-
-            // update inline TCG prob sum span
-            const tcgProbSpan = gatewayBox.querySelector('.tcg-prob-sum');
-            if (tcgProbSpan) {
-                tcgProbSpan.textContent = rounded;
-                tcgProbSpan.className = 'tcg-prob-sum badge ' + (Math.abs(rounded - 1) < 0.001 ? 'bg-success' : 'bg-danger');
-            }
 
             let badge = gatewayBox.querySelector('.prob-sum-badge');
             if (!badge) {
@@ -580,10 +754,10 @@
                 badge.className = 'prob-sum-badge ms-2 badge';
                 gatewayBox.querySelector('h6').appendChild(badge);
             }
-            const ok = Math.abs(rounded - 1) < 0.001;
-            badge.textContent = 'Sum = ' + rounded;
+            const ok = count === 0 || Math.abs(rounded - 1) < 0.001;
+            badge.textContent = 'Probability branches sum = ' + rounded;
             badge.className = 'prob-sum-badge ms-2 badge ' + (ok ? 'bg-success' : 'bg-danger');
-            badge.style.display = tcgActive ? 'none' : '';
+            badge.style.display = count === 0 ? 'none' : '';
         }
 
         // Attach listeners to a single gateway box
@@ -593,7 +767,7 @@
             });
         }
 
-        // Exposed globally so auto-load, duplicateScenario and TCG listeners can call it
+        // Exposed globally so auto-load, duplicateScenario and the branch-timer/condition listeners can call it
         window.updateAllGatewaySums = function() {
             document.querySelectorAll('.gateway-group').forEach(box => {
                 initBox(box);
@@ -601,28 +775,26 @@
             });
         };
 
-        // Block submit: for TCG gateways exclude the timeout branch from the sum check
+        // Block submit: only the branches still in the probability pool (no timer, no condition) must sum to 1
         document.getElementById('main_form').addEventListener('submit', function(e) {
             let errors = [];
             document.querySelectorAll('.gateway-group').forEach(box => {
-                const tcgHidden = box.querySelector('input[name*="_tcgEnabled_"]');
-                const tcgActive = tcgHidden && tcgHidden.value === 'true';
-                const timeoutFlowId = tcgActive ? getTimeoutFlowId(box) : null;
-
-                const inputs = box.querySelectorAll('input[name*="_executionProbability_"]');
                 let sum = 0;
-                inputs.forEach(inp => {
-                    if (timeoutFlowId && inp.name.endsWith('_' + timeoutFlowId)) return;
+                let count = 0;
+                box.querySelectorAll('[data-flow-id]').forEach(branchBox => {
+                    const inp = branchBox.querySelector('input[name*="_executionProbability_"]');
+                    if (!inp || !isProbabilityBranch(branchBox)) return;
                     sum += parseFloat(inp.value) || 0;
+                    count += 1;
                 });
-                if (inputs.length > 0 && Math.abs(sum - 1) > 0.001) {
+                if (count > 0 && Math.abs(sum - 1) > 0.001) {
                     const name = box.querySelector('h6 strong');
                     errors.push(name ? name.textContent : box.dataset.gatewayId);
                 }
             });
             if (errors.length > 0) {
                 e.preventDefault();
-                alert('Le probabilità dei seguenti gateway non sommano a 1:\n' + errors.join('\n'));
+                alert('Le probabilità dei rami senza timer/condizioni dei seguenti gateway non sommano a 1:\n' + errors.join('\n'));
             }
         });
 
@@ -633,6 +805,7 @@
 
     <script>
     function setTcgEnabled(toggleEl, enabled) {
+        // Toggles the gateway's DEFAULT timer fields only -- no longer gates any branch behavior.
         const gwContainer = toggleEl.closest('.gateway-group');
         if (!gwContainer) return;
         const gwId = gwContainer.dataset.gatewayId;
@@ -644,59 +817,320 @@
         const hidden = gwContainer.querySelector('input[name="scenario_' + scenario + '_tcgEnabled_' + gwId + '"]') ||
                        document.getElementById('scenario_' + scenario + '_tcgEnabled_hidden_' + gwId);
         if (hidden) hidden.value = enabled ? 'true' : 'false';
-
-        // show/hide branch timeout option divs inside this gateway container
-        gwContainer.querySelectorAll('.tcg-branch-option').forEach(div => {
-            div.style.display = enabled ? 'block' : 'none';
-            if (!enabled) {
-                const cb = div.querySelector('.tcg-timeout-checkbox');
-                if (cb) {
-                    cb.checked = false;
-                    const flowId = cb.dataset.flowId;
-                    const hid = document.getElementById('scenario_' + scenario + '_isTimeoutPath_' + flowId);
-                    if (hid) hid.value = 'false';
-                }
-            }
-        });
-
-        const probDisplay = gwContainer.querySelector('.tcg-prob-display');
-        if (probDisplay) probDisplay.style.display = enabled ? 'inline-flex' : 'none';
-        if (window.updateAllGatewaySums) window.updateAllGatewaySums();
     }
 
     function initializeTcgListeners(container) {
         container = container || document;
-
         container.querySelectorAll('.tcg-toggle').forEach(function(toggle) {
             toggle.addEventListener('change', function() {
                 setTcgEnabled(this, this.checked);
             });
         });
+    }
 
-        container.querySelectorAll('.tcg-timeout-checkbox').forEach(function(cb) {
-            cb.addEventListener('change', function() {
-                const gwContainer = this.closest('.gateway-group');
-                if (!gwContainer) return;
-                const scenario = this.dataset.scenario || 0;
-                const flowId = this.dataset.flowId;
-                if (this.checked) {
-                    // uncheck siblings in same gateway
-                    gwContainer.querySelectorAll('.tcg-timeout-checkbox').forEach(other => {
-                        if (other !== this) {
-                            other.checked = false;
-                            const hid = document.getElementById('scenario_' + scenario + '_isTimeoutPath_' + other.dataset.flowId);
-                            if (hid) hid.value = 'false';
-                        }
-                    });
-                }
-                const hid = document.getElementById('scenario_' + scenario + '_isTimeoutPath_' + flowId);
-                if (hid) hid.value = this.checked ? 'true' : 'false';
+    initializeTcgListeners(document);
+    </script>
+
+    <script>
+    function setBranchTimerEnabled(toggleEl, enabled) {
+        // toggleEl itself carries a data-flow-id attribute (read below), so .closest() called on
+        // the toggle would match the toggle itself first (an <input>, which can't have children) --
+        // start the search from its parent instead so it walks up to the real branch container.
+        const branchBox = toggleEl.parentElement.closest('[data-flow-id]');
+        if (!branchBox) return;
+        const flowId = toggleEl.dataset.flowId;
+        const scenario = toggleEl.dataset.scenario || 0;
+
+        const fields = branchBox.querySelector('.branch-timer-fields');
+        if (fields) fields.style.display = enabled ? 'block' : 'none';
+
+        const hidden = document.getElementById('scenario_' + scenario + '_hasOwnTimer_hidden_' + flowId);
+        if (hidden) hidden.value = enabled ? 'true' : 'false';
+        if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+    }
+
+    function initializeBranchTimerListeners(container) {
+        container = container || document;
+        container.querySelectorAll('.branch-timer-toggle').forEach(function(toggle) {
+            toggle.addEventListener('change', function() {
+                setBranchTimerEnabled(this, this.checked);
+            });
+        });
+        container.querySelectorAll('select[name*="_condition_"][name$="_kind"]').forEach(function(sel) {
+            updateConditionValueVisibility(sel.closest('.condition-input'));
+            sel.addEventListener('change', function() {
+                updateConditionValueVisibility(this.closest('.condition-input'));
                 if (window.updateAllGatewaySums) window.updateAllGatewaySums();
             });
         });
     }
 
-    initializeTcgListeners(document);
+    // A condition row's value is either an activity (visited/notVisited/visitedCount) or an
+    // instance type (instanceType/notInstanceType) -- only the select matching the chosen kind is
+    // shown. visitedCount additionally shows a comparator + count field next to the activity select.
+    function updateConditionValueVisibility(row) {
+        if (!row) return;
+        const kindSelect = row.querySelector('select[name$="_kind"]');
+        const activitySelect = row.querySelector('.condition-activity-select');
+        const typeSelect = row.querySelector('.condition-instancetype-select');
+        const countFields = row.querySelector('.condition-count-fields');
+        if (!kindSelect) return;
+        const kind = kindSelect.value;
+        const isType = kind === 'instanceType' || kind === 'notInstanceType';
+        const isCount = kind === 'visitedCount';
+        if (activitySelect) activitySelect.style.display = isType ? 'none' : '';
+        if (typeSelect) typeSelect.style.display = isType ? '' : 'none';
+        if (countFields) countFields.style.display = isCount ? 'flex' : 'none';
+
+        // The instance-type select is only ever filled in reactively (when an instance type is
+        // added/edited, or when a brand-new row is created via addConditionRow) -- a server-rendered
+        // row that nobody has touched yet still has zero options at this point. Refresh here too, so
+        // switching an existing/first row to "Instance type is" always shows the current list.
+        if (isType && typeof updateInstanceTypeSelects === 'function') {
+            const container = row.closest('.conditions-container');
+            const scenarioIndex = container ? container.dataset.scenario : null;
+            if (scenarioIndex !== null && scenarioIndex !== undefined) updateInstanceTypeSelects(scenarioIndex);
+        }
+    }
+
+    // Conditions are a list of groups: rows inside a group combine via that group's own AND/OR
+    // select. Groups combine with each other left to right, each via its own AND/OR "connector" to
+    // the group right before it (a small select sitting between the two group boxes) -- e.g.
+    // "G1 OR G2 AND G3" is evaluated as (G1 OR G2) AND G3, exactly as laid out, no AND-before-OR
+    // precedence. Row/group indices must stay contiguous (1,2,3,...) since app.py's parser stops at
+    // the first missing index, so every removal renumbers what's left (same convention as
+    // renumberElementResources elsewhere).
+    function getConditionsContainer(flowId, scenarioIndex) {
+        const containers = document.querySelectorAll('.conditions-container[data-flow-id="' + flowId + '"][data-scenario="' + scenarioIndex + '"]');
+        return containers[containers.length - 1] || null;
+    }
+
+    function renumberConditionRows(groupEl, flowId, scenarioIndex, groupIdx) {
+        groupEl.querySelectorAll('.condition-rows .condition-input').forEach((row, idx) => {
+            const rowIdx = idx + 1;
+            const kindSelect = row.querySelector('select[name$="_kind"]');
+            const activitySelect = row.querySelector('.condition-activity-select');
+            const typeSelect = row.querySelector('.condition-instancetype-select');
+            const comparatorSelect = row.querySelector('.condition-comparator-select');
+            const countInput = row.querySelector('.condition-count-input');
+            if (kindSelect) {
+                kindSelect.name = `scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${rowIdx}_kind`;
+                kindSelect.id = kindSelect.name;
+            }
+            if (activitySelect) {
+                activitySelect.name = `scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${rowIdx}_activityId`;
+                activitySelect.id = activitySelect.name;
+            }
+            if (typeSelect) {
+                typeSelect.name = `scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${rowIdx}_instanceType`;
+                typeSelect.id = typeSelect.name;
+            }
+            if (comparatorSelect) {
+                comparatorSelect.name = `scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${rowIdx}_comparator`;
+                comparatorSelect.id = comparatorSelect.name;
+            }
+            if (countInput) {
+                countInput.name = `scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${rowIdx}_count`;
+                countInput.id = countInput.name;
+            }
+        });
+    }
+
+    function renumberConditionGroups(flowId, scenarioIndex) {
+        const container = getConditionsContainer(flowId, scenarioIndex);
+        if (!container) return;
+        container.querySelectorAll('.condition-group').forEach((groupEl, idx) => {
+            const groupIdx = idx + 1;
+            groupEl.dataset.groupIdx = groupIdx;
+            const label = groupEl.querySelector('.condition-group-label');
+            if (label) label.innerHTML = `Group ${groupIdx} &mdash; combine with:`;
+            const opSelect = groupEl.querySelector('.group-operator-select');
+            if (opSelect) {
+                opSelect.name = `scenario_${scenarioIndex}_conditionGroupOp_${flowId}_${groupIdx}`;
+                opSelect.id = opSelect.name;
+            }
+            const addBtn = groupEl.querySelector('.add-condition');
+            if (addBtn) addBtn.dataset.groupIdx = groupIdx;
+            renumberConditionRows(groupEl, flowId, scenarioIndex, groupIdx);
+        });
+        // Connector i (0-based, in DOM order) sits between group (i+1) and group (i+2) -- i.e. it
+        // belongs to (is the connector "into") the group right after it.
+        container.querySelectorAll('.condition-group-connector').forEach((connEl, idx) => {
+            const groupIdx = idx + 2;
+            const sel = connEl.querySelector('.connector-operator-select');
+            if (sel) {
+                sel.name = `scenario_${scenarioIndex}_conditionGroupConnector_${flowId}_${groupIdx}`;
+                sel.id = sel.name;
+            }
+        });
+    }
+
+    function addConditionRow(flowId, scenarioIndex, groupIdx) {
+        const container = getConditionsContainer(flowId, scenarioIndex);
+        if (!container) return;
+        const groupEl = container.querySelector('.condition-group[data-group-idx="' + groupIdx + '"]');
+        const rowsContainer = groupEl && groupEl.querySelector('.condition-rows');
+        if (!rowsContainer) return;
+        const count = rowsContainer.querySelectorAll('.condition-input').length + 1;
+
+        const templateActivitySelect = container.querySelector('.condition-activity-select');
+        const activityOptionsHtml = templateActivitySelect ? templateActivitySelect.innerHTML : '<option value=""></option>';
+
+        const row = document.createElement('div');
+        row.className = 'condition-input row mb-2 gx-2';
+        row.innerHTML = `
+            <div class="form-group col-md-5">
+                <select class="form-control form-control-sm" name="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_kind" id="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_kind">
+                    <option value=""></option>
+                    <option value="visited">Has visited activity</option>
+                    <option value="notVisited">Has NOT visited activity</option>
+                    <option value="visitedCount">Visited N times</option>
+                    <option value="instanceType">Instance type is</option>
+                    <option value="notInstanceType">Instance type is NOT</option>
+                </select>
+            </div>
+            <div class="form-group col-md-5">
+                <select class="form-control form-control-sm condition-activity-select" name="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_activityId" id="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_activityId">${activityOptionsHtml}</select>
+                <select class="form-control form-control-sm condition-instancetype-select" style="display:none"
+                        name="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_instanceType" id="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_instanceType">
+                    <option value=""></option>
+                </select>
+                <div class="condition-count-fields align-items-center gap-2 mt-1" style="display:none">
+                    <select class="form-control form-control-sm condition-comparator-select" style="width:auto"
+                            name="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_comparator" id="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_comparator">
+                        <option value=">=">at least</option>
+                        <option value="=">exactly</option>
+                        <option value="<=">at most</option>
+                    </select>
+                    <input type="number" min="0" step="1" class="form-control form-control-sm condition-count-input" style="width:80px"
+                           name="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_count" id="scenario_${scenarioIndex}_condition_${flowId}_${groupIdx}_${count}_count" value="1">
+                    <span class="text-muted small">times</span>
+                </div>
+            </div>
+            <div class="form-group col-md-2 d-flex align-items-center">
+                <button type="button" class="btn btn-outline-danger btn-sm remove-condition-row">Remove</button>
+            </div>
+        `;
+        rowsContainer.appendChild(row);
+        row.querySelector('select[name$="_kind"]').addEventListener('change', function() {
+            updateConditionValueVisibility(row);
+            if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+        });
+        if (typeof updateInstanceTypeSelects === 'function') updateInstanceTypeSelects(scenarioIndex);
+        return row;
+    }
+
+    function addConditionGroup(flowId, scenarioIndex) {
+        const container = getConditionsContainer(flowId, scenarioIndex);
+        if (!container) return;
+        const groupIdx = container.querySelectorAll('.condition-group').length + 1;
+        const addGroupBtn = container.querySelector('.add-condition-group');
+
+        if (groupIdx > 1) {
+            const connector = document.createElement('div');
+            connector.className = 'condition-group-connector d-flex align-items-center gap-2 my-1';
+            connector.innerHTML = `
+                <hr class="flex-grow-1 my-0">
+                <select class="form-control form-control-sm connector-operator-select" style="width:auto"
+                        name="scenario_${scenarioIndex}_conditionGroupConnector_${flowId}_${groupIdx}" id="scenario_${scenarioIndex}_conditionGroupConnector_${flowId}_${groupIdx}">
+                    <option value="OR">OR</option>
+                    <option value="AND">AND</option>
+                </select>
+                <hr class="flex-grow-1 my-0">
+            `;
+            container.insertBefore(connector, addGroupBtn);
+        }
+
+        const group = document.createElement('div');
+        group.className = 'condition-group border rounded p-2 mb-2';
+        group.dataset.groupIdx = groupIdx;
+        group.innerHTML = `
+            <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fw-semibold small condition-group-label">Group ${groupIdx} &mdash; combine with:</span>
+                    <select class="form-control form-control-sm group-operator-select" style="width:auto"
+                            name="scenario_${scenarioIndex}_conditionGroupOp_${flowId}_${groupIdx}" id="scenario_${scenarioIndex}_conditionGroupOp_${flowId}_${groupIdx}">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-outline-danger btn-sm remove-condition-group">Remove group</button>
+            </div>
+            <div class="condition-rows"></div>
+            <button type="button" class="btn btn-secondary btn-sm add-condition mt-1"
+                    data-flow-id="${flowId}" data-scenario="${scenarioIndex}" data-group-idx="${groupIdx}">Add Condition</button>
+        `;
+        container.insertBefore(group, container.querySelector('.add-condition-group'));
+        addConditionRow(flowId, scenarioIndex, groupIdx);
+    }
+
+    document.addEventListener('click', function(e) {
+        const groupBtn = e.target.closest('.add-condition-group');
+        if (groupBtn) {
+            addConditionGroup(groupBtn.dataset.flowId, groupBtn.dataset.scenario);
+            return;
+        }
+        const removeGroupBtn = e.target.closest('.remove-condition-group');
+        if (removeGroupBtn) {
+            const groupEl = removeGroupBtn.closest('.condition-group');
+            const container = removeGroupBtn.closest('.conditions-container');
+            // Each group's own connector sits right before it in the DOM. Drop that one; if this was
+            // the first group (no preceding connector), drop the one right after it instead, since
+            // the group that becomes first can't have a leading connector either.
+            const prevConnector = groupEl.previousElementSibling;
+            const nextConnector = groupEl.nextElementSibling;
+            const connectorToRemove =
+                (prevConnector && prevConnector.classList.contains('condition-group-connector')) ? prevConnector :
+                (nextConnector && nextConnector.classList.contains('condition-group-connector')) ? nextConnector : null;
+            groupEl.remove();
+            if (connectorToRemove) connectorToRemove.remove();
+            if (container) renumberConditionGroups(container.dataset.flowId, container.dataset.scenario);
+            if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+            return;
+        }
+        const removeRowBtn = e.target.closest('.remove-condition-row');
+        if (removeRowBtn) {
+            const groupEl = removeRowBtn.closest('.condition-group');
+            const container = removeRowBtn.closest('.conditions-container');
+            removeRowBtn.closest('.condition-input').remove();
+            if (groupEl && container) {
+                renumberConditionRows(groupEl, container.dataset.flowId, container.dataset.scenario, groupEl.dataset.groupIdx);
+            }
+            if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+            return;
+        }
+        const addBtn = e.target.closest('.add-condition');
+        if (!addBtn) return;
+        addConditionRow(addBtn.dataset.flowId, addBtn.dataset.scenario, addBtn.dataset.groupIdx);
+    });
+
+    initializeBranchTimerListeners(document);
+    </script>
+
+    <script>
+    function setBatchEnabled(toggleEl, enabled) {
+        const container = toggleEl.closest('.element-group');
+        if (!container) return;
+        const elementId = toggleEl.dataset.elementId;
+        const scenario = toggleEl.dataset.scenario || 0;
+
+        const fields = container.querySelector('.batch-fields');
+        if (fields) fields.style.display = enabled ? 'block' : 'none';
+
+        const hidden = document.getElementById('scenario_' + scenario + '_batchEnabled_hidden_' + elementId);
+        if (hidden) hidden.value = enabled ? 'true' : 'false';
+    }
+
+    function initializeBatchListeners(container) {
+        container = container || document;
+        container.querySelectorAll('.batch-toggle').forEach(function(toggle) {
+            toggle.addEventListener('change', function() {
+                setBatchEnabled(this, this.checked);
+            });
+        });
+    }
+
+    initializeBatchListeners(document);
     </script>
 
     <script>

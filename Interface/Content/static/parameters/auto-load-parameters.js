@@ -273,6 +273,20 @@ function loadScenarioData(scenarioIndex, scenarioData) {
                     if (thresholdUnitSelect) thresholdUnitSelect.value = element.durationThresholdTimeUnit;
                 }
                 
+                if (element.batchMaxSize) {
+                    const maxSizeInput = document.getElementById(`scenario_${scenarioIndex}_batchMaxSize_${elementId}`);
+                    const minSizeInput = document.getElementById(`scenario_${scenarioIndex}_batchMinSize_${elementId}`);
+                    const mixedInput = document.getElementById(`scenario_${scenarioIndex}_batchAllowMixedTypes_${elementId}`);
+                    const toggle = document.getElementById(`scenario_${scenarioIndex}_batchEnabled_${elementId}`);
+                    if (maxSizeInput) maxSizeInput.value = element.batchMaxSize;
+                    if (minSizeInput) minSizeInput.value = element.batchMinSize || '';
+                    if (mixedInput) mixedInput.checked = !!element.batchAllowMixedTypes;
+                    if (toggle) {
+                        toggle.checked = true;
+                        if (typeof setBatchEnabled === 'function') setBatchEnabled(toggle, true);
+                    }
+                }
+
                 if (element.resourceIds && element.resourceIds.length > 0) {
                     const resourcesContainer = document.querySelector(`.element-resources-container-${scenarioIndex}-${elementId}`);
                     
@@ -363,12 +377,104 @@ function loadScenarioData(scenarioIndex, scenarioData) {
                     }
                 }
 
-                // restore isTimeoutPath
-                if (flow.isTimeoutPath) {
-                    const cb = document.getElementById(`scenario_${scenarioIndex}_isTimeoutPath_cb_${flowId}`);
-                    const hid = document.getElementById(`scenario_${scenarioIndex}_isTimeoutPath_${flowId}`);
-                    if (cb) cb.checked = true;
-                    if (hid) hid.value = 'true';
+                // restore own timer
+                if (flow.hasOwnTimer) {
+                    const toggle = document.getElementById(`scenario_${scenarioIndex}_hasOwnTimer_${flowId}`);
+                    const timer = flow.ownTimer || {};
+                    const typeEl = document.getElementById(`scenario_${scenarioIndex}_ownTimerType_${flowId}`);
+                    const meanEl = document.getElementById(`scenario_${scenarioIndex}_ownTimerMean_${flowId}`);
+                    const arg1El = document.getElementById(`scenario_${scenarioIndex}_ownTimerArg1_${flowId}`);
+                    const arg2El = document.getElementById(`scenario_${scenarioIndex}_ownTimerArg2_${flowId}`);
+                    const unitEl = document.getElementById(`scenario_${scenarioIndex}_ownTimerTimeUnit_${flowId}`);
+                    if (typeEl) typeEl.value = timer.type || 'FIXED';
+                    if (meanEl) meanEl.value = timer.mean || '';
+                    if (arg1El) arg1El.value = timer.arg1 || '';
+                    if (arg2El) arg2El.value = timer.arg2 || '';
+                    if (unitEl) unitEl.value = timer.timeUnit || 'seconds';
+                    if (toggle) {
+                        toggle.checked = true;
+                        if (typeof setBranchTimerEnabled === 'function') setBranchTimerEnabled(toggle, true);
+                    }
+                }
+
+                // restore conditions (grouped: rows inside a group combine via that group's own
+                // operator, groups combine with each other left to right via each group's own
+                // connector to the group right before it). Falls back to treating a pre-groups flat
+                // 'conditions' list (saved before this feature existed) as one implicit AND-group.
+                const conditionGroups = flow.conditionGroups
+                    ? flow.conditionGroups.slice()
+                    : (flow.conditions && flow.conditions.length > 0 ? [{ operator: 'AND', conditions: flow.conditions }] : []);
+
+                // Legacy 'Forced Instance Types' on an exclusive-gateway branch (identifiable by having
+                // a conditions-container at all -- inclusive gateways don't) becomes an implicit
+                // OR-group of instanceType conditions, ANDed onto whatever's already there. Matches
+                // the migration simulator_engine.py's normalize_condition_groups() does at run time,
+                // so what the user sees here is what would actually be evaluated.
+                const hasConditionsContainer = !!document.querySelector(`.conditions-container[data-flow-id="${flowId}"][data-scenario="${scenarioIndex}"]`);
+                if (hasConditionsContainer && flow.types && flow.types.length > 0) {
+                    conditionGroups.push({
+                        operator: 'OR',
+                        conditions: flow.types.map(t => ({ kind: 'instanceType', value: t.type })),
+                        ...(conditionGroups.length > 0 ? { connector: 'AND' } : {})
+                    });
+                }
+
+                if (conditionGroups.length > 0) {
+                    const conditionsContainer = document.querySelector(`.conditions-container[data-flow-id="${flowId}"][data-scenario="${scenarioIndex}"]`);
+                    if (conditionsContainer) {
+                        // capture the server-rendered activity options before clearing the template row,
+                        // since addConditionRow() below copies options from whatever row is already present
+                        const templateSelect = conditionsContainer.querySelector('.condition-activity-select');
+                        const activityOptionsHtml = templateSelect ? templateSelect.innerHTML : '<option value=""></option>';
+
+                        conditionsContainer.querySelectorAll('.condition-group, .condition-group-connector').forEach(el => el.remove());
+
+                        conditionGroups.forEach((group, groupPos) => {
+                            if (typeof addConditionGroup !== 'function') return;
+                            addConditionGroup(flowId, scenarioIndex);
+                            const groups = conditionsContainer.querySelectorAll('.condition-group');
+                            const groupEl = groups[groups.length - 1];
+                            if (!groupEl) return;
+                            const groupIdx = groupEl.dataset.groupIdx;
+
+                            const opSelect = groupEl.querySelector('.group-operator-select');
+                            if (opSelect) opSelect.value = group.operator || 'AND';
+
+                            if (groupPos > 0) {
+                                // addConditionGroup() creates this group's connector as its immediately
+                                // preceding sibling when it's not the first group.
+                                const connectorEl = groupEl.previousElementSibling;
+                                const connSelect = connectorEl && connectorEl.querySelector('.connector-operator-select');
+                                if (connSelect) connSelect.value = group.connector || 'OR';
+                            }
+
+                            // addConditionGroup() seeds one empty row -- drop it, we add exactly as
+                            // many rows as this group needs below.
+                            groupEl.querySelectorAll('.condition-input').forEach(row => row.remove());
+
+                            (group.conditions || []).forEach((cond) => {
+                                addConditionRow(flowId, scenarioIndex, groupIdx);
+                                const rows = groupEl.querySelectorAll('.condition-input');
+                                const lastRow = rows[rows.length - 1];
+                                if (!lastRow) return;
+                                const kindSelect = lastRow.querySelector('select[name$="_kind"]');
+                                const activitySelect = lastRow.querySelector('.condition-activity-select');
+                                const typeSelect = lastRow.querySelector('.condition-instancetype-select');
+                                const comparatorSelect = lastRow.querySelector('.condition-comparator-select');
+                                const countInput = lastRow.querySelector('.condition-count-input');
+                                if (activitySelect) activitySelect.innerHTML = activityOptionsHtml;
+                                const condValue = cond.value !== undefined ? cond.value : cond.activityId;
+                                setTimeout(() => {
+                                    if (kindSelect) kindSelect.value = cond.kind || '';
+                                    if (activitySelect) activitySelect.value = condValue || '';
+                                    if (typeSelect) typeSelect.value = condValue || '';
+                                    if (comparatorSelect) comparatorSelect.value = cond.comparator || '>=';
+                                    if (countInput) countInput.value = cond.count !== undefined ? cond.count : 1;
+                                    updateConditionValueVisibility(lastRow);
+                                }, 100);
+                            });
+                        });
+                    }
                 }
             });
 
@@ -397,7 +503,12 @@ function loadScenarioData(scenarioIndex, scenarioData) {
             });
         }
 
-        // Aggiorna i badge somma DOPO che i valori delle probabilità sono stati impostati
-        if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+        // Aggiorna i badge somma DOPO che i valori delle probabilità sono stati impostati.
+        // Le condizioni (kind/activity select) vengono scritte in un setTimeout annidato di 100ms
+        // (vedi sopra), quindi questo ricalcolo deve girare dopo, altrimenti i branch con
+        // condizione risultano ancora "senza condizione" e vengono inclusi per errore nella somma.
+        setTimeout(() => {
+            if (window.updateAllGatewaySums) window.updateAllGatewaySums();
+        }, 150);
     }, 500);
 }

@@ -154,8 +154,20 @@ function updateInstanceTypeSelects(scenarioIndex) {
         }
     });
 
-    // Aggiorna i select nei gateway di questo scenario
-    const instanceTypeSelects = document.querySelectorAll(`#gateways-container-${scenarioIndex} select[name*="forcedInstanceType"]`);
+    // Aggiorna i select nei gateway di questo scenario: sia i "Forced Instance Types" (inclusivi)
+    // sia i select valore delle condizioni "Instance type is/is NOT" (esclusivi). Quando l'utente
+    // clicca un gateway nel diagramma bpmn.io, il suo .gateway-group viene spostato temporaneamente
+    // dentro #gatewayModalBody (vedi bpmn-diagram.js) -- uscendo così da #gateways-container-N. Se il
+    // gateway attualmente nella modale appartiene a QUESTO scenario, includerla nello scope, altrimenti
+    // i suoi select instance-type non verrebbero mai più aggiornati finché resta nella modale.
+    const scopeSelectors = [`#gateways-container-${scenarioIndex}`];
+    const modalBody = document.getElementById('gatewayModalBody');
+    if (modalBody && modalBody.querySelector(`[data-scenario="${scenarioIndex}"]`)) {
+        scopeSelectors.push('#gatewayModalBody');
+    }
+    const instanceTypeSelects = document.querySelectorAll(
+        scopeSelectors.map(s => `${s} select[name*="forcedInstanceType"], ${s} .condition-instancetype-select`).join(', ')
+    );
     instanceTypeSelects.forEach(select => {
         const selectedValue = select.value;
         select.innerHTML = '<option value=""></option>';
